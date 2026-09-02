@@ -11,6 +11,10 @@ from .rubric import load_rubric
 
 
 def main(argv: list[str] | None = None) -> int:
+    try:  # cp1251-консоли Windows не умеют эмодзи вердикта
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
     parser = argparse.ArgumentParser(
         prog="tz_review",
         description="Предварительное LLM-ревью ТЗ на потоки и витрины данных.",
