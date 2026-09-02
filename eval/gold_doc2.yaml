@@ -6,6 +6,7 @@ defects:
   - лидирующ
   - этих полей
   code: B3
+  difficulty: medium
 - id: G2-2
   description: FAQ ссылается на radioAccessTechnology/CELL_ID/LAC — их нет в структуре
   categories:
@@ -15,12 +16,14 @@ defects:
   - cell_id
   - lac
   code: C2
+  difficulty: hard
 - id: G2-3
   description: TABLE_MSCP_RAW_SFTP объявлена, структура не описана
   categories: []
   keywords:
   - raw_sftp
   code: A1
+  difficulty: medium
 - id: G2-4
   description: Судьба событий вне окна фильтрации [-7д, +2ч] не определена
   categories:
@@ -30,6 +33,7 @@ defects:
   - вне окна
   - отбрасыва
   code: A7
+  difficulty: medium
 - id: G2-5
   description: Сдвиги в часах vs поле «в минутах»; связь TIME_ZONE_SHIFT/TIMEZONE_CALC
     с шагом 2 не задана
@@ -39,9 +43,11 @@ defects:
   - time_zone_shift
   - timezone_calc
   code: D4
+  difficulty: hard
 - id: G2-7
   description: FIELD_IS_ROAMING string со значениями true/false — тип vs значения
   categories: []
   keywords:
   - is_roaming
   code: E2
+  difficulty: medium

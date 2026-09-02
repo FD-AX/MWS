@@ -5,7 +5,7 @@ from typing import Any
 
 from . import document as docmod
 from .passes import (baseline, checklist, critic, deterministic, developer_sim,
-                     document_level, uncertainty)
+                     doc_graph, document_level, uncertainty)
 from .schema import Finding
 from .verify import anchoring_rate, mark_only, verify_findings
 
@@ -28,6 +28,7 @@ def _assign_ids(findings: list[Finding]) -> None:
 def review(text: str, rubric: dict[str, Any], llm=None, *,
            use_entropy: bool = False,
            use_baseline: bool = False,
+           use_graph: bool = False,
            critic_threshold: float = critic.DEFAULT_THRESHOLD) -> ReviewResult:
     """Полный конвейер: детерминированный слой -> чеклист -> документ-уровень ->
     персона разработчика -> [semantic entropy] -> верификация цитат -> критик.
@@ -53,6 +54,10 @@ def review(text: str, rubric: dict[str, Any], llm=None, *,
 
     findings += deterministic.run(doc, rubric)
     result.passes_run.append("deterministic")
+
+    if use_graph:
+        findings += doc_graph.run(doc)
+        result.passes_run.append("doc_graph")
 
     if llm is not None:
         cl_findings, statuses = checklist.run(text, rubric, llm)

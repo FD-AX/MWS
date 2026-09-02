@@ -27,10 +27,12 @@ from tz_review.pipeline import review  # noqa: E402
 from tz_review.rubric import load_rubric  # noqa: E402
 
 VARIANTS = {
-    "v1":  {"llm": False, "baseline": False, "entropy": False},
-    "v0b": {"llm": True,  "baseline": True,  "entropy": False},
-    "v2":  {"llm": True,  "baseline": False, "entropy": False},
-    "v2e": {"llm": True,  "baseline": False, "entropy": True},
+    "v1":  {"llm": False, "baseline": False, "entropy": False, "graph": False},
+    "v1g": {"llm": False, "baseline": False, "entropy": False, "graph": True},
+    "v0b": {"llm": True,  "baseline": True,  "entropy": False, "graph": False},
+    "v2":  {"llm": True,  "baseline": False, "entropy": False, "graph": False},
+    "v2g": {"llm": True,  "baseline": False, "entropy": False, "graph": True},
+    "v2e": {"llm": True,  "baseline": False, "entropy": True,  "graph": True},
 }
 
 
@@ -43,12 +45,15 @@ def evaluate(result, gold_defects):
         matched_fids.update(f["fid"] for f in found)
     extras = [f for f in findings if f["fid"] not in matched_fids]
     by_group = defaultdict(lambda: [0, 0])
+    by_diff = defaultdict(lambda: [0, 0])
     for d in gold_defects:
         g = str(d.get("code", "?"))[:1]
         by_group[g][1] += 1
+        by_diff[str(d.get("difficulty", "?"))][1] += 1
         if hits[d["id"]]:
             by_group[g][0] += 1
-    return hits, extras, dict(by_group)
+            by_diff[str(d.get("difficulty", "?"))][0] += 1
+    return hits, extras, dict(by_group), dict(by_diff)
 
 
 def main() -> int:
@@ -79,8 +84,8 @@ def main() -> int:
     lines = [f"# Bench report — {datetime.date.today()}",
              f"Варианты: {', '.join(variants)}", "",
              "## Сводка", "",
-             "| Вариант | Цель | Recall | По группам | Находок | Лишних | Anchoring |",
-             "|---|---|---|---|---|---|---|"]
+             "| Вариант | Цель | Recall | По группам | По сложности | Находок | Лишних | Anchoring |",
+             "|---|---|---|---|---|---|---|---|"]
     details = []
 
     for vname in variants:
@@ -88,15 +93,19 @@ def main() -> int:
         for t in targets:
             text = (ROOT / t["doc"]).read_text(encoding="utf-8")
             result = review(text, rubric, llm if spec["llm"] else None,
-                            use_baseline=spec["baseline"], use_entropy=spec["entropy"])
+                            use_baseline=spec["baseline"], use_entropy=spec["entropy"],
+                            use_graph=spec["graph"])
             n_findings = len(result.findings)
             if t.get("gold"):
                 gold = yaml.safe_load((ROOT / t["gold"]).read_text(encoding="utf-8"))["defects"]
-                hits, extras, by_group = evaluate(result, gold)
+                hits, extras, by_group, by_diff = evaluate(result, gold)
                 n_hit = sum(1 for v in hits.values() if v)
                 groups = " ".join(f"{g} {a}/{b}" for g, (a, b) in sorted(by_group.items()))
+                diffs = " ".join(f"{d[:3]} {a}/{b}" for d, (a, b) in
+                                 sorted(by_diff.items(),
+                                        key=lambda x: {"easy": 0, "medium": 1, "hard": 2}.get(x[0], 9)))
                 lines.append(f"| {vname} | {t['label']} | **{n_hit}/{len(gold)}** | {groups} "
-                             f"| {n_findings} | {len(extras)} | {result.anchoring:.0%} |")
+                             f"| {diffs} | {n_findings} | {len(extras)} | {result.anchoring:.0%} |")
                 det = [f"### {vname} · {t['label']}", "", "Пропущено:"]
                 det += [f"- **[{d.get('code', '?')}] {d['id']}**: {d['description']}"
                         for d in gold if not hits[d["id"]]] or ["- (ничего)"]

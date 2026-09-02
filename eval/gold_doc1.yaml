@@ -6,6 +6,7 @@ defects:
   keywords:
   - задержк
   code: D2
+  difficulty: hard
 - id: G1-2
   description: Схемы RAW_3G/RAW_4G асимметричны без объяснения (LOC_ACCURACY, VENDOR
     vs SERVICE_TYPE)
@@ -16,6 +17,7 @@ defects:
   - отличают
   - асимметр
   code: D4
+  difficulty: hard
 - id: G1-3
   description: DDS/ADDS/CDM объявлены приёмниками — структура и переходы не описаны
   categories:
@@ -25,18 +27,21 @@ defects:
   - adds
   - cdm
   code: A1
+  difficulty: medium
 - id: G1-4
   description: 'FIELD_RADIUS и FIELD_LOC_ACCURACY — оба «точность в метрах»: дубль?'
   categories: []
   keywords:
   - radius
   code: B1
+  difficulty: medium
 - id: G1-5
   description: Формат времени указан только в 4G («Unix-время»), в 3G нет
   categories: []
   keywords:
   - unix
   code: D4
+  difficulty: hard
 - id: G1-6
   description: Ретеншен DDS/ADDS/CDM не задан (только Kafka 24ч и RAW 30 дней)
   categories:
@@ -46,6 +51,7 @@ defects:
   - хранени
   - срок хранения
   code: A8
+  difficulty: medium
 - id: G1-7
   description: '«Алгоритмы: хэндоверы, геоинтервалы, RNC/eNodeB» — заявлены без содержимого/ссылок'
   categories: []
@@ -54,6 +60,7 @@ defects:
   - геоинтервал
   - rnc
   code: C3
+  difficulty: medium
 - id: G1-8
   description: Дедупликация и late data при чтении Kafka→RAW не описаны
   categories:
@@ -65,3 +72,4 @@ defects:
   - поздн
   - late
   code: A2
+  difficulty: medium

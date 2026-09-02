@@ -61,6 +61,7 @@ def main() -> int:
 
     gold = {"defects": [
         {"id": d["id"], "code": d.get("code", "?"),
+         "difficulty": d.get("difficulty", "?"),
          "description": f"[{d.get('code', '?')}] {d['description']}",
          "categories": d.get("categories", []), "keywords": d.get("keywords", [])}
         for d in recipe["defects"]

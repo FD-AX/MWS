@@ -9,6 +9,7 @@ defects:
   - перезагрузк
   - upsert
   code: D2
+  difficulty: hard
 - id: G3-2
   description: Алгоритм использует FIELD_LAC/CELL_ID/TIME_STAMP/CELL_GEN — структура
     источников не описана
@@ -20,6 +21,7 @@ defects:
   - field_time_stamp
   - не описан
   code: C2
+  difficulty: hard
 - id: G3-3
   description: 'Fallback региона не закрыт: lac=0 и cell=0 одновременно / джойн без
     совпадений'
@@ -31,6 +33,7 @@ defects:
   - fallback
   - не нашл
   code: A3
+  difficulty: hard
 - id: G3-4
   description: «Последний по времени за месяц» IMEI — по какому полю времени и из
     какой таблицы
@@ -39,6 +42,7 @@ defects:
   - последний по времени
   - какому полю времени
   code: B9
+  difficulty: medium
 - id: G3-5
   description: FIELD_USERS_CNT=count(...) внутри списка «Группировка по» — агрегат
     в группировке
@@ -46,6 +50,7 @@ defects:
   keywords:
   - группировк
   code: B2
+  difficulty: medium
 - id: G3-6
   description: TAC не найден в TABLE_DEVICE_REF → vendor = ? (NULL/Unknown/отброс)
   categories: []
@@ -54,6 +59,7 @@ defects:
   - не найден в справочнике
   - нет соответствия
   code: A3
+  difficulty: medium
 - id: G3-7
   description: «Обязательно загрузить исторические данные» — процесс бэкфилла не описан
   categories: []
@@ -62,6 +68,7 @@ defects:
   - бэкфилл
   - backfill
   code: A7
+  difficulty: medium
 - id: G3-8
   description: 'UTC витрины vs региональные часовые пояса источника: границы месяца'
   categories: []
@@ -69,6 +76,7 @@ defects:
   - utc
   - часов
   code: D3
+  difficulty: hard
 - id: G3-9
   description: Нет SLA/времени запуска; «метка обработки DAG» — оркестрация не описана
   categories:
@@ -80,6 +88,7 @@ defects:
   - время запуска
   - dag
   code: A6
+  difficulty: medium
 - id: G3-10
   description: Раздел контроля качества отсутствует
   categories:
@@ -89,6 +98,7 @@ defects:
   - контроль качества
   - контроля качества
   code: F1
+  difficulty: easy
 - id: G3-11
   description: Ключ витрины явно не задан
   categories:
@@ -98,3 +108,4 @@ defects:
   - первичный ключ
   - гранулярн
   code: A5
+  difficulty: medium
