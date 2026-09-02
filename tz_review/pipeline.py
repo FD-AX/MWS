@@ -5,7 +5,9 @@ from typing import Any
 
 from . import document as docmod
 from .passes import (baseline, checklist, critic, deterministic, developer_sim,
-                     doc_graph, document_level, uncertainty)
+                     doc_graph, document_level, spec_compile, uncertainty)
+
+DEFAULT_LLM_PASSES = frozenset({"checklist", "document_level", "developer_sim"})
 from .schema import Finding
 from .verify import anchoring_rate, mark_only, verify_findings
 
@@ -29,6 +31,7 @@ def review(text: str, rubric: dict[str, Any], llm=None, *,
            use_entropy: bool = False,
            use_baseline: bool = False,
            use_graph: bool = False,
+           llm_passes: frozenset[str] | None = None,
            critic_threshold: float = critic.DEFAULT_THRESHOLD) -> ReviewResult:
     """Полный конвейер: детерминированный слой -> чеклист -> документ-уровень ->
     персона разработчика -> [semantic entropy] -> верификация цитат -> критик.
@@ -59,20 +62,28 @@ def review(text: str, rubric: dict[str, Any], llm=None, *,
         findings += doc_graph.run(doc)
         result.passes_run.append("doc_graph")
 
+    lp = DEFAULT_LLM_PASSES if llm_passes is None else llm_passes
     if llm is not None:
-        cl_findings, statuses = checklist.run(text, rubric, llm)
-        findings += cl_findings
-        result.statuses = statuses
-        result.passes_run.append("checklist")
+        if "checklist" in lp:
+            cl_findings, statuses = checklist.run(text, rubric, llm)
+            findings += cl_findings
+            result.statuses = statuses
+            result.passes_run.append("checklist")
 
-        findings += document_level.run(text, llm)
-        result.passes_run.append("document_level")
+        if "document_level" in lp:
+            findings += document_level.run(text, llm)
+            result.passes_run.append("document_level")
 
-        findings += developer_sim.run(text, llm)
-        result.passes_run.append("developer_sim")
+        if "developer_sim" in lp:
+            findings += developer_sim.run(text, llm)
+            result.passes_run.append("developer_sim")
 
-        if use_entropy:
-            findings += uncertainty.run(text, rubric, statuses, llm)
+        if "compile" in lp:
+            findings += spec_compile.run(text, llm)
+            result.passes_run.append("spec_compile")
+
+        if use_entropy and result.statuses:
+            findings += uncertainty.run(text, rubric, result.statuses, llm)
             result.passes_run.append("uncertainty")
 
     verified, dropped = verify_findings(findings, doc)
