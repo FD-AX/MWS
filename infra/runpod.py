@@ -40,12 +40,12 @@ def _req(method: str, path: str, body: dict | None = None) -> dict:
         raise SystemExit(f"RunPod API {e.code}: {e.read().decode()[:500]}")
 
 
-def create(gpu: str, model: str) -> None:
+def create(gpu: str, model: str, cloud: str = "SECURE") -> None:
     vllm_key = os.environ.get("TZR_API_KEY", "tzr-local-token")
     body = {
         "name": "tzr-vllm",
         "imageName": "vllm/vllm-openai:latest",
-        "cloudType": "COMMUNITY",
+        "cloudType": cloud,
         "gpuTypeIds": [gpu],
         "gpuCount": 1,
         "containerDiskInGb": 40,
@@ -76,7 +76,8 @@ def main() -> int:
     if cmd == "create":
         gpu = args[args.index("--gpu") + 1] if "--gpu" in args else "NVIDIA GeForce RTX 4090"
         model = args[args.index("--model") + 1] if "--model" in args else "Qwen/Qwen2.5-14B-Instruct-AWQ"
-        create(gpu, model)
+        cloud = args[args.index("--cloud") + 1] if "--cloud" in args else "SECURE"
+        create(gpu, model, cloud)
     elif cmd == "status":
         print(json.dumps(_req("GET", f"/pods/{args[1]}"), indent=1)[:1200])
     elif cmd == "list":

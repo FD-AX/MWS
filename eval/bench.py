@@ -30,6 +30,11 @@ VARIANTS = {
     "v1":  {"llm": False, "baseline": False, "entropy": False, "graph": False},
     "v1g": {"llm": False, "baseline": False, "entropy": False, "graph": True},
     "v0b": {"llm": True,  "baseline": True,  "entropy": False, "graph": False},
+    # Промпт-лестница абляций бейзлайна: p0 наивный -> p3 (+обезличивание); v0b = +калибровка
+    "p0":  {"llm": True,  "baseline": True,  "entropy": False, "graph": False, "bprompt": "ablation_p0"},
+    "p1":  {"llm": True,  "baseline": True,  "entropy": False, "graph": False, "bprompt": "ablation_p1"},
+    "p2":  {"llm": True,  "baseline": True,  "entropy": False, "graph": False, "bprompt": "ablation_p2"},
+    "p3":  {"llm": True,  "baseline": True,  "entropy": False, "graph": False, "bprompt": "ablation_p3"},
     "v2":  {"llm": True,  "baseline": False, "entropy": False, "graph": False},
     "v2g": {"llm": True,  "baseline": False, "entropy": False, "graph": True},
     "v2e": {"llm": True,  "baseline": False, "entropy": True,  "graph": True},
@@ -101,7 +106,8 @@ def main() -> int:
             result = review(text, rubric, llm if spec["llm"] else None,
                             use_baseline=spec["baseline"], use_entropy=spec["entropy"],
                             use_graph=spec["graph"],
-                            llm_passes=frozenset(spec["passes"]) if spec.get("passes") else None)
+                            llm_passes=frozenset(spec["passes"]) if spec.get("passes") else None,
+                            baseline_prompt=spec.get("bprompt", "baseline"))
             n_findings = len(result.findings)
             if t.get("gold"):
                 gold = yaml.safe_load((ROOT / t["gold"]).read_text(encoding="utf-8"))["defects"]

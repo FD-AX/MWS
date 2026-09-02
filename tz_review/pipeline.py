@@ -32,6 +32,7 @@ def review(text: str, rubric: dict[str, Any], llm=None, *,
            use_baseline: bool = False,
            use_graph: bool = False,
            llm_passes: frozenset[str] | None = None,
+           baseline_prompt: str = "baseline",
            critic_threshold: float = critic.DEFAULT_THRESHOLD) -> ReviewResult:
     """Полный конвейер: детерминированный слой -> чеклист -> документ-уровень ->
     персона разработчика -> [semantic entropy] -> верификация цитат -> критик.
@@ -44,7 +45,7 @@ def review(text: str, rubric: dict[str, Any], llm=None, *,
     if use_baseline:
         if llm is None:
             raise ValueError("--baseline требует LLM (заполни .env)")
-        marked = mark_only(baseline.run(text, llm), doc)
+        marked = mark_only(baseline.run(text, llm, baseline_prompt), doc)
         marked.sort(key=lambda f: f.sort_key())
         _assign_ids(marked)
         quoted = [f for f in marked if not f.missing]
