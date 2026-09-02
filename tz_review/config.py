@@ -44,3 +44,16 @@ def settings_or_die() -> Settings:
         api_key=os.environ["TZR_API_KEY"],
         model=os.environ["TZR_MODEL"],
     )
+
+
+def openai_settings_or_die() -> Settings:
+    """Второй бэкенд (референс/кросс-чек другого семейства моделей)."""
+    load_dotenv()
+    key = os.environ.get("OPENAI_API_KEY")
+    if not key:
+        raise SystemExit("OPENAI_API_KEY не задан в .env — бэкенд openai недоступен.")
+    return Settings(
+        base_url=os.environ.get("OPENAI_BASE_URL", "https://api.openai.com/v1"),
+        api_key=key,
+        model=os.environ.get("OPENAI_MODEL", "gpt-5.5"),
+    )

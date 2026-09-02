@@ -38,6 +38,11 @@ VARIANTS = {
     "v2":  {"llm": True,  "baseline": False, "entropy": False, "graph": False},
     "v2g": {"llm": True,  "baseline": False, "entropy": False, "graph": True},
     "v2e": {"llm": True,  "baseline": False, "entropy": True,  "graph": True},
+    # Референс другого семейства (OpenAI): бейзлайн и полный конвейер
+    "v0b_gpt": {"llm": True, "baseline": True, "entropy": False, "graph": False,
+                "backend": "openai"},
+    "v2g_gpt": {"llm": True, "baseline": False, "entropy": False, "graph": True,
+                "backend": "openai"},
     # h5 = граф + только «компиляция ТЗ» (изолированный вклад гипотезы H5)
     "h5":  {"llm": True,  "baseline": False, "entropy": False, "graph": True,
             "passes": ["compile"]},
@@ -82,15 +87,23 @@ def main() -> int:
     targets = yaml.safe_load((ROOT / args.targets).read_text(encoding="utf-8"))["targets"]
     rubric = load_rubric()
 
-    llm = None
-    if any(VARIANTS[v]["llm"] for v in variants):
-        try:
-            from tz_review.config import settings_or_die
+    llms: dict[str, object] = {}
+
+    def get_llm(backend: str):
+        if backend not in llms:
+            from tz_review.config import openai_settings_or_die, settings_or_die
             from tz_review.llm import LLM
-            llm = LLM(settings_or_die())
-        except SystemExit as e:
-            print(f"! LLM недоступна ({e}); LLM-варианты пропущены.")
-            variants = [v for v in variants if not VARIANTS[v]["llm"]]
+            cfg = openai_settings_or_die() if backend == "openai" else settings_or_die()
+            llms[backend] = LLM(cfg)
+        return llms[backend]
+
+    for v in list(variants):
+        if VARIANTS[v]["llm"]:
+            try:
+                get_llm(VARIANTS[v].get("backend", "pod"))
+            except SystemExit as e:
+                print(f"! {v}: LLM недоступна ({e}) — вариант пропущен.")
+                variants.remove(v)
 
     lines = [f"# Bench report — {datetime.date.today()}",
              f"Варианты: {', '.join(variants)}", "",
@@ -103,7 +116,8 @@ def main() -> int:
         spec = VARIANTS[vname]
         for t in targets:
             text = (ROOT / t["doc"]).read_text(encoding="utf-8")
-            result = review(text, rubric, llm if spec["llm"] else None,
+            llm = get_llm(spec.get("backend", "pod")) if spec["llm"] else None
+            result = review(text, rubric, llm,
                             use_baseline=spec["baseline"], use_entropy=spec["entropy"],
                             use_graph=spec["graph"],
                             llm_passes=frozenset(spec["passes"]) if spec.get("passes") else None,

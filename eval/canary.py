@@ -40,9 +40,11 @@ def main() -> int:
     rubric = load_rubric()
     llm = None
     if spec["llm"]:
-        from tz_review.config import settings_or_die
+        from tz_review.config import openai_settings_or_die, settings_or_die
         from tz_review.llm import LLM
-        llm = LLM(settings_or_die())
+        cfg = (openai_settings_or_die() if spec.get("backend") == "openai"
+               else settings_or_die())
+        llm = LLM(cfg)
 
     ok = True
     for path, expect_desc, matcher in CHECKS:
