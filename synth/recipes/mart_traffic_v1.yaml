@@ -1,0 +1,115 @@
+# Рецепт v1: 12 инъекций в чистую витрину трафика.
+# Покрытие групп матрицы: A×4, B×3, C×2, D×2, E×1.
+# ВАЖНО: этот рецепт — тестовый набор; промпты на нём не тюнить (train/test split —
+# для тюнинга сделать отдельный рецепт v2 с другими инъекциями).
+
+base: synth/base/mart_traffic_clean.md
+out_doc: synth/out/mart_traffic_v1.md
+out_gold: synth/out/mart_traffic_v1.gold.yaml
+
+defects:
+  - id: SYN-A-NUL
+    code: A3
+    description: "Удалено правило NULL для FIELD_RAT"
+    op: replace
+    find: "Если FIELD_RAT не заполнен (NULL), запись учитывается в категории UNKNOWN. Записи"
+    replace: "Записи"
+    categories: ["checklist:NUL-01"]
+    keywords: ["null"]
+
+  - id: SYN-A-DED
+    code: A4
+    description: "Удалён шаг дедупликации целиком"
+    op: replace
+    find: "Шаг 3. Дедупликация\nДубликаты определяются по паре (FIELD_IMSI, FIELD_TIME_STAMP); из дубликатов остаётся запись с наибольшим FIELD_LOAD_ID.\n\nШаг 4."
+    replace: "Шаг 3."
+    categories: ["checklist:DED-01"]
+    keywords: ["дедупл", "дубл"]
+
+  - id: SYN-A-VOL
+    code: A8
+    description: "Удалена строка ожидаемого объёма"
+    op: delete
+    find: "| Ожидаемый объём | ~ 3 000 строк на месяц (85 регионов × 4 типа сети + служебные категории) |\n"
+    categories: ["checklist:VOL-01"]
+    keywords: ["объём", "объем"]
+
+  - id: SYN-A-BCKF
+    code: A
+    description: "Удалены глубина данных и бэкфилл"
+    op: delete
+    find: "| Глубина данных | С 01.01.2024; бэкфилл — DAG_BACKFILL_TRAFFIC, один месяц за прогон |\n"
+    categories: []
+    keywords: ["глубин", "бэкфилл", "историческ"]
+
+  - id: SYN-B-OPEN
+    code: B7
+    description: "Список типов сети превращён в открытый («и т. д.»)"
+    op: replace
+    find: "| FIELD_RAT | string | Тип сети (2G, 3G, 4G) |"
+    replace: "| FIELD_RAT | string | Тип сети (2G, 3G и т. д.) |"
+    categories: ["lang:open_ended"]
+    keywords: ["и т. д"]
+
+  - id: SYN-B-ANAPH
+    code: B3
+    description: "Регион: «по полю FIELD_REGION» заменено местоимением без антецедента"
+    op: replace
+    find: "Регион определяется по полю FIELD_REGION через справочник TABLE_REGION_REF;"
+    replace: "Он определяется через справочник TABLE_REGION_REF;"
+    categories: []
+    keywords: ["он определяется", "антецедент", "неясно, что"]
+
+  - id: SYN-B-VAGUE
+    code: B5
+    description: "Срок готовности заменён на «оперативно»"
+    op: replace
+    find: "Срок готовности: данные за месяц M доступны потребителям не позднее 10:00 UTC 2-го числа месяца M+1."
+    replace: "Срок готовности: данные за месяц публикуются оперативно после расчёта."
+    categories: ["lang:vague", "checklist:SLA-02"]
+    keywords: ["оперативн"]
+
+  - id: SYN-C-DANGLE
+    code: C2
+    description: "Партиционирование по несуществующему полю FIELD_PART_DATE"
+    op: replace
+    find: "| Поле партиционирования | FIELD_BIZ_DATE |"
+    replace: "| Поле партиционирования | FIELD_PART_DATE |"
+    categories: ["doc:completeness"]
+    keywords: ["field_part_date"]
+
+  - id: SYN-C-SECREF
+    code: C1
+    description: "Ссылка на несуществующий раздел 12"
+    op: insert_after
+    find: "Записи с пустым FIELD_REGION отбрасываются в TABLE_AGG_LOAD_LOG с кодом EMPTY_REGION."
+    text: "Полный перечень кодов отбраковки приведён в разделе 12."
+    categories: []
+    keywords: ["разделе 12", "раздел 12"]
+
+  - id: SYN-D-TZ
+    code: D2
+    description: "Время запуска в требованиях (МСК) противоречит регламенту (UTC)"
+    op: replace
+    find: "| Время запуска | 2-е число, 03:00 UTC |"
+    replace: "| Время запуска | 2-е число, 03:00 МСК |"
+    categories: ["doc:contradiction"]
+    keywords: ["мск"]
+
+  - id: SYN-D-NAME
+    code: D1
+    description: "Журнал в контроле качества назван несуществующим именем"
+    op: replace
+    find: "Результаты проверок пишутся в TABLE_AGG_LOAD_LOG."
+    replace: "Результаты проверок пишутся в TABLE_AGG_LOG_LOAD."
+    categories: ["doc:terminology"]
+    keywords: ["table_agg_log_load"]
+
+  - id: SYN-E-MEAS
+    code: E1
+    description: "Допуск сверки 0.1% заменён неизмеримой формулировкой"
+    op: replace
+    find: "сверка суммы байтов витрины с источником: расхождение не более 0.1%;"
+    replace: "сверка суммы байтов витрины с источником: существенных расхождений быть не должно;"
+    categories: []
+    keywords: ["существенн"]

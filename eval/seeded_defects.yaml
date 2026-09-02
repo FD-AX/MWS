@@ -1,0 +1,53 @@
+# Подсаженные дефекты examples/sample_tz.md (методика CriticGPT: меряем recall
+# ревьюера по заранее известным дефектам). Матчинг: категория-префикс ИЛИ ключевые
+# слова в quote/why/ask находки.
+
+defects:
+  - id: D01
+    description: "Инкремент без поля-курсора: «загружаются ежедневно и добавляются»"
+    categories: ["checklist:INC-01", "entropy:INC-01"]
+    keywords: ["инкремент", "курсор"]
+  - id: D02
+    description: "Открытый список счётчиков «и т. д.»"
+    categories: ["lang:open_ended", "checklist:SRC-02"]
+    keywords: ["и т. д", "открытый список"]
+  - id: D03
+    description: "Лазейка «при необходимости выполняется повторная загрузка»"
+    categories: ["lang:escape"]
+    keywords: ["при необходимости"]
+  - id: D04
+    description: "TBD в разделе контроля качества"
+    categories: ["lang:incomplete", "template:empty_section"]
+    keywords: ["tbd"]
+  - id: D05
+    description: "Формула DROP_RATE использует CNT_DROP_TOTAL, отсутствующий в источнике"
+    categories: ["doc:completeness", "doc:consistency"]
+    keywords: ["cnt_drop_total"]
+  - id: D06
+    description: "Поле REGION_CODE в маппинге без источника"
+    categories: ["checklist:MAP-01", "doc:completeness"]
+    keywords: ["region_code"]
+  - id: D07
+    description: "Нет правил NULL для счётчиков в формулах"
+    categories: ["checklist:NUL-01", "checklist:NUL-02"]
+    keywords: ["null", "делени"]
+  - id: D08
+    description: "Нет срока готовности данных (SLA), время запуска не указано"
+    categories: ["checklist:SLA-01", "checklist:SLA-02"]
+    keywords: ["sla", "время запуска", "готовности"]
+  - id: D09
+    description: "Дедупликация при повторной выгрузке не описана"
+    categories: ["checklist:DED-01"]
+    keywords: ["дедупл", "дубл"]
+  - id: D10
+    description: "Термин-дрейф: сота / ячейка / cell"
+    categories: ["doc:terminology"]
+    keywords: ["сота", "ячейка", "cell-уровня"]
+  - id: D11
+    description: "Пустой обязательный раздел «Контроль качества»"
+    categories: ["template:empty_section"]
+    keywords: ["контроль качества"]
+  - id: D12
+    description: "Расплывчатые «оперативно» / «большой объём»"
+    categories: ["lang:vague"]
+    keywords: ["оперативно", "большой объём", "больш"]

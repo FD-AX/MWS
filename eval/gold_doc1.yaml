@@ -1,0 +1,67 @@
+defects:
+- id: G1-1
+  description: «Задержка < 1 мин» vs «задержка ≈ 0 сек» — противоречие метрик и НФТ
+  categories:
+  - doc:contradiction
+  keywords:
+  - задержк
+  code: D2
+- id: G1-2
+  description: Схемы RAW_3G/RAW_4G асимметричны без объяснения (LOC_ACCURACY, VENDOR
+    vs SERVICE_TYPE)
+  categories: []
+  keywords:
+  - loc_accuracy
+  - field_service_type
+  - отличают
+  - асимметр
+  code: D4
+- id: G1-3
+  description: DDS/ADDS/CDM объявлены приёмниками — структура и переходы не описаны
+  categories:
+  - template:missing_section
+  keywords:
+  - dds
+  - adds
+  - cdm
+  code: A1
+- id: G1-4
+  description: 'FIELD_RADIUS и FIELD_LOC_ACCURACY — оба «точность в метрах»: дубль?'
+  categories: []
+  keywords:
+  - radius
+  code: B1
+- id: G1-5
+  description: Формат времени указан только в 4G («Unix-время»), в 3G нет
+  categories: []
+  keywords:
+  - unix
+  code: D4
+- id: G1-6
+  description: Ретеншен DDS/ADDS/CDM не задан (только Kafka 24ч и RAW 30 дней)
+  categories:
+  - checklist:VOL-01
+  keywords:
+  - ретеншен
+  - хранени
+  - срок хранения
+  code: A8
+- id: G1-7
+  description: '«Алгоритмы: хэндоверы, геоинтервалы, RNC/eNodeB» — заявлены без содержимого/ссылок'
+  categories: []
+  keywords:
+  - хэндовер
+  - геоинтервал
+  - rnc
+  code: C3
+- id: G1-8
+  description: Дедупликация и late data при чтении Kafka→RAW не описаны
+  categories:
+  - checklist:DED-01
+  - checklist:INC-02
+  keywords:
+  - дедупл
+  - дубл
+  - поздн
+  - late
+  code: A2

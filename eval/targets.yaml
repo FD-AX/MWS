@@ -1,0 +1,17 @@
+# Цели бенча: документ + голд (gold: null = замер шума, noise@clean).
+targets:
+  - label: synth_v1
+    doc: synth/out/mart_traffic_v1.md
+    gold: synth/out/mart_traffic_v1.gold.yaml
+  - label: doc3_mart (целевой тип)
+    doc: casedata/doc3_mart_devices.md
+    gold: eval/gold_doc3.yaml
+  - label: doc2_source
+    doc: casedata/doc2_source_cdr.md
+    gold: eval/gold_doc2.yaml
+  - label: doc1_stream
+    doc: casedata/doc1_stream_geo.md
+    gold: eval/gold_doc1.yaml
+  - label: clean_base (шум)
+    doc: synth/base/mart_traffic_clean.md
+    gold: null

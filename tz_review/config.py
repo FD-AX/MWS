@@ -1,0 +1,46 @@
+from __future__ import annotations
+
+import os
+from dataclasses import dataclass
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+
+ENV_VARS = ("TZR_BASE_URL", "TZR_API_KEY", "TZR_MODEL")
+
+
+def load_dotenv(path: Path | None = None) -> None:
+    """Мини-загрузчик .env без зависимостей. Не перетирает уже выставленные переменные."""
+    p = path or ROOT / ".env"
+    if not p.exists():
+        return
+    for line in p.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, value = line.partition("=")
+        key, value = key.strip(), value.strip().strip('"').strip("'")
+        os.environ.setdefault(key, value)
+
+
+@dataclass(frozen=True)
+class Settings:
+    base_url: str
+    api_key: str
+    model: str
+
+
+def settings_or_die() -> Settings:
+    """Fail-fast: LLM-проходы не запускаются с дефолтами — все переменные явные."""
+    load_dotenv()
+    missing = [v for v in ENV_VARS if not os.environ.get(v)]
+    if missing:
+        raise SystemExit(
+            "Не заданы переменные окружения: " + ", ".join(missing)
+            + "\nСкопируй .env.example в .env и заполни, либо запусти с --no-llm."
+        )
+    return Settings(
+        base_url=os.environ["TZR_BASE_URL"],
+        api_key=os.environ["TZR_API_KEY"],
+        model=os.environ["TZR_MODEL"],
+    )

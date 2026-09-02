@@ -1,0 +1,68 @@
+from __future__ import annotations
+
+import json
+import time
+from typing import Any
+
+from .config import Settings
+
+
+def _extract_json(text: str) -> Any:
+    """Модели любят заворачивать JSON в ```-заборы и пояснения — достаём объект."""
+    text = text.strip()
+    if text.startswith("```"):
+        text = text.strip("`")
+        if text.startswith("json"):
+            text = text[4:]
+    start = min((i for i in (text.find("{"), text.find("[")) if i >= 0), default=-1)
+    if start < 0:
+        raise ValueError(f"В ответе модели нет JSON: {text[:200]!r}")
+    for end in range(len(text), start, -1):
+        try:
+            return json.loads(text[start:end])
+        except json.JSONDecodeError:
+            continue
+    raise ValueError(f"Не удалось распарсить JSON из ответа: {text[:200]!r}")
+
+
+class LLM:
+    def __init__(self, settings: Settings):
+        from openai import OpenAI  # ленивый импорт: --no-llm работает без пакета
+
+        self._client = OpenAI(base_url=settings.base_url, api_key=settings.api_key)
+        self._model = settings.model
+
+    def _chat(self, system: str, user: str, temperature: float = 0.0, n: int = 1) -> list[str]:
+        last_err: Exception | None = None
+        for attempt in range(3):
+            try:
+                resp = self._client.chat.completions.create(
+                    model=self._model,
+                    messages=[
+                        {"role": "system", "content": system},
+                        {"role": "user", "content": user},
+                    ],
+                    temperature=temperature,
+                    n=n,
+                )
+                return [c.message.content or "" for c in resp.choices]
+            except Exception as e:  # noqa: BLE001 - ретраим любой сбой транспорта
+                last_err = e
+                time.sleep(2 * (attempt + 1))
+        raise RuntimeError(f"LLM недоступна после 3 попыток: {last_err}")
+
+    def chat_json(self, system: str, user: str, temperature: float = 0.0) -> Any:
+        return _extract_json(self._chat(system, user, temperature)[0])
+
+    def sample(self, system: str, user: str, n: int = 5, temperature: float = 0.9) -> list[str]:
+        """n независимых сэмплов (для semantic entropy). Некоторые локальные бэкенды
+        не поддерживают n>1 — тогда добираем отдельными вызовами."""
+        try:
+            outs = self._chat(system, user, temperature, n=n)
+            if len(outs) == n:
+                return outs
+        except Exception:
+            outs = []
+        while len(outs) < n:
+            outs.extend(self._chat(system, user, temperature))
+        return outs[:n]
