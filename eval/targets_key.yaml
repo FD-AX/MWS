@@ -1,0 +1,11 @@
+# Ключевые цели для дорогих прогонов (GPT / стабильность)
+targets:
+  - label: synth_v1
+    doc: synth/out/mart_traffic_v1.md
+    gold: synth/out/mart_traffic_v1.gold.yaml
+  - label: doc3_mart (целевой тип)
+    doc: casedata/doc3_mart_devices.md
+    gold: eval/gold_doc3.yaml
+  - label: clean_base (шум)
+    doc: synth/base/mart_traffic_clean.md
+    gold: null

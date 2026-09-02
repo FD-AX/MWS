@@ -114,3 +114,26 @@ defects:
   - уникальность строк
   code: A5
   difficulty: medium
+- id: G3-12
+  code: A1
+  difficulty: medium
+  description: Способ получения данных из источников IUM не указан (интерфейс/протокол/доступ)
+  categories:
+  - checklist:SRC-01
+  - checklist:LOC-01
+  keywords:
+  - способ получения
+  - интерфейс
+  - протокол
+  - доступ к
+- id: G3-13
+  code: A7
+  difficulty: medium
+  description: Поведение при сбое загрузки не описано (недоступность источника, ретраи,
+    частичный расчёт)
+  categories:
+  - checklist:ERR-01
+  keywords:
+  - при сбое
+  - недоступности источ
+  - ретра
