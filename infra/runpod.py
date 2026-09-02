@@ -48,11 +48,14 @@ def create(gpu: str, model: str, cloud: str = "SECURE") -> None:
         "cloudType": cloud,
         "gpuTypeIds": [gpu],
         "gpuCount": 1,
-        "containerDiskInGb": 40,
+        "containerDiskInGb": 60,
         "volumeInGb": 0,
         "ports": ["8000/http"],
         "env": {"VLLM_API_KEY": vllm_key, "HF_HUB_ENABLE_HF_TRANSFER": "1"},
+        # Явные entrypoint+cmd: не полагаемся на семантику наследования CMD у образа
+        "dockerEntrypoint": ["python3", "-m", "vllm.entrypoints.openai.api_server"],
         "dockerStartCmd": [
+            "--host", "0.0.0.0", "--port", "8000",
             "--model", model,
             "--max-model-len", "16384",
             "--gpu-memory-utilization", "0.92",

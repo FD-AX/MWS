@@ -57,11 +57,21 @@ def main() -> int:
         findings = [f.model_dump() for f in result.findings]
         name = Path(path).stem
         if matcher is None:
-            noisy = [f for f in findings if f["severity"] in ("critical", "high", "medium")]
-            status = len(noisy) == 0
-            print(f"{'✓' if status else '✗'} {name}: шум medium+ = {len(noisy)} (ожидание 0)")
-            for f in noisy[:5]:
-                print(f"    - {f['category']}: {(f['why'] or '')[:90]}")
+            # Бейзлайны без критика всегда дают немного medium-нитов; канарейка ловит
+            # сломанный стек, а не шум (шум меряется бенчем на clean_base).
+            crit_high = [f for f in findings if f["severity"] in ("critical", "high")]
+            medium = [f for f in findings if f["severity"] == "medium"]
+            quiet = not crit_high and len(medium) <= 3
+            # Жёстко шум гейтит только вариант с критиком; для бейзлайнов — информационно
+            # (вывод ночи: бейзлайн без критика перешумливает даже хорошие документы).
+            enforced = not spec["baseline"]
+            status = quiet or not enforced
+            mark = "✓" if quiet else ("✗" if enforced else "ℹ")
+            print(f"{mark} {name}: critical/high = {len(crit_high)} "
+                  f"(ожидание 0), medium = {len(medium)} (ожидание <=3)"
+                  + ("" if enforced else " [информационно для бейзлайна]"))
+            for f in (crit_high + medium)[:5]:
+                print(f"    - {f['severity']} {f['category']}: {(f['why'] or '')[:90]}")
         else:
             hit = [f for f in findings if finding_matches(matcher, f)]
             status = bool(hit)

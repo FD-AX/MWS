@@ -31,10 +31,12 @@ class LLM:
 
         self._client = OpenAI(base_url=settings.base_url, api_key=settings.api_key)
         self._model = settings.model
+        self._no_temperature = False  # reasoning-модели OpenAI не принимают temperature
 
     def _chat(self, system: str, user: str, temperature: float = 0.0, n: int = 1) -> list[str]:
         last_err: Exception | None = None
         for attempt in range(3):
+            kwargs = {} if self._no_temperature else {"temperature": temperature}
             try:
                 resp = self._client.chat.completions.create(
                     model=self._model,
@@ -42,11 +44,14 @@ class LLM:
                         {"role": "system", "content": system},
                         {"role": "user", "content": user},
                     ],
-                    temperature=temperature,
                     n=n,
+                    **kwargs,
                 )
                 return [c.message.content or "" for c in resp.choices]
             except Exception as e:  # noqa: BLE001 - ретраим любой сбой транспорта
+                if "temperature" in str(e) and not self._no_temperature:
+                    self._no_temperature = True
+                    continue  # повтор без параметра, попытку не тратим
                 last_err = e
                 time.sleep(2 * (attempt + 1))
         raise RuntimeError(f"LLM недоступна после 3 попыток: {last_err}")
