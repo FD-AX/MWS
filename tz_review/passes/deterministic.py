@@ -38,6 +38,24 @@ def run(doc: Document, rubric: dict[str, Any]) -> list[Finding]:
 
     min_chars = int(rubric.get("min_section_chars", 40))
     titles_norm = [(s, normalize(s.title)) for s in doc.sections]
+
+    # Официальный шаблон МТС: все разделы сохраняются; пустой допустим только
+    # с явным «не применимо» (keypoints_official.md, п.5).
+    doc_norm = normalize(doc.raw)
+    absent = [name for name in rubric.get("official_sections", [])
+              if normalize(name) not in doc_norm]
+    if absent:
+        findings.append(Finding(
+            category="template:official_missing",
+            severity="medium",
+            section="(шаблон)",
+            missing=True,
+            why=("Отсутствуют разделы официального шаблона (по правилам кейсодателя "
+                 "все разделы сохраняются, неиспользуемые помечаются «не применимо»): "
+                 + ", ".join(absent) + "."),
+            ask="Добавь недостающие разделы или явно пометь их «не применимо».",
+            source_pass="deterministic",
+        ))
     for req in rubric.get("required_sections", []):
         aliases = [normalize(a) for a in [req["name"], *req.get("aliases", [])]]
         matched = [s for s, tn in titles_norm if any(a in tn for a in aliases)]
@@ -52,7 +70,8 @@ def run(doc: Document, rubric: dict[str, Any]) -> list[Finding]:
                 source_pass="deterministic",
             ))
             continue
-        if all(len(s.body.strip("-—* ")) < min_chars for s in matched):
+        if all(len(s.body.strip("-—* ")) < min_chars
+               and "не применимо" not in normalize(s.body) for s in matched):
             findings.append(Finding(
                 category="template:empty_section",
                 severity="high",
