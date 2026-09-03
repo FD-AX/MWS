@@ -41,6 +41,8 @@
   .jobs small { color:var(--muted); display:block; }
   .links a { margin-right:14px; font-size:14px; }
   details summary { cursor:pointer; color:var(--muted); font-size:13px; margin-top:10px; }
+  button.mini { background:#f3f4f6; color:var(--ink); border:1px solid var(--line); padding:3px 10px; font-size:12px; border-radius:6px; }
+  .fb { margin-top:6px; }
   @media (max-width: 860px) { main { grid-template-columns: 1fr; } }
 </style>
 </head>
@@ -67,6 +69,11 @@
       <h2 style="margin-top:16px;">Находки</h2>
       <div id="findings"></div>
       <details><summary>Срезано критиком / отброшено верификацией</summary><div id="rejected"></div></details>
+    </div>
+
+    <div id="history" class="card jobs" hidden style="margin-top:20px;">
+      <h2>История этого документа</h2>
+      <div id="historyBody"></div>
     </div>
   </section>
 
@@ -187,9 +194,11 @@ function render(j) {
   $("kpis").innerHTML = [
     ["Находок", f.length], ["Критично", bySev("critical")], ["Важно", bySev("high")], ["Средне", bySev("medium")],
     ["Слотов закрыто", `${count("OK")}/${Object.keys(st).length}`], ["Не закрыто", count("MISSING")], ["Неоднозначно", count("UNCLEAR")],
-    ["Anchoring", Math.round((res.anchoring_rate || 0) * 100) + "%"], ["Вызовов модели", (j.llm_usage || {}).calls ?? "—"],
+    ["Anchoring", Math.round((res.anchoring_rate || 0) * 100) + "%"], ["Вызовов модели", j.llm_calls ?? (j.llm_usage || {}).calls ?? "—"],
+    ["Токенов", ((j.prompt_tokens || 0) + (j.completion_tokens || 0)) ? Math.round(((j.prompt_tokens || 0) + (j.completion_tokens || 0)) / 1000) + "k" : "—"],
   ].map(([k, val]) => `<div class="kpi"><b>${esc(val)}</b><span>${k}</span></div>`).join("");
   $("links").innerHTML = `<a href="/reviews/${j.job_id}/report.md" target="_blank">Отчёт (markdown)</a><a href="/reviews/${j.job_id}" target="_blank">JSON</a>`;
+  loadHistory(j.doc_hash, j.job_id);
   const sorted = [...f].sort((a, b) => (SEV_ORDER[a.severity] ?? 9) - (SEV_ORDER[b.severity] ?? 9) || (b.score || 0) - (a.score || 0));
   $("findings").innerHTML = sorted.map(x => `
     <div class="finding">
@@ -199,10 +208,36 @@ function render(j) {
       ${x.quote ? `<div class="quote">${esc(x.quote)}</div>` : `<div class="muted">информация в документе отсутствует</div>`}
       <div class="why"><b>Почему:</b> ${esc(x.why)}</div>
       ${x.ask ? `<div class="ask"><b>Что уточнить:</b> ${esc(x.ask)}</div>` : ""}
+      ${x.db_id ? `<div class="fb" data-id="${x.db_id}"><button class="mini" onclick="feedback(${x.db_id}, 1, this)">👍 полезно</button> <button class="mini" onclick="feedback(${x.db_id}, -1, this)">👎 не по делу</button></div>` : ""}
     </div>`).join("") || "<div class='muted'>Замечаний нет.</div>";
   const rej = [...(res.rejected || []).map(x => ({...x, _why: "критик"})), ...(res.dropped || []).map(x => ({...x, _why: "цитата не найдена"}))];
   $("rejected").innerHTML = rej.map(x => `<div class="finding"><div class="head"><span class="cat">${esc(x.category)}</span><span class="muted">· ${x._why}${x.score != null ? " · score " + x.score : ""}</span></div><div class="why">${esc(x.why)}</div></div>`).join("") || "<div class='muted'>ничего</div>";
   $("result").hidden = false;
+}
+
+async function feedback(findingId, vote, btn) {
+  const r = await fetch(`/findings/${findingId}/feedback`, { method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ vote, author: "analyst" }) });
+  const box = btn.parentElement;
+  box.innerHTML = r.ok ? `<span class="muted">${vote > 0 ? "👍" : "👎"} учтено</span>` : `<span class="muted">не сохранилось</span>`;
+}
+
+async function loadHistory(docHash, jobId) {
+  const box = $("history");
+  if (!docHash) { box.hidden = true; return; }
+  const r = await fetch(`/documents/${docHash}/history`);
+  if (!r.ok) { box.hidden = true; return; }
+  const h = await r.json();
+  const rows = [];
+  (h.versions || []).forEach((v, i) => {
+    (v.reviews || []).forEach(rv => rows.push({ ...rv, version: i + 1, chars: v.chars }));
+  });
+  if (rows.length < 2 && (h.versions || []).length < 2) { box.hidden = true; return; }
+  $("historyBody").innerHTML = rows.map(rv => `
+    <a href="#${rv.job_id}" onclick="open('${rv.job_id}');return false;" ${rv.job_id === jobId ? 'style="font-weight:600"' : ""}>
+      v${rv.version} · ${esc(rv.verdict_light || "")} ${esc(rv.status)} · находок ${rv.findings ?? "—"} · ${esc(rv.model || "")}
+      <small>${fmtTime(rv.created_at)} · ${rv.job_id}${rv.cached_from ? " · из кэша" : ""}</small></a>`).join("");
+  box.hidden = false;
 }
 
 async function loadJobs() {
@@ -212,7 +247,7 @@ async function loadJobs() {
   const durs = jobs.filter(j => j.status === "done" && j.duration_s > 0).map(j => j.duration_s).sort((a, b) => a - b);
   if (durs.length) typicalDuration = durs[Math.floor(durs.length / 2)];
   $("jobs").innerHTML = jobs.map(j => `<a href="#${j.job_id}" onclick="open('${j.job_id}');return false;">
-      ${esc(j.verdict?.light || "")} ${esc(j.filename || "текст")} <small>${esc(j.status)} · ${fmtTime(j.created_at)} · ${j.job_id}</small></a>`).join("") || "<span class='muted'>пусто</span>";
+      ${esc(j.verdict?.light || "")} ${esc(j.filename || "текст")} <small>${esc(j.status)}${j.findings != null && j.status === "done" ? " · находок " + j.findings : ""} · ${fmtTime(j.created_at)} · ${j.job_id}${j.cached_from ? " · кэш" : ""}</small></a>`).join("") || "<span class='muted'>пусто</span>";
 }
 
 $("go").addEventListener("click", submit);

@@ -6,3 +6,4 @@ pika>=1.3
 prometheus_client>=0.20
 mammoth>=1.8
 pdfplumber>=0.11
+psycopg[binary]>=3.1

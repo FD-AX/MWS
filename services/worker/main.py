@@ -21,8 +21,8 @@ from pathlib import Path
 from prometheus_client import Counter, Gauge, Histogram, start_http_server
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
-from services.common import (QUEUE, RESULTS_DIR, connect, declare, index_get,  # noqa: E402
-                             index_put, load_job, update_job)
+from services import db  # noqa: E402
+from services.common import QUEUE, connect, declare  # noqa: E402
 from tz_review.config import openai_settings_or_die, settings_or_die  # noqa: E402
 from tz_review.llm import LLM  # noqa: E402
 from tz_review.pipeline import review  # noqa: E402
@@ -74,11 +74,13 @@ def process(conn, ch, tag: int, redelivered: bool, body: bytes, *,
 
     msg = json.loads(body.decode("utf-8"))
     job_id = msg["job_id"]
-    prior = load_job(job_id) or {}
-    if prior.get("result"):
+    prior = db.get_review(job_id, with_result=False)
+    if prior is None:
+        print(f"! {job_id}: задания нет в базе — в DLQ", file=sys.stderr, flush=True)
+        nack(False)
+        return
+    if prior.get("status") == "done":
         # Уже посчитано (повторная доставка после потери соединения на ack) — не пересчитываем.
-        update_job(job_id, status="done")
-        index_put(msg.get("doc_hash", ""), msg.get("config_hash", ""), job_id)
         REVIEWS.labels("dup_ack").inc()
         print(f"= {job_id}: повторная доставка, результат уже есть — ack", flush=True)
         ack()
@@ -86,31 +88,33 @@ def process(conn, ch, tag: int, redelivered: bool, body: bytes, *,
 
     # Тот же документ с тем же конфигом уже посчитан (двойной Execute, повторная загрузка):
     # отдаём готовый результат, не тратим 7 минут модели.
-    twin_id = index_get(msg.get("doc_hash", ""), msg.get("config_hash", ""))
-    twin = load_job(twin_id) if twin_id and twin_id != job_id else None
-    if twin and twin.get("status") == "done" and twin.get("result"):
-        src = RESULTS_DIR / f"{twin_id}.report.md"
-        if src.exists():
-            (RESULTS_DIR / f"{job_id}.report.md").write_text(src.read_text(encoding="utf-8"),
-                                                            encoding="utf-8")
-        update_job(job_id, status="done", cached_from=twin_id, finished_at=time.time(),
-                   duration_s=0.0, verdict=twin.get("verdict"), llm_usage={"calls": 0},
-                   model=twin.get("model"), backend=twin.get("backend"), result=twin["result"])
+    document_id = msg.get("document_id")
+    twin_id = db.find_done_review(document_id, msg.get("config_hash", "")) if document_id else None
+    twin = db.get_review(twin_id) if twin_id and twin_id != job_id else None
+    if twin and twin.get("result"):
+        res = twin["result"]
+        db.save_result(job_id, result=res, report_md=db.get_report(twin_id) or "",
+                       statuses=res.get("checklist_statuses", {}), findings=res.get("findings", []),
+                       cached_from=twin_id, duration_s=0.0, llm_calls=0, prompt_tokens=0,
+                       completion_tokens=0, model=twin.get("model"), backend=twin.get("backend"),
+                       verdict_light=(twin.get("verdict") or {}).get("light"),
+                       verdict_text=(twin.get("verdict") or {}).get("text"),
+                       anchoring=twin.get("anchoring"))
         REVIEWS.labels("cached").inc()
         print(f"= {job_id}: дубль документа {twin_id} — результат из кэша", flush=True)
         ack()
         return
 
-    text = msg.get("text") or (RESULTS_DIR / f"{job_id}.source.md").read_text(encoding="utf-8")
-    update_job(job_id, status="running", started_at=time.time(), worker_pid=os.getpid(),
-               redelivered=redelivered)
+    text = msg["text"]
+    db.update_review(job_id, status="running", started_at=time.time())
     INFLIGHT.inc()
     t0 = time.time()
     before = _snapshot(llm)
+
     def on_progress(stage: str, frac: float, info: dict | None = None) -> None:
         # Ход ревью в задании: UI рисует полосу по этапам конвейера + живые цифры.
         now = _snapshot(llm)
-        update_job(job_id, progress={
+        db.update_review(job_id, progress={
             "stage": stage, "pct": round(frac * 100), "at": time.time(),
             "elapsed_s": round(time.time() - t0),
             "candidates": (info or {}).get("candidates"),
@@ -129,8 +133,10 @@ def process(conn, ch, tag: int, redelivered: bool, body: bytes, *,
         usage = _account(llm, model, before)
         err = f"{type(e).__name__}: {str(e)[:500]}"
         requeue = not redelivered  # второй сбой подряд → DLQ, не бесконечный цикл
-        update_job(job_id, status="failed" if not requeue else "retrying", error=err,
-                   traceback=traceback.format_exc()[-2000:], llm_usage=usage)
+        db.update_review(job_id, status="failed" if not requeue else "retrying",
+                         error=f"{err}\n{traceback.format_exc()[-1500:]}",
+                         llm_calls=usage["calls"], prompt_tokens=usage["prompt_tokens"],
+                         completion_tokens=usage["completion_tokens"])
         REVIEWS.labels("failed" if not requeue else "retry").inc()
         print(f"! {job_id}: {err} (requeue={requeue})", file=sys.stderr, flush=True)
         nack(requeue)
@@ -150,12 +156,13 @@ def process(conn, ch, tag: int, redelivered: bool, body: bytes, *,
 
     light, vtext = verdict(result)
     report_md = to_markdown(result, doc_name=msg.get("filename") or job_id)
-    (RESULTS_DIR / f"{job_id}.report.md").write_text(report_md, encoding="utf-8")
     payload = json.loads(to_json(result))
-    update_job(job_id, status="done", finished_at=time.time(), duration_s=round(dur, 1),
-               verdict={"light": light, "text": vtext}, llm_usage=usage,
-               model=model, backend=BACKEND, result=payload)
-    index_put(msg.get("doc_hash", ""), msg.get("config_hash", ""), job_id)
+    db.save_result(job_id, result=payload, report_md=report_md, statuses=statuses,
+                   findings=payload.get("findings", []),
+                   duration_s=round(dur, 1), llm_calls=usage["calls"],
+                   prompt_tokens=usage["prompt_tokens"], completion_tokens=usage["completion_tokens"],
+                   model=model, backend=BACKEND, verdict_light=light, verdict_text=vtext,
+                   anchoring=result.anchoring)
     REVIEWS.labels("done").inc()
     print(f"✓ {job_id}: {light} {vtext}; находок {len(result.findings)}, {dur:.0f}s, "
           f"вызовов {usage['calls']}", flush=True)
@@ -172,6 +179,7 @@ def on_message(ch, method, properties, body, *, conn, llm, model, rubric) -> Non
 
 def main() -> int:
     start_http_server(int(os.environ.get("TZR_METRICS_PORT", "9100")))
+    db.init()
     llm, model = build_llm()
     rubric = load_rubric()
     print(f"worker: backend={BACKEND} model={model} lp={USE_LP} entropy={USE_ENTROPY} "
