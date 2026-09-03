@@ -37,7 +37,7 @@ DPI_System — платформа учёта интернет-трафика а�
 
 ## Исходники проекта
 
-LINK_GITLAB_AGG_TRAFFIC (код DAG_AGG_TRAFFIC, тесты и DDL витрины).
+LINK_GITLAB_AGG_TRAFFIC (код DAG_AGG_TRAFFIC и DAG_BACKFILL_TRAFFIC, тесты и DDL витрины).
 
 ## Команда
 
@@ -54,8 +54,8 @@ LINK_JIRA_AGG_TRAFFIC (эпик витрины).
 
 | Схема | Таблица | Описание | Тип источника | Формат хранения (сериализация) | Data Catalog |
 |---|---|---|---|---|---|
-| SCHEMA_RAW | TABLE_DPI_RAW_PS | Необработанные записи об интернет-сессиях | Hive-таблица в HDFS, партиции по FIELD_BIZ_DATE и FIELD_HOUR | Parquet (Snappy), схема по карточке Data Catalog | LINK_DC_DPI_RAW_PS |
-| SCHEMA_DIC | TABLE_REGION_REF | Справочник регионов | Hive-таблица в HDFS, без партиций | Parquet (Snappy) | LINK_DC_REGION_REF |
+| SCHEMA_RAW | TABLE_DPI_RAW_PS | Необработанные записи об интернет-сессиях | Hive-таблица в HDFS: hdfs://CLUSTER/data/raw/dpi_ps/, партиции по FIELD_BIZ_DATE и FIELD_HOUR | Parquet (Snappy), схема по карточке Data Catalog | LINK_DC_DPI_RAW_PS |
+| SCHEMA_DIC | TABLE_REGION_REF | Справочник регионов | Hive-таблица в HDFS: hdfs://CLUSTER/data/dic/region_ref/, без партиций | Parquet (Snappy) | LINK_DC_REGION_REF |
 
 Структуры таблиц-источников приведены в разделе «Структура данных».
 
@@ -86,13 +86,13 @@ TOPIC_DPI_PS → STREAM_DPI_PS → TABLE_DPI_RAW_PS (SCHEMA_RAW) → DAG_AGG_TRA
 Из TABLE_DPI_RAW_PS берутся все записи с FIELD_BIZ_DATE внутри календарного месяца агрегации.
 
 Шаг 2. Фильтрация
-Значения NULL в FIELD_BYTES_UL и FIELD_BYTES_DL трактуются как 0. Записи с нулевым суммарным объёмом (FIELD_BYTES_UL + FIELD_BYTES_DL = 0) исключаются из расчёта; количество исключённых записей пишется в журнал TABLE_AGG_LOAD_LOG с кодом ZERO_VOLUME.
+Значения NULL в FIELD_BYTES_UL и FIELD_BYTES_DL трактуются как 0. Записи с нулевым суммарным объёмом (FIELD_BYTES_UL + FIELD_BYTES_DL = 0) исключаются из расчёта; количество исключённых записей пишется в журнал TABLE_AGG_LOAD_LOG с кодом ZERO_VOLUME. Записи с NULL в FIELD_IMSI или FIELD_TIME_STAMP отбрасываются на этом же шаге, до дедупликации, в TABLE_AGG_LOAD_LOG с кодом EMPTY_KEY.
 
 Шаг 3. Дедупликация
 Дубликаты определяются по паре (FIELD_IMSI, FIELD_TIME_STAMP); из дубликатов остаётся запись с наибольшим FIELD_LOAD_ID. При равном FIELD_LOAD_ID остаётся запись с наибольшим FIELD_BYTES_UL + FIELD_BYTES_DL; полностью одинаковые записи эквивалентны, остаётся любая.
 
 Шаг 4. Обработка пропусков
-Если FIELD_RAT не заполнен (NULL), запись учитывается в категории UNKNOWN. Записи с пустым FIELD_REGION отбрасываются в TABLE_AGG_LOAD_LOG с кодом EMPTY_REGION. Записи с NULL в FIELD_IMSI или FIELD_TIME_STAMP отбрасываются туда же с кодом EMPTY_KEY. Непустые значения FIELD_RAT вне списка (2G, 3G, 4G) учитываются в категории UNKNOWN.
+Если FIELD_RAT не заполнен (NULL), запись учитывается в категории UNKNOWN. Записи с пустым FIELD_REGION отбрасываются в TABLE_AGG_LOAD_LOG с кодом EMPTY_REGION. Непустые значения FIELD_RAT вне списка (2G, 3G, 4G) — после trim и приведения к верхнему регистру — учитываются в категории UNKNOWN.
 
 Шаг 5. Определение региона
 Регион определяется по полю FIELD_REGION через справочник TABLE_REGION_REF; коды, отсутствующие в справочнике, учитываются в категории NO_REGION.
@@ -107,7 +107,7 @@ TOPIC_DPI_PS → STREAM_DPI_PS → TABLE_DPI_RAW_PS (SCHEMA_RAW) → DAG_AGG_TRA
 
 Запуск: ежемесячно, 2-го числа в 03:00 UTC, оркестрация DAG_AGG_TRAFFIC.
 
-Перед расчётом DAG ждёт сигнал готовности всех часовых партиций месяца от STREAM_DPI_PS (сенсор в DAG_AGG_TRAFFIC); если готовность не наступила к 06:00 UTC, в LINK_ALERT_CHANNEL уходит алерт и расчёт не стартует. При сбое шага DAG выполняется 3 повтора с интервалом 20 минут; после исчерпания повторов уходит алерт, партиция не публикуется (остаётся во временном каталоге).
+Перед расчётом сенсор DAG_AGG_TRAFFIC проверяет готовность источника: наличие файла _SUCCESS в каталоге последней часовой партиции месяца (FIELD_BIZ_DATE = последний день месяца, FIELD_HOUR = 23) в hdfs://CLUSTER/data/raw/dpi_ps/; если файл не появился к 06:00 UTC, в LINK_ALERT_CHANNEL уходит алерт и расчёт не стартует. При сбое шага DAG выполняется 3 повтора с интервалом 20 минут; после исчерпания повторов уходит алерт, партиция не публикуется (остаётся во временном каталоге).
 
 Срок готовности: данные за месяц M доступны потребителям не позднее 10:00 UTC 2-го числа месяца M+1.
 
@@ -131,7 +131,7 @@ TOPIC_DPI_PS → STREAM_DPI_PS → TABLE_DPI_RAW_PS (SCHEMA_RAW) → DAG_AGG_TRA
 После записи партиции выполняются проверки:
 
 - сверка суммы байтов: сумма FIELD_BYTES_UL + FIELD_BYTES_DL по записям источника за месяц после шагов 2–4 (фильтрация, дедупликация, отбраковка EMPTY_REGION и EMPTY_KEY) против суммы FIELD_TRAFFIC_GB × 1024^3 по партиции; расхождение не более 0.1%;
-- контроль отброшенных записей: доля записей EMPTY_REGION, EMPTY_KEY и NO_REGION от числа записей источника за месяц (после шага 1) не более 1%, иначе алерт в LINK_ALERT_CHANNEL;
+- контроль отброшенных записей: доля отброшенных записей (EMPTY_REGION, EMPTY_KEY, ZERO_VOLUME) от числа записей источника за месяц (после шага 1) не более 1%; отдельно доля записей служебной категории NO_REGION (они остаются в витрине) не более 1%; при превышении любой из долей — алерт в LINK_ALERT_CHANNEL;
 - проверка соответствия регионов партиции справочнику: каждое значение FIELD_REGION_NAME, кроме служебной категории NO_REGION, присутствует в TABLE_REGION_REF; регион без трафика за месяц допустим (строка не создаётся).
 
 При нарушении любой проверки партиция не публикуется (остаётся во временном каталоге), в LINK_ALERT_CHANNEL уходит алерт; публикация выполняется вручную после разбора владельцем витрины.
@@ -218,6 +218,8 @@ CREATE TABLE SCHEMA_CDM_NETS.TABLE_AGG_TRAFFIC_REGION (
 PARTITIONED BY (FIELD_BIZ_DATE date)
 STORED AS PARQUET;
 ```
+
+DDL приведён без ограничений NOT NULL: Hive их не проверяет; обязательность полей из раздела «Структура данных» контролируется проверками из раздела «Контроль качества» (пустое значение в обязательном поле — ошибка проверки CHECK_REGIONS/CHECK_BYTES).
 
 ## FAQ
 

@@ -1,0 +1,14 @@
+# Bench report — 2026-09-03
+Варианты: v2g_gpt
+
+## Сводка
+
+| Вариант | Цель | Recall | По группам | По сложности | Находок | Лишних | Anchoring |
+|---|---|---|---|---|---|---|---|
+| v2g_gpt | synth_v1 | **9/12** | A 2/4 B 2/3 C 2/2 D 2/2 E 1/1 | eas 3/3 med 3/6 har 3/3 | 16 | 4 | 81% |
+| v2g_gpt | doc3_mart (целевой тип) | **16/16** | A 9/9 B 2/2 C 1/1 D 2/2 F 2/2 | eas 2/2 med 10/10 har 4/4 | 28 | 6 | 100% |
+| v2g_gpt | synth_v2hard | **7/8** | B 2/2 C 1/1 D 4/5 | har 3/4 exp 4/4 | 13 | 3 | 67% |
+| v2g_gpt | synth_v3official | **12/13** | A 6/7 C 1/1 D 2/2 E 1/1 F 2/2 | eas 2/2 med 6/7 har 3/3 exp 1/1 | 11 | 0 | 63% |
+| v2g_gpt | clean_base (шум) | — | — | 9 | noise=9 | 93% |
+
+Отчёт: C:\Users\user\OneDrive\Рабочий стол\ИТМО\mws-main\eval\night\bench_exp14_rerun.md

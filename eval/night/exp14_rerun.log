@@ -1,0 +1,25 @@
+[23:02:07] start v2g_gpt · synth_v1
+[23:09:31] | v2g_gpt | synth_v1 | **9/12** | A 2/4 B 2/3 C 2/2 D 2/2 E 1/1 | eas 3/3 med 3/6 har 3/3 | 16 | 4 | 81% |
+[23:09:31] start v2g_gpt · doc3_mart (целевой тип)
+[23:14:03] | v2g_gpt | doc3_mart (целевой тип) | **16/16** | A 9/9 B 2/2 C 1/1 D 2/2 F 2/2 | eas 2/2 med 10/10 har 4/4 | 28 | 6 | 100% |
+[23:14:03] start v2g_gpt · synth_v2hard
+[23:20:19] | v2g_gpt | synth_v2hard | **7/8** | B 2/2 C 1/1 D 4/5 | har 3/4 exp 4/4 | 13 | 3 | 67% |
+[23:20:19] start v2g_gpt · synth_v3official
+! checklist: невалидный ответ "{'id': 'LOC-02', 'status': 'NA', 'quote': None, 'why': 'Документ описывает витрину, которая читает уже загруженные табли": 1 validation error for ChecklistAnswer
+status
+  Input should be 'OK', 'MISSING' or 'UNCLEAR' [type=literal_error, input_
+! checklist: невалидный ответ "{'id': 'LOC-02', 'status': 'NA', 'quote': None, 'why': 'Документ явно описывает витрину, которая читает уже загруженные ": 1 validation error for ChecklistAnswer
+status
+  Input should be 'OK', 'MISSING' or 'UNCLEAR' [type=literal_error, input_
+! checklist: слоты без ответа после повтора: ['LOC-02']
+[23:25:30] | v2g_gpt | synth_v3official | **12/13** | A 6/7 C 1/1 D 2/2 E 1/1 F 2/2 | eas 2/2 med 6/7 har 3/3 exp 1/1 | 11 | 0 | 63% |
+[23:25:30] start v2g_gpt · clean_base (шум)
+! checklist: невалидный ответ "{'id': 'INC-01', 'status': 'NA', 'quote': None, 'why': 'Загрузка явно описана как полная перезапись партиции месяца, а н": 1 validation error for ChecklistAnswer
+status
+  Input should be 'OK', 'MISSING' or 'UNCLEAR' [type=literal_error, input_
+! checklist: невалидный ответ "{'id': 'INC-01', 'status': 'NA', 'quote': None, 'why': 'Загрузка явно описана как полная перезапись партиции месяца, поэ": 1 validation error for ChecklistAnswer
+status
+  Input should be 'OK', 'MISSING' or 'UNCLEAR' [type=literal_error, input_
+! checklist: слоты без ответа после повтора: ['INC-01']
+[23:30:26] | v2g_gpt | clean_base (шум) | — | — | 9 | noise=9 | 93% |
+RERUN EXIT 0

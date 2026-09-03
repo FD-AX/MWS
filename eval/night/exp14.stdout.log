@@ -1,0 +1,24 @@
+# Bench report — 2026-09-03
+Варианты: v2g_gpt, v2e_gpt, v2l_gpt
+
+## Сводка
+
+| Вариант | Цель | Recall | По группам | По сложности | Находок | Лишних | Anchoring |
+|---|---|---|---|---|---|---|---|
+| v2g_gpt | synth_v1 | **7/12** | A 1/4 B 2/3 C 1/2 D 2/2 E 1/1 | eas 3/3 med 1/6 har 3/3 | 10 | 2 | 80% |
+| v2g_gpt | doc3_mart (целевой тип) | **14/16** | A 8/9 B 2/2 C 1/1 D 1/2 F 2/2 | eas 2/2 med 9/10 har 3/4 | 27 | 5 | 83% |
+| v2g_gpt | synth_v2hard | **7/8** | B 2/2 C 1/1 D 4/5 | har 3/4 exp 4/4 | 10 | 2 | 53% |
+| v2g_gpt | synth_v3official | **12/13** | A 7/7 C 0/1 D 2/2 E 1/1 F 2/2 | eas 2/2 med 6/7 har 3/3 exp 1/1 | 13 | 1 | 71% |
+| v2g_gpt | clean_base (шум) | — | — | 9 | noise=9 | 90% |
+| v2e_gpt | synth_v1 | **10/12** | A 3/4 B 3/3 C 1/2 D 2/2 E 1/1 | eas 3/3 med 4/6 har 3/3 | 15 | 3 | 100% |
+| v2e_gpt | doc3_mart (целевой тип) | **16/16** | A 9/9 B 2/2 C 1/1 D 2/2 F 2/2 | eas 2/2 med 10/10 har 4/4 | 32 | 5 | 96% |
+| v2e_gpt | synth_v2hard | **7/8** | B 2/2 C 1/1 D 4/5 | har 3/4 exp 4/4 | 11 | 2 | 74% |
+| v2e_gpt | synth_v3official | **12/13** | A 7/7 C 0/1 D 2/2 E 1/1 F 2/2 | eas 2/2 med 6/7 har 3/3 exp 1/1 | 15 | 2 | 63% |
+| v2e_gpt | clean_base (шум) | — | — | 7 | noise=7 | 62% |
+| v2l_gpt | synth_v1 | **7/12** | A 2/4 B 2/3 C 1/2 D 2/2 E 0/1 | eas 2/3 med 2/6 har 3/3 | 10 | 1 | 77% |
+| v2l_gpt | doc3_mart (целевой тип) | **16/16** | A 9/9 B 2/2 C 1/1 D 2/2 F 2/2 | eas 2/2 med 10/10 har 4/4 | 26 | 5 | 100% |
+| v2l_gpt | synth_v2hard | **7/8** | B 2/2 C 1/1 D 4/5 | har 3/4 exp 4/4 | 11 | 2 | 70% |
+| v2l_gpt | synth_v3official | **12/13** | A 7/7 C 0/1 D 2/2 E 1/1 F 2/2 | eas 2/2 med 6/7 har 3/3 exp 1/1 | 13 | 2 | 70% |
+| v2l_gpt | clean_base (шум) | — | — | 7 | noise=7 | 64% |
+
+Отчёт: C:\Users\user\OneDrive\Рабочий стол\ИТМО\mws-main\eval\night\bench_exp14.md
