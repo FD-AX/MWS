@@ -43,6 +43,8 @@ VARIANTS = {
                 "backend": "openai"},
     "v2g_gpt": {"llm": True, "baseline": False, "entropy": False, "graph": True,
                 "backend": "openai"},
+    "v2e_gpt": {"llm": True, "baseline": False, "entropy": True, "graph": True,
+                "backend": "openai"},
     # h5 = граф + только «компиляция ТЗ» (изолированный вклад гипотезы H5)
     "h5":  {"llm": True,  "baseline": False, "entropy": False, "graph": True,
             "passes": ["compile"]},
@@ -91,9 +93,17 @@ def main() -> int:
 
     def get_llm(backend: str):
         if backend not in llms:
-            from tz_review.config import openai_settings_or_die, settings_or_die
+            from tz_review.config import (openai_cheap_settings,
+                                          openai_settings_or_die, settings_or_die)
             from tz_review.llm import LLM
-            cfg = openai_settings_or_die() if backend == "openai" else settings_or_die()
+            if backend == "openai_cheap":
+                cfg = openai_cheap_settings()
+                if cfg is None:
+                    raise SystemExit("нет OPENAI_API_KEY для дешёвой модели")
+            elif backend == "openai":
+                cfg = openai_settings_or_die()
+            else:
+                cfg = settings_or_die()
             llms[backend] = LLM(cfg)
         return llms[backend]
 
@@ -117,8 +127,11 @@ def main() -> int:
         for t in targets:
             text = (ROOT / t["doc"]).read_text(encoding="utf-8")
             llm = get_llm(spec.get("backend", "pod")) if spec["llm"] else None
+            llm_cheap = (get_llm("openai_cheap")
+                         if spec["llm"] and spec["entropy"] and spec.get("backend") == "openai"
+                         else None)
             try:
-                result = review(text, rubric, llm,
+                result = review(text, rubric, llm, llm_cheap=llm_cheap,
                                 use_baseline=spec["baseline"], use_entropy=spec["entropy"],
                                 use_graph=spec["graph"],
                                 llm_passes=frozenset(spec["passes"]) if spec.get("passes") else None,

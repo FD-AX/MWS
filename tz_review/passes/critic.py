@@ -6,7 +6,7 @@ from ..llm import LLM
 from ..schema import SEVERITY_ORDER, Finding
 from . import load_prompt
 
-DEFAULT_THRESHOLD = 3.0
+DEFAULT_THRESHOLD = 4.0  # по свипу 2026-09-03: recall держится, мусорный хвост −40%
 
 
 def run(findings: list[Finding], doc_text: str, llm: LLM,

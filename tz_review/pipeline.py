@@ -33,6 +33,7 @@ def review(text: str, rubric: dict[str, Any], llm=None, *,
            use_graph: bool = False,
            llm_passes: frozenset[str] | None = None,
            baseline_prompt: str = "baseline",
+           llm_cheap=None,
            critic_threshold: float = critic.DEFAULT_THRESHOLD) -> ReviewResult:
     """Полный конвейер: детерминированный слой -> чеклист -> документ-уровень ->
     персона разработчика -> [semantic entropy] -> верификация цитат -> критик.
@@ -84,7 +85,7 @@ def review(text: str, rubric: dict[str, Any], llm=None, *,
             result.passes_run.append("spec_compile")
 
         if use_entropy and result.statuses:
-            findings += uncertainty.run(text, rubric, result.statuses, llm)
+            findings += uncertainty.run(text, rubric, result.statuses, llm_cheap or llm)
             result.passes_run.append("uncertainty")
 
     verified, dropped = verify_findings(findings, doc)

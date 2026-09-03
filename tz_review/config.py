@@ -57,3 +57,16 @@ def openai_settings_or_die() -> Settings:
         api_key=key,
         model=os.environ.get("OPENAI_MODEL", "gpt-5.5"),
     )
+
+
+def openai_cheap_settings() -> Settings | None:
+    """Дешёвая модель для массовых мелких вызовов (entropy-сэмплы, канонизация)."""
+    load_dotenv()
+    key = os.environ.get("OPENAI_API_KEY")
+    if not key:
+        return None
+    return Settings(
+        base_url=os.environ.get("OPENAI_BASE_URL", "https://api.openai.com/v1"),
+        api_key=key,
+        model=os.environ.get("OPENAI_MODEL_CHEAP", "gpt-5.4-mini"),
+    )

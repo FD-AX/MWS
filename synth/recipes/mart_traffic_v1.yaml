@@ -133,8 +133,8 @@ defects:
   code: D1
   description: Журнал в контроле качества назван несуществующим именем
   op: replace
-  find: Результаты проверок пишутся в TABLE_AGG_LOAD_LOG.
-  replace: Результаты проверок пишутся в TABLE_AGG_LOG_LOAD.
+  find: Результаты проверок пишутся в TABLE_AGG_LOAD_LOG (структура
+  replace: Результаты проверок пишутся в TABLE_AGG_LOG_LOAD (структура
   categories:
   - doc:terminology
   keywords:
