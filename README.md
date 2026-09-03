@@ -43,10 +43,13 @@ pre-review — находит места, которые разработчик�
 ```bash
 pip install -r requirements.txt
 
+# Локальный веб-интерфейс:
+streamlit run app.py
+
 # Без LLM (только детерминированный слой) — работает сразу:
 python -m tz_review examples/sample_tz.md --no-llm
 
-# Полный конвейер: скопируй .env.example в .env, заполни
+# Полный конвейер в CLI или веб-интерфейсе: скопируй .env.example в .env, заполни
 # TZR_BASE_URL / TZR_API_KEY / TZR_MODEL (OpenAI-совместимый API:
 # облако, OpenRouter, LM Studio, vLLM), затем:
 python -m tz_review examples/sample_tz.md
