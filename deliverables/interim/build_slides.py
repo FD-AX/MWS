@@ -64,7 +64,7 @@ def draw_architecture(path: Path) -> None:
     arrow(9.2, 4.2, 6.6, 3.6, "результат")
     arrow(3.85, 4.2, 5.4, 3.3, "история")
     arrow(9.2, 4.2, 9.2, 3.6, "/metrics")
-    arrow(9.2, 2.2, 9.2, 1.75)
+    arrow(10.4, 4.5, 12.0, 1.75, "review()")
     fig.tight_layout()
     fig.savefig(path, bbox_inches="tight")
     plt.close(fig)
