@@ -101,7 +101,10 @@ def review(text: str, rubric: dict[str, Any], llm=None, *,
     _assign_ids(verified)
 
     if llm is not None and verified:
-        kept, rejected = critic.run(verified, text, llm, threshold=critic_threshold)
+        protected = frozenset(f"checklist:{q['id']}" for q in rubric.get("checklist", [])
+                              if q.get("official"))
+        kept, rejected = critic.run(verified, text, llm, threshold=critic_threshold,
+                                    protected=protected)
         result.findings = kept
         result.rejected = rejected
         result.passes_run.append("critic")

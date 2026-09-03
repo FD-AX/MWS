@@ -10,10 +10,15 @@ DEFAULT_THRESHOLD = 4.0  # по свипу 2026-09-03: recall держится, 
 
 
 def run(findings: list[Finding], doc_text: str, llm: LLM,
-        threshold: float = DEFAULT_THRESHOLD) -> tuple[list[Finding], list[Finding]]:
+        threshold: float = DEFAULT_THRESHOLD,
+        protected: frozenset[str] = frozenset()) -> tuple[list[Finding], list[Finding]]:
     """Критик-ранжировщик. Ключевое (Greptile vs PR-Agent): судья видит ВСЕ находки
     сразу и оценивает сравнительно, а не каждую в изоляции.
     Детерминированные находки критику не отдаём — их precision и так ~100%.
+    `protected` — категории, которые критик не вправе опустить ниже порога
+    (официальные требования кейсодателя: EXP-13 показал score 0–2 на верных
+    MISSING по Data Catalog / кластеру Kafka / типовым фильтрам); дедупликация
+    на них действует по-прежнему.
 
     Возвращает (kept, rejected)."""
     llm_findings = [f for f in findings if f.source_pass != "deterministic"]
@@ -40,6 +45,10 @@ def run(findings: list[Finding], doc_text: str, llm: LLM,
     kept, rejected = [], []
     for f in llm_findings:
         f.score = scores.get(f.fid, 5.0)
+        if f.category in protected and f.fid not in drop_ids:
+            f.score = max(f.score, threshold)  # пол: требование кейсодателя не режется
+            kept.append(f)
+            continue
         if f.fid in drop_ids or f.score < threshold:
             rejected.append(f)
         else:

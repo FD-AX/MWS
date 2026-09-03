@@ -29,6 +29,19 @@ class TestVerify(unittest.TestCase):
         v, _ = verify_findings([make(quote="данные  загружаются ЕЖЕДНЕВНО")], DOC)
         self.assertEqual(len(v), 1)
 
+    def test_table_quote_without_pipes_verified(self):
+        # Модель переписала строки таблицы без «|» и с другим переносом — цитата всё равно якорится
+        doc = document.parse("## Структура данных\n| Поле | Тип |\n|---|---|\n"
+                             "| FIELD_X | int |\n| FIELD_Y | string |\n")
+        v, d = verify_findings([make(quote="FIELD_X | int\n\nFIELD_Y string")], doc)
+        self.assertEqual((len(v), len(d)), (1, 0))
+        self.assertEqual(v[0].section, "Структура данных")
+
+    def test_loose_match_does_not_accept_hallucination(self):
+        doc = document.parse("## Структура данных\n| Поле | Тип |\n|---|---|\n| FIELD_X | int |\n")
+        v, d = verify_findings([make(quote="FIELD_X | bigint")], doc)
+        self.assertEqual((len(v), len(d)), (0, 1))
+
     def test_reanchored_to_real_section(self):
         v, _ = verify_findings(
             [make(quote="Файлы CSV на SFTP-сервере", section="Регламент загрузки")], DOC)

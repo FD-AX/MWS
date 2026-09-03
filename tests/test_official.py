@@ -50,6 +50,12 @@ class TestOfficialSlots(unittest.TestCase):
                      "LOC-02", "LOC-03", "REF-01", "KEY-02"):
             self.assertIn(slot, ids)
 
+    def test_mts_slots_marked_official(self):
+        # official: true → критик не вправе опустить такие находки ниже порога (EXP-13)
+        official = {q["id"] for q in RUBRIC["checklist"] if q.get("official")}
+        self.assertEqual(official, {"SER-01", "CAT-01", "NUL-03", "FIL-02",
+                                    "LOC-02", "LOC-03", "REF-01", "KEY-02"})
+
 
 class TestOfficialEmptySection(unittest.TestCase):
     BODY = "## Источники данных\nДостаточно длинное описание источника данных для порога.\n"
