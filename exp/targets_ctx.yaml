@@ -1,16 +1,16 @@
 targets:
-- label: ctx_len0_start (~4k chars)
+- label: ctx_len0_start (~5k chars)
   doc: exp/ctx/len0_start.md
   gold: synth/out/mart_traffic_v1.gold.yaml
-- label: ctx_len2_start (~15k chars)
+- label: ctx_len2_start (~16k chars)
   doc: exp/ctx/len2_start.md
   gold: synth/out/mart_traffic_v1.gold.yaml
-- label: ctx_len2_end (~15k chars)
+- label: ctx_len2_end (~16k chars)
   doc: exp/ctx/len2_end.md
   gold: synth/out/mart_traffic_v1.gold.yaml
-- label: ctx_len5_start (~30k chars)
+- label: ctx_len5_start (~33k chars)
   doc: exp/ctx/len5_start.md
   gold: synth/out/mart_traffic_v1.gold.yaml
-- label: ctx_len5_end (~30k chars)
+- label: ctx_len5_end (~33k chars)
   doc: exp/ctx/len5_end.md
   gold: synth/out/mart_traffic_v1.gold.yaml

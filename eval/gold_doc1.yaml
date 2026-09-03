@@ -73,3 +73,41 @@ defects:
   - late
   code: A2
   difficulty: medium
+- id: G1-9
+  code: F1
+  difficulty: easy
+  description: Отсутствуют разделы официального шаблона (Data Catalog, DDL, Пример
+    данных, FAQ...)
+  categories:
+  - template:official_missing
+  keywords:
+  - официального шаблона
+- id: G1-10
+  code: A1
+  difficulty: medium
+  description: Сериализация входного/выходного потока не указана (обязательный пункт
+    МТС №1)
+  categories:
+  - checklist:SER-01
+  keywords:
+  - сериализац
+  - десериализац
+- id: G1-11
+  code: A1
+  difficulty: medium
+  description: Kafka-кластер не указан — только топики (обязательный пункт МТС №6)
+  categories:
+  - checklist:LOC-02
+  keywords:
+  - кластер
+- id: G1-12
+  code: A3
+  difficulty: medium
+  description: NOT NULL/NULLABLE не указан ни для одного поля (обязательный пункт
+    МТС №3)
+  categories:
+  - checklist:NUL-03
+  keywords:
+  - not null
+  - nullable
+  - обязательност

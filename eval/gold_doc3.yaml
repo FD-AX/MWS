@@ -137,3 +137,31 @@ defects:
   - при сбое
   - недоступности источ
   - ретра
+- id: G3-14
+  code: F1
+  difficulty: easy
+  description: Отсутствуют разделы официального шаблона
+  categories:
+  - template:official_missing
+  keywords:
+  - официального шаблона
+- id: G3-15
+  code: A3
+  difficulty: medium
+  description: NOT NULL/NULLABLE не указан ни для одного поля витрины (пункт МТС №3)
+  categories:
+  - checklist:NUL-03
+  keywords:
+  - not null
+  - nullable
+  - обязательност
+- id: G3-16
+  code: A1
+  difficulty: medium
+  description: Сериализация/формат хранения витрины и источников не указаны (пункт
+    МТС №1)
+  categories:
+  - checklist:SER-01
+  keywords:
+  - сериализац
+  - формат хранения

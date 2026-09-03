@@ -51,3 +51,21 @@ defects:
   - is_roaming
   code: E2
   difficulty: medium
+- id: G2-8
+  code: F1
+  difficulty: easy
+  description: Отсутствуют разделы официального шаблона
+  categories:
+  - template:official_missing
+  keywords:
+  - официального шаблона
+- id: G2-9
+  code: A3
+  difficulty: medium
+  description: NOT NULL/NULLABLE не указан ни для одного поля (пункт МТС №3)
+  categories:
+  - checklist:NUL-03
+  keywords:
+  - not null
+  - nullable
+  - обязательност
