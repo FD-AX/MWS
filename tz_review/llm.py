@@ -20,9 +20,11 @@ def _extract_json(text: str) -> Any:
     start = min((i for i in (text.find("{"), text.find("[")) if i >= 0), default=-1)
     if start < 0:
         raise ValueError(f"В ответе модели нет JSON: {text[:200]!r}")
+    # strict=False: открытые модели кладут сырые переносы строк внутрь цитат-строк
+    # (табличные цитаты gpt-oss) — по стандарту это невалидно, по смыслу — нормально.
     for end in range(len(text), start, -1):
         try:
-            return json.loads(text[start:end])
+            return json.loads(text[start:end], strict=False)
         except json.JSONDecodeError:
             continue
     # Ремонт обрезанного max_tokens'ом ответа: режем до последнего целого объекта
@@ -33,7 +35,7 @@ def _extract_json(text: str) -> Any:
     while cut > 0 and tries < 8:
         for suffix in ("]}", "}]}", "\"]}"):
             try:
-                return json.loads(body[:cut + 1] + suffix)
+                return json.loads(body[:cut + 1] + suffix, strict=False)
             except json.JSONDecodeError:
                 continue
         cut = body.rfind("}", 0, cut)
@@ -66,6 +68,8 @@ class LLM:
         self._model = settings.model
         self._no_temperature = False  # reasoning-модели OpenAI не принимают temperature
         self._use_completion_tokens = False  # gpt-5.x: max_completion_tokens вместо max_tokens
+        self._floor = int(getattr(settings, "max_tokens_floor", 0) or 0)
+        self._reasoning = getattr(settings, "reasoning_effort", None)
         # Учёт вызовов/токенов (метрики воркера, стоимость документа)
         self.stats = {"calls": 0, "prompt_tokens": 0, "completion_tokens": 0}
 
@@ -82,13 +86,16 @@ class LLM:
         # а длинные генерации на медленных картах в окно не влезают.
         last_err: Exception | None = None
         budget_mult = 1
+        max_tokens = max(max_tokens, self._floor)  # reasoning-модели на pod: пол бюджета
         for attempt in range(ATTEMPTS):
             kwargs = {} if self._no_temperature else {"temperature": temperature}
             if self._use_completion_tokens:
                 # reasoning-модели тратят этот же бюджет на размышления — даём запас
                 kwargs["max_completion_tokens"] = max(max_tokens * 4, 6000) * budget_mult
             else:
-                kwargs["max_tokens"] = max_tokens
+                kwargs["max_tokens"] = max_tokens * budget_mult
+            if self._reasoning:
+                kwargs["extra_body"] = {"reasoning_effort": self._reasoning}
             try:
                 resp = self._client.chat.completions.create(
                     model=self._model,
@@ -101,6 +108,8 @@ class LLM:
                 )
                 self._account(resp)
                 outs = [c.message.content or "" for c in resp.choices]
+                self.last_finish = (getattr(resp.choices[0], "finish_reason", None)
+                                    if resp.choices else None)
                 if any(o.strip() for o in outs):
                     return outs
                 # Пустой ответ (reasoning съел бюджет / сбой генерации) — это не успех:
@@ -121,8 +130,20 @@ class LLM:
             time.sleep(2 * (attempt + 1) + random.uniform(0.0, 1.5))  # jitter
         raise RuntimeError(f"LLM недоступна после {ATTEMPTS} попыток: {last_err}")
 
-    def chat_json(self, system: str, user: str, temperature: float = 0.0) -> Any:
-        return _extract_json(self._chat(system, user, temperature)[0])
+    def chat_json(self, system: str, user: str, temperature: float = 0.0,
+                  max_tokens: int = 1600) -> Any:
+        """JSON-ответ с повтором: обрезанный (finish_reason=length) или битый JSON
+        не роняет проход — повторяем с удвоенным бюджетом (EXP-15: gpt-oss на doc3)."""
+        last_err: Exception | None = None
+        for attempt in range(3):
+            text = self._chat(system, user, temperature, max_tokens=max_tokens)[0]
+            try:
+                return _extract_json(text)
+            except ValueError as e:
+                last_err = e
+                if getattr(self, "last_finish", None) == "length" or attempt == 0:
+                    max_tokens *= 2
+        raise ValueError(f"JSON не получен за 3 попытки: {last_err}")
 
     def binary_probs(self, system: str, user: str,
                      pos: str = "YES", neg: str = "NO") -> tuple[float, float]:

@@ -46,6 +46,14 @@ class TestCriticProtected(unittest.TestCase):
         kept, rejected = critic.run(fs, "doc", FakeLLM({}), threshold=4.0)
         self.assertEqual((len(kept), len(rejected)), (1, 0))
 
+    def test_doc_graph_findings_bypass_critic(self):
+        # EXP-14: граф нашёл поле-фантом (precision ~1.0), критик ставил ему 2.0 и резал
+        fs = [make("F1", "graph:undefined_field", source_pass="doc_graph"),
+              make("F2", "dev_question", source_pass="developer_sim")]
+        kept, rejected = critic.run(fs, "doc", FakeLLM({"F1": 0.0, "F2": 0.0}), threshold=4.0)
+        self.assertEqual([f.fid for f in kept], ["F1"])
+        self.assertEqual([f.fid for f in rejected], ["F2"])
+
 
 if __name__ == "__main__":
     unittest.main()

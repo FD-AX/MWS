@@ -43,5 +43,7 @@ class ChecklistAnswer(BaseModel):
     id: str
     status: Literal["OK", "MISSING", "UNCLEAR"]
     quote: Optional[str] = None
-    why: str = ""
-    ask: str = ""
+    # why/ask приходят как null на OK-ответах — раньше str-поле роняло валидацию,
+    # и OK-статус терялся молча (EXP-13/14: «UNKNOWN» у 7–10 слотов из 27).
+    why: Optional[str] = None
+    ask: Optional[str] = None

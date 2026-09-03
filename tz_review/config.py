@@ -28,6 +28,18 @@ class Settings:
     base_url: str
     api_key: str
     model: str
+    # Пол бюджета генерации на вызов: reasoning-модели (gpt-oss, gpt-5.x через pod)
+    # тратят тот же max_tokens на размышления — 1600 им мало, пустой content.
+    max_tokens_floor: int = 0
+    # Уровень размышлений (low/medium/high) — extra_body.reasoning_effort; None = не слать.
+    reasoning_effort: str | None = None
+
+
+def _int_env(name: str, default: int) -> int:
+    try:
+        return int(os.environ.get(name, "") or default)
+    except ValueError:
+        return default
 
 
 def settings_or_die() -> Settings:
@@ -43,6 +55,8 @@ def settings_or_die() -> Settings:
         base_url=os.environ["TZR_BASE_URL"],
         api_key=os.environ["TZR_API_KEY"],
         model=os.environ["TZR_MODEL"],
+        max_tokens_floor=_int_env("TZR_MAX_TOKENS", 0),
+        reasoning_effort=os.environ.get("TZR_REASONING_EFFORT") or None,
     )
 
 

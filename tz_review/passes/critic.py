@@ -7,6 +7,7 @@ from ..schema import SEVERITY_ORDER, Finding
 from . import load_prompt
 
 DEFAULT_THRESHOLD = 4.0  # по свипу 2026-09-03: recall держится, мусорный хвост −40%
+DETERMINISTIC_PASSES = frozenset({"deterministic", "doc_graph"})
 
 
 def run(findings: list[Finding], doc_text: str, llm: LLM,
@@ -21,8 +22,11 @@ def run(findings: list[Finding], doc_text: str, llm: LLM,
     на них действует по-прежнему.
 
     Возвращает (kept, rejected)."""
-    llm_findings = [f for f in findings if f.source_pass != "deterministic"]
-    det_findings = [f for f in findings if f.source_pass == "deterministic"]
+    # Детерминированные проходы (regex-слой и граф сущностей) критику не отдаём:
+    # их precision ~1.0 по построению, а критик резал graph:undefined_field
+    # (EXP-14: OFF-HIST найден графом и потерян на v2g).
+    llm_findings = [f for f in findings if f.source_pass not in DETERMINISTIC_PASSES]
+    det_findings = [f for f in findings if f.source_pass in DETERMINISTIC_PASSES]
     if not llm_findings:
         return findings, []
 

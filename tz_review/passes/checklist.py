@@ -21,7 +21,9 @@ def _ask(batch: list[dict], doc_text: str, llm: LLM) -> dict[str, ChecklistAnswe
     for item in (raw.get("answers", []) if isinstance(raw, dict) else []):
         try:
             ans = ChecklistAnswer(**item)
-        except Exception:
+        except Exception as e:  # noqa: BLE001 — невалидный ответ не теряем молча
+            print(f"! checklist: невалидный ответ {str(item)[:120]!r}: {str(e)[:120]}",
+                  file=sys.stderr, flush=True)
             continue
         if ans.id in ids:
             answers[ans.id] = ans
