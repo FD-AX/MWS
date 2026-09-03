@@ -5,7 +5,8 @@ from typing import Any
 
 from . import document as docmod
 from .passes import (baseline, checklist, critic, deterministic, developer_sim,
-                     doc_graph, document_level, spec_compile, uncertainty)
+                     doc_graph, document_level, spec_compile, uncertainty,
+                     uncertainty_lp)
 
 DEFAULT_LLM_PASSES = frozenset({"checklist", "document_level", "developer_sim"})
 from .schema import Finding
@@ -34,6 +35,8 @@ def review(text: str, rubric: dict[str, Any], llm=None, *,
            llm_passes: frozenset[str] | None = None,
            baseline_prompt: str = "baseline",
            llm_cheap=None,
+           use_lp: bool = False,
+           llm_lp=None,
            critic_threshold: float = critic.DEFAULT_THRESHOLD) -> ReviewResult:
     """Полный конвейер: детерминированный слой -> чеклист -> документ-уровень ->
     персона разработчика -> [semantic entropy] -> верификация цитат -> критик.
@@ -87,6 +90,10 @@ def review(text: str, rubric: dict[str, Any], llm=None, *,
         if use_entropy and result.statuses:
             findings += uncertainty.run(text, rubric, result.statuses, llm_cheap or llm)
             result.passes_run.append("uncertainty")
+
+        if use_lp and result.statuses and llm_lp is not None:
+            findings += uncertainty_lp.run(text, rubric, result.statuses, llm_lp)
+            result.passes_run.append("uncertainty_lp")
 
     verified, dropped = verify_findings(findings, doc)
     result.dropped = dropped

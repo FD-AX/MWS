@@ -56,6 +56,20 @@ class TestVerify(unittest.TestCase):
         self.assertAlmostEqual(anchoring_rate(v, d), 0.5)
 
 
+class TestLogprobAggregation(unittest.TestCase):
+    def test_bpe_fragments_aggregate(self):
+        from tz_review.llm import aggregate_yes_no
+        tops = [("YES", 0.5), (" YE", 0.2), ("No", 0.15), ("N", 0.05), ("да", 0.1)]
+        p_yes, p_no = aggregate_yes_no(tops)
+        self.assertAlmostEqual(p_yes, 0.7)
+        self.assertAlmostEqual(p_no, 0.2)
+
+    def test_binary_entropy_bounds(self):
+        from tz_review.passes.uncertainty_lp import binary_entropy
+        self.assertAlmostEqual(binary_entropy(0.5), 1.0, places=6)
+        self.assertLess(binary_entropy(0.01), 0.1)
+
+
 class TestEntropy(unittest.TestCase):
     def test_identical_answers_zero(self):
         from tz_review.passes.uncertainty import semantic_entropy

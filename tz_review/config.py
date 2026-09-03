@@ -59,6 +59,19 @@ def openai_settings_or_die() -> Settings:
     )
 
 
+def openai_logprob_settings() -> Settings | None:
+    """Модель с поддержкой logprobs для числовых зондов (H10); reasoning не умеют."""
+    load_dotenv()
+    key = os.environ.get("OPENAI_API_KEY")
+    if not key:
+        return None
+    return Settings(
+        base_url=os.environ.get("OPENAI_BASE_URL", "https://api.openai.com/v1"),
+        api_key=key,
+        model=os.environ.get("OPENAI_MODEL_LOGPROB", "gpt-4.1-mini"),
+    )
+
+
 def openai_cheap_settings() -> Settings | None:
     """Дешёвая модель для массовых мелких вызовов (entropy-сэмплы, канонизация)."""
     load_dotenv()

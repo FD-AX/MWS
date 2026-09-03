@@ -38,6 +38,23 @@ def _extract_json(text: str) -> Any:
     raise ValueError(f"Не удалось распарсить JSON из ответа: {text[:200]!r}")
 
 
+def aggregate_yes_no(top_tokens: list[tuple[str, float]],
+                     pos: str = "YES", neg: str = "NO") -> tuple[float, float]:
+    """Суммирует вероятностную массу top-токенов в P(pos)/P(neg).
+    Токен засчитывается, если он префикс слова или слово — его префикс
+    (BPE может отдать 'YES', 'YE', ' YES' и т.п.)."""
+    p_pos = p_neg = 0.0
+    for token, prob in top_tokens:
+        t = token.strip().upper()
+        if not t:
+            continue
+        if pos.startswith(t) or t.startswith(pos):
+            p_pos += prob
+        elif neg.startswith(t) or t.startswith(neg):
+            p_neg += prob
+    return p_pos, p_neg
+
+
 class LLM:
     def __init__(self, settings: Settings):
         from openai import OpenAI  # ленивый импорт: --no-llm работает без пакета
@@ -83,6 +100,24 @@ class LLM:
 
     def chat_json(self, system: str, user: str, temperature: float = 0.0) -> Any:
         return _extract_json(self._chat(system, user, temperature)[0])
+
+    def binary_probs(self, system: str, user: str,
+                     pos: str = "YES", neg: str = "NO") -> tuple[float, float]:
+        """Числовой сигнал из логитов (H10): P(pos)/P(neg) первого токена ответа.
+        Требует бэкенд с поддержкой logprobs (gpt-4.1-*, vLLM; reasoning gpt-5.x — нет)."""
+        import math
+
+        resp = self._client.chat.completions.create(
+            model=self._model,
+            messages=[{"role": "system", "content": system},
+                      {"role": "user", "content": user}],
+            max_tokens=1, temperature=0, logprobs=True, top_logprobs=10,
+        )
+        content = resp.choices[0].logprobs.content
+        if not content:
+            return 0.0, 0.0
+        tops = [(t.token, math.exp(t.logprob)) for t in content[0].top_logprobs]
+        return aggregate_yes_no(tops, pos, neg)
 
     def sample(self, system: str, user: str, n: int = 5, temperature: float = 0.9) -> list[str]:
         """n независимых сэмплов (для semantic entropy). Некоторые локальные бэкенды
