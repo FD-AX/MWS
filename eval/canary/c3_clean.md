@@ -6,7 +6,7 @@
 
 ## Структура целевых таблиц
 
-Таблица TABLE_CANARY_C: FIELD_ID (bigint), FIELD_NAME (string), FIELD_SNAPSHOT_DATE (date, партиция). Ключ: (FIELD_ID, FIELD_SNAPSHOT_DATE).
+Таблица TABLE_CANARY_C: FIELD_ID (bigint, NOT NULL), FIELD_NAME (string, NULLABLE), FIELD_SNAPSHOT_DATE (date, NOT NULL, партиция). Ключ: (FIELD_ID, FIELD_SNAPSHOT_DATE). Хранение: Hive-таблица на кластере CLUSTER, полный путь hdfs://CLUSTER/data/raw/canary_c/, формат Parquet (Snappy), партиция — каталог FIELD_SNAPSHOT_DATE=YYYY-MM-DD. Карточка в Data Catalog: LINK_DC_CANARY_C (источник SFTP — LINK_DC_SFTP_C). Справочники не используются (не применимо). Kafka не используется (не применимо).
 
 ## Правила трансформации
 

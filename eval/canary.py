@@ -34,6 +34,10 @@ CHECKS = [
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--variant", default="v2g")
+    # Порог тишины на чистом c3: канарейка ловит сломанный стек (десятки мусорных находок),
+    # а шум модели меряется бенчем. Для слабых моделей порог поднимается явно.
+    ap.add_argument("--max-crit-high", type=int, default=0)
+    ap.add_argument("--max-medium", type=int, default=3)
     args = ap.parse_args()
     spec = VARIANTS[args.variant]
 
@@ -61,14 +65,15 @@ def main() -> int:
             # сломанный стек, а не шум (шум меряется бенчем на clean_base).
             crit_high = [f for f in findings if f["severity"] in ("critical", "high")]
             medium = [f for f in findings if f["severity"] == "medium"]
-            quiet = not crit_high and len(medium) <= 3
+            quiet = len(crit_high) <= args.max_crit_high and len(medium) <= args.max_medium
             # Жёстко шум гейтит только вариант с критиком; для бейзлайнов — информационно
             # (вывод ночи: бейзлайн без критика перешумливает даже хорошие документы).
             enforced = not spec["baseline"]
             status = quiet or not enforced
             mark = "✓" if quiet else ("✗" if enforced else "ℹ")
             print(f"{mark} {name}: critical/high = {len(crit_high)} "
-                  f"(ожидание 0), medium = {len(medium)} (ожидание <=3)"
+                  f"(ожидание <={args.max_crit_high}), medium = {len(medium)} "
+                  f"(ожидание <={args.max_medium})"
                   + ("" if enforced else " [информационно для бейзлайна]"))
             for f in (crit_high + medium)[:5]:
                 print(f"    - {f['severity']} {f['category']}: {(f['why'] or '')[:90]}")
