@@ -30,15 +30,20 @@ def _ask(batch: list[dict], doc_text: str, llm: LLM) -> dict[str, ChecklistAnswe
     return answers
 
 
-def run(doc_text: str, rubric: dict[str, Any], llm: LLM) -> tuple[list[Finding], dict[str, str]]:
+def run(doc_text: str, rubric: dict[str, Any], llm: LLM,
+        on_batch=None) -> tuple[list[Finding], dict[str, str]]:
     """Чеклист-аудит «слотов» полноты. Возвращает (находки, статусы всех слотов).
-    Статусы нужны для coverage-метрики и для entropy-прохода."""
+    Статусы нужны для coverage-метрики и для entropy-прохода.
+    on_batch(i, n) — необязательный колбэк прогресса после каждого батча."""
     questions = rubric["checklist"]
     findings: list[Finding] = []
     statuses: dict[str, str] = {}
     unanswered: list[str] = []
+    n_batches = (len(questions) + BATCH_SIZE - 1) // BATCH_SIZE
 
     for i in range(0, len(questions), BATCH_SIZE):
+        if on_batch is not None:
+            on_batch(i // BATCH_SIZE, n_batches)
         batch = questions[i:i + BATCH_SIZE]
         answers = _ask(batch, doc_text, llm)
         rest = [q for q in batch if q["id"] not in answers]
