@@ -3,6 +3,7 @@ from __future__ import annotations
 import math
 import re
 from collections import Counter
+from concurrent.futures import ThreadPoolExecutor
 from typing import Any
 
 from ..llm import LLM
@@ -47,13 +48,22 @@ def run(doc_text: str, rubric: dict[str, Any], statuses: dict[str, str],
     by_id = {q["id"]: q for q in rubric["checklist"]}
     findings: list[Finding] = []
 
-    for qid, status in statuses.items():
-        if status != "OK":
-            continue  # MISSING/UNCLEAR уже отработаны чеклистом
+    ok_slots = [qid for qid, s in statuses.items() if s == "OK"]
+
+    def sample_slot(qid: str) -> tuple[str, list[str]]:
         q = by_id[qid]
         prompt = load_prompt("entropy_answer", question=q["question"], document=doc_text)
-        answers = llm.sample("Отвечай одной короткой фразой.", prompt,
-                             n=N_SAMPLES, temperature=TEMPERATURE)
+        return qid, llm.sample("Отвечай одной короткой фразой.", prompt,
+                               n=N_SAMPLES, temperature=TEMPERATURE)
+
+    # Слоты независимы — сэмплируем параллельно (иначе 27 слотов × 5 сэмплов
+    # последовательно превращают проход в десятки минут).
+    with ThreadPoolExecutor(max_workers=6) as pool:
+        sampled = dict(pool.map(sample_slot, ok_slots))
+
+    for qid in ok_slots:
+        q = by_id[qid]
+        answers = sampled[qid]
         entropy, clusters = semantic_entropy(answers)
         if entropy < ENTROPY_THRESHOLD:
             continue
