@@ -1,10 +1,13 @@
 from __future__ import annotations
 
 import json
+import random
 import time
 from typing import Any
 
 from .config import Settings
+
+ATTEMPTS = 4  # попыток на вызов: транспортные сбои и пустые ответы ретраятся с jitter
 
 
 def _extract_json(text: str) -> Any:
@@ -69,11 +72,12 @@ class LLM:
         # max_tokens ограничен: прокси RunPod (Cloudflare) рвёт запросы >120s,
         # а длинные генерации на медленных картах в окно не влезают.
         last_err: Exception | None = None
-        for attempt in range(3):
+        budget_mult = 1
+        for attempt in range(ATTEMPTS):
             kwargs = {} if self._no_temperature else {"temperature": temperature}
             if self._use_completion_tokens:
                 # reasoning-модели тратят этот же бюджет на размышления — даём запас
-                kwargs["max_completion_tokens"] = max(max_tokens * 4, 6000)
+                kwargs["max_completion_tokens"] = max(max_tokens * 4, 6000) * budget_mult
             else:
                 kwargs["max_tokens"] = max_tokens
             try:
@@ -86,7 +90,16 @@ class LLM:
                     n=n,
                     **kwargs,
                 )
-                return [c.message.content or "" for c in resp.choices]
+                outs = [c.message.content or "" for c in resp.choices]
+                if any(o.strip() for o in outs):
+                    return outs
+                # Пустой ответ (reasoning съел бюджет / сбой генерации) — это не успех:
+                # раньше уходил дальше как '' и ронял проход «В ответе модели нет JSON».
+                finish = (getattr(resp.choices[0], "finish_reason", None)
+                          if resp.choices else None)
+                last_err = RuntimeError(f"пустой ответ модели (finish_reason={finish})")
+                if finish == "length":
+                    budget_mult *= 2
             except Exception as e:  # noqa: BLE001 - ретраим любой сбой транспорта
                 if "temperature" in str(e) and not self._no_temperature:
                     self._no_temperature = True
@@ -95,8 +108,8 @@ class LLM:
                     self._use_completion_tokens = True
                     continue
                 last_err = e
-                time.sleep(2 * (attempt + 1))
-        raise RuntimeError(f"LLM недоступна после 3 попыток: {last_err}")
+            time.sleep(2 * (attempt + 1) + random.uniform(0.0, 1.5))  # jitter
+        raise RuntimeError(f"LLM недоступна после {ATTEMPTS} попыток: {last_err}")
 
     def chat_json(self, system: str, user: str, temperature: float = 0.0) -> Any:
         return _extract_json(self._chat(system, user, temperature)[0])

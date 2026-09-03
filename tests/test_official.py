@@ -51,5 +51,23 @@ class TestOfficialSlots(unittest.TestCase):
             self.assertIn(slot, ids)
 
 
+class TestOfficialEmptySection(unittest.TestCase):
+    BODY = "## Источники данных\nДостаточно длинное описание источника данных для порога.\n"
+
+    def test_empty_official_section_dash_flagged(self):
+        findings = run_on(self.BODY + "## Data Catalog\n—\n")
+        empty = [f for f in findings if f.category == "template:empty_section"]
+        self.assertEqual([f.section for f in empty], ["Data Catalog"])
+
+    def test_empty_official_section_with_mark_ok(self):
+        findings = run_on(self.BODY + "## Data Catalog\nне применимо: витрина без каталога\n")
+        self.assertFalse([f for f in findings if f.category == "template:empty_section"])
+
+    def test_required_and_official_not_double_flagged(self):
+        findings = run_on("## Источники данных\n—\n")
+        empty = [f for f in findings if f.category == "template:empty_section"]
+        self.assertEqual(len(empty), 1)  # required-проверка уже отметила, official молчит
+
+
 if __name__ == "__main__":
     unittest.main()

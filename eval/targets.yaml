@@ -1,4 +1,5 @@
 # Цели бенча: документ + голд (gold: null = замер шума, noise@clean).
+# it5: вся синтетика на базе в официальном шаблоне МТС (synth/base/mart_traffic_official_clean.md).
 targets:
   - label: synth_v1
     doc: synth/out/mart_traffic_v1.md
@@ -15,6 +16,9 @@ targets:
   - label: synth_v2hard
     doc: synth/out/mart_traffic_v2h.md
     gold: synth/out/mart_traffic_v2h.gold.yaml
+  - label: synth_v3official
+    doc: synth/out/mart_traffic_v3o.md
+    gold: synth/out/mart_traffic_v3o.gold.yaml
   - label: clean_base (шум)
-    doc: synth/base/mart_traffic_clean.md
+    doc: synth/base/mart_traffic_official_clean.md
     gold: null

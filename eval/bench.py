@@ -57,6 +57,11 @@ VARIANTS = {
 }
 
 
+def _log(msg: str) -> None:
+    """Построчный прогресс в stderr: виден в логе во время прогона, а не в конце."""
+    print(f"[{datetime.datetime.now():%H:%M:%S}] {msg}", file=sys.stderr, flush=True)
+
+
 def evaluate(result, gold_defects):
     findings = [f.model_dump() for f in result.findings]
     hits, matched_fids = {}, set()
@@ -137,6 +142,7 @@ def main() -> int:
         spec = VARIANTS[vname]
         for t in targets:
             text = (ROOT / t["doc"]).read_text(encoding="utf-8")
+            _log(f"start {vname} · {t['label']}")
             llm = get_llm(spec.get("backend", "pod")) if spec["llm"] else None
             llm_cheap = (get_llm("openai_cheap")
                          if spec["llm"] and spec["entropy"] and spec.get("backend") == "openai"
@@ -152,6 +158,7 @@ def main() -> int:
                                 baseline_prompt=spec.get("bprompt", "baseline"))
             except Exception as e:  # noqa: BLE001 — ночные прогоны не должны умирать целиком
                 lines.append(f"| {vname} | {t['label']} | ERROR | {str(e)[:80]} | | | | |")
+                _log(lines[-1])
                 continue
             n_findings = len(result.findings)
             if t.get("gold"):
@@ -165,6 +172,7 @@ def main() -> int:
                                                        "expert": 3}.get(x[0], 9)))
                 lines.append(f"| {vname} | {t['label']} | **{n_hit}/{len(gold)}** | {groups} "
                              f"| {diffs} | {n_findings} | {len(extras)} | {result.anchoring:.0%} |")
+                _log(lines[-1])
                 raw_records.append({
                     "variant": vname, "target": t["label"],
                     "defects": {d["id"]: {"code": str(d.get("code", "?")),
@@ -186,6 +194,7 @@ def main() -> int:
             else:
                 lines.append(f"| {vname} | {t['label']} | — | — | {n_findings} "
                              f"| noise={n_findings} | {result.anchoring:.0%} |")
+                _log(lines[-1])
                 raw_records.append({
                     "variant": vname, "target": t["label"], "defects": {},
                     "noise": [{"category": f["category"], "severity": f["severity"],

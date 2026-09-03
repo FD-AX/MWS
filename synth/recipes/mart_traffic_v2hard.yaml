@@ -1,7 +1,7 @@
 # v2hard: экспертные логические инъекции — разграничение сильнейших моделей/вариантов.
 # Текст остаётся гладким; дефекты видны только пониманию семантики данных.
 
-base: synth/base/mart_traffic_clean.md
+base: synth/base/mart_traffic_official_clean.md
 out_doc: synth/out/mart_traffic_v2h.md
 out_gold: synth/out/mart_traffic_v2h.gold.yaml
 
@@ -31,8 +31,8 @@ defects:
     difficulty: hard
     description: "Ссылка на несуществующий раздел по имени («Оркестрация») — graph ловит только номера"
     op: replace
-    find: "| FIELD_PROC_TS | timestamp | Время формирования строки | метка запуска DAG_AGG_TRAFFIC |"
-    replace: "| FIELD_PROC_TS | timestamp | Время формирования строки | метка запуска DAG_AGG_TRAFFIC (детали — в разделе «Оркестрация») |"
+    find: "| FIELD_PROC_TS | timestamp | NOT NULL | Время формирования строки | метка запуска DAG_AGG_TRAFFIC |"
+    replace: "| FIELD_PROC_TS | timestamp | NOT NULL | Время формирования строки | метка запуска DAG_AGG_TRAFFIC (детали — в разделе «Оркестрация») |"
     categories: []
     keywords: ["оркестрац"]
 

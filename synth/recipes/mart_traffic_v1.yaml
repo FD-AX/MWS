@@ -1,4 +1,4 @@
-base: synth/base/mart_traffic_clean.md
+base: synth/base/mart_traffic_official_clean.md
 out_doc: synth/out/mart_traffic_v1.md
 out_gold: synth/out/mart_traffic_v1.gold.yaml
 defects:
@@ -109,14 +109,14 @@ defects:
   difficulty: hard
 - id: SYN-C-SECREF
   code: C1
-  description: Ссылка на несуществующий раздел 12
+  description: Ссылка на несуществующий раздел 31
   op: insert_after
   find: Записи с пустым FIELD_REGION отбрасываются в TABLE_AGG_LOAD_LOG с кодом EMPTY_REGION.
-  text: Полный перечень кодов отбраковки приведён в разделе 12.
+  text: Полный перечень кодов отбраковки приведён в разделе 31.
   categories: []
   keywords:
-  - разделе 12
-  - раздел 12
+  - разделе 31
+  - раздел 31
   difficulty: medium
 - id: SYN-D-TZ
   code: D2

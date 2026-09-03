@@ -1,0 +1,180 @@
+# v3official: инъекции по официальным «Основным моментам документации» МТС (8 пунктов)
+# + межсекционные дефекты, возможные только в полном шаблоне (DDL, пример данных, FAQ, история).
+# База — чистый документ в официальном шаблоне (20 разделов). Итерация синтетики it5.
+
+base: synth/base/mart_traffic_official_clean.md
+out_doc: synth/out/mart_traffic_v3o.md
+out_gold: synth/out/mart_traffic_v3o.gold.yaml
+
+defects:
+  # --- п.1 Сериализация: формат выходной таблицы убран из приёмника И из DDL ---
+  - id: OFF-SER
+    code: A1
+    difficulty: medium
+    description: "Сериализация/формат хранения витрины не указаны (п.1 МТС): в приёмнике «по умолчанию платформы», в DDL нет STORED AS"
+    edits:
+      - op: replace
+        find: "| Parquet (Snappy), схема — DDL ниже |"
+        replace: "| по умолчанию платформы |"
+      - op: replace
+        find: "PARTITIONED BY (FIELD_BIZ_DATE date)\nSTORED AS PARQUET;"
+        replace: "PARTITIONED BY (FIELD_BIZ_DATE date);"
+    categories: ["checklist:SER-01"]
+    keywords: ["сериализац", "формат хранения", "формат выходн", "по умолчанию платформы", "stored as"]
+
+  # --- п.2 Data Catalog: ссылка на карточку витрины заменена обещанием ---
+  - id: OFF-CAT
+    code: A1
+    difficulty: medium
+    description: "Нет прямой ссылки на Data Catalog для витрины (п.2 МТС): «заводится после ввода в эксплуатацию»"
+    edits:
+      - op: replace
+        find: "Витрина: LINK_DC_AGG_TRAFFIC_REGION. Источники: LINK_DC_DPI_RAW_PS (TABLE_DPI_RAW_PS), LINK_DC_REGION_REF (TABLE_REGION_REF)."
+        replace: "Карточка витрины заводится после ввода в эксплуатацию; карточки источников ведёт команда DPI_System."
+      - op: replace
+        find: "| LINK_DC_AGG_TRAFFIC_REGION |"
+        replace: "| после ввода в эксплуатацию |"
+    categories: ["checklist:CAT-01"]
+    keywords: ["data catalog", "дата-каталог", "каталог данных", "ввода в эксплуатацию"]
+
+  # --- п.3 NOT NULL / NULLABLE: колонка обязательности убрана из структуры витрины ---
+  - id: OFF-NUL
+    code: A3
+    difficulty: medium
+    description: "Признак обязательности NOT NULL/NULLABLE убран для всех полей витрины (п.3 МТС)"
+    op: replace
+    find: |-
+      | Поле | Тип данных | Обязательность | Описание | Правило |
+      |---|---|---|---|---|
+      | FIELD_BIZ_DATE | date | NOT NULL | Бизнес-дата витрины: 1-е число месяца агрегации (в отличие от одноимённого поля источника, где это дата сессии) | партиция |
+      | FIELD_REGION_NAME | string | NOT NULL | Название региона | из TABLE_REGION_REF по FIELD_REGION |
+      | FIELD_RAT_NAME | string | NOT NULL | Тип сети (2G, 3G, 4G, UNKNOWN) | из FIELD_RAT |
+      | FIELD_TRAFFIC_GB | decimal(18,3) | NOT NULL | Суммарный трафик за месяц, ГБ | (sum(FIELD_BYTES_UL) + sum(FIELD_BYTES_DL)) / 1024^3 |
+      | FIELD_USERS_CNT | bigint | NOT NULL | Число уникальных абонентов | count(distinct FIELD_IMSI) |
+      | FIELD_PROC_TS | timestamp | NOT NULL | Время формирования строки | метка запуска DAG_AGG_TRAFFIC |
+    replace: |-
+      | Поле | Тип данных | Описание | Правило |
+      |---|---|---|---|
+      | FIELD_BIZ_DATE | date | Бизнес-дата витрины: 1-е число месяца агрегации (в отличие от одноимённого поля источника, где это дата сессии) | партиция |
+      | FIELD_REGION_NAME | string | Название региона | из TABLE_REGION_REF по FIELD_REGION |
+      | FIELD_RAT_NAME | string | Тип сети (2G, 3G, 4G, UNKNOWN) | из FIELD_RAT |
+      | FIELD_TRAFFIC_GB | decimal(18,3) | Суммарный трафик за месяц, ГБ | (sum(FIELD_BYTES_UL) + sum(FIELD_BYTES_DL)) / 1024^3 |
+      | FIELD_USERS_CNT | bigint | Число уникальных абонентов | count(distinct FIELD_IMSI) |
+      | FIELD_PROC_TS | timestamp | Время формирования строки | метка запуска DAG_AGG_TRAFFIC |
+    categories: ["checklist:NUL-03"]
+    keywords: ["not null", "nullable", "обязательност"]
+
+  # --- п.4 Типовые фильтры: блок стандартных условий удалён ---
+  - id: OFF-FIL
+    code: A
+    difficulty: medium
+    description: "Типовые фильтры при построении и выгрузке не зафиксированы (п.4 МТС): блок удалён"
+    op: delete
+    find: "Типовые фильтры\nПри построении витрины и при выгрузке потребителям применяются стандартные условия: (1) FIELD_BIZ_DATE в границах месяца расчёта; (2) записи с нулевым суммарным трафиком в расчёт не входят (Шаг 2); (3) при выгрузке потребителям по умолчанию исключаются служебные категории NO_REGION и UNKNOWN, они включаются по явному запросу потребителя.\n\n"
+    categories: ["checklist:FIL-02"]
+    keywords: ["типовые фильтр", "типовых фильтр", "стандартные фильтр", "стандартные условия фильтрации", "фильтры при выгрузке", "фильтрации при выгрузке", "служебные категории"]
+
+  # --- п.5 Структура шаблона: раздел удалён целиком (без «не применимо») ---
+  - id: OFF-TPL
+    code: F1
+    difficulty: easy
+    description: "Раздел шаблона «Схема потоков данных» удалён без пометки «не применимо» (п.5 МТС)"
+    op: delete
+    find: "## Схема потоков данных\n\nTOPIC_DPI_PS → STREAM_DPI_PS → TABLE_DPI_RAW_PS (SCHEMA_RAW) → DAG_AGG_TRAFFIC → TABLE_AGG_TRAFFIC_REGION (SCHEMA_CDM_NETS); справочник TABLE_REGION_REF подключается на шаге определения региона. Диаграмма: LINK_DIAGRAM_AGG_TRAFFIC.\n\n"
+    categories: ["template:official_missing"]
+    keywords: ["схема потоков", "схемы потоков"]
+
+  # --- п.5 Структура шаблона: раздел оставлен, но пуст (прочерк вместо «не применимо») ---
+  - id: OFF-EMPTY
+    code: F1
+    difficulty: easy
+    description: "Раздел «Нефункциональные требования» присутствует, но пуст (прочерк) без «не применимо» (п.5 МТС)"
+    op: replace
+    find: |-
+      | Требование | Значение |
+      |---|---|
+      | Длительность расчёта | не более 2 часов на один месяц при полном объёме источника |
+      | Доступность на чтение | перезапись партиции атомарная: запись во временный каталог и подмена, читатели не видят частично записанную партицию |
+      | Нагрузка на источник | один проход по партициям месяца TABLE_DPI_RAW_PS, без повторных чтений |
+    replace: "—"
+    categories: ["template:empty_section"]
+    keywords: ["нефункциональные требования", "нефункциональных требований"]
+
+  # --- п.6 Кластер Kafka для потокового источника убран ---
+  - id: OFF-KAFKA
+    code: A1
+    difficulty: medium
+    description: "Кластер Kafka потокового источника не указан (п.6 МТС): остался только топик"
+    op: replace
+    find: "из Kafka-топика TOPIC_DPI_PS на кластере KAFKA_CLUSTER_DPI потоком"
+    replace: "из Kafka-топика TOPIC_DPI_PS потоком"
+    categories: ["checklist:LOC-02"]
+    keywords: ["кластер kafka", "kafka-кластер", "кластере kafka", "какой кластер", "kafka_cluster", "кластер не указан"]
+
+  # --- п.7 Полный путь в HDFS заменён общим указанием ---
+  - id: OFF-HDFS
+    code: A1
+    difficulty: medium
+    description: "Полный путь витрины в HDFS не указан (п.7 МТС): «HDFS кластера CLUSTER» вместо пути"
+    op: replace
+    find: "| hdfs://CLUSTER/data/cdm/nets/agg_traffic_region/ |"
+    replace: "| HDFS кластера CLUSTER |"
+    categories: ["checklist:LOC-03"]
+    keywords: ["полный путь", "путь в hdfs", "hdfs-путь", "путь к каталогу", "путь хранения", "путь не указан", "каталог в hdfs"]
+
+  # --- п.8 Перечень справочников заменён «не применимо» при том, что алгоритм джойнит справочник ---
+  - id: OFF-REF
+    code: A
+    difficulty: hard
+    description: "Источники обогащения помечены «не применимо», хотя алгоритм использует справочник TABLE_REGION_REF (п.8 МТС + противоречие)"
+    op: replace
+    find: |-
+      Используемые справочники (НСИ):
+
+      | Справочник | Назначение | Владелец | Обновление |
+      |---|---|---|---|
+      | TABLE_REGION_REF (SCHEMA_DIC) | код региона → название региона | команда НСИ (USER_F) | ежедневно (DAG_DIC_REGION); в расчёт берётся состояние справочника на момент запуска |
+    replace: "Не применимо: обогащение при построении витрины не выполняется."
+    categories: ["checklist:REF-01", "doc:contradiction"]
+    keywords: ["перечень справочников", "справочники не", "справочников не", "обогащени"]
+
+  # --- Межсекционные дефекты полного шаблона ---
+  - id: OFF-DDL
+    code: D4
+    difficulty: hard
+    description: "DDL: FIELD_TRAFFIC_GB decimal(18,2) против decimal(18,3) в структуре витрины"
+    op: replace
+    find: "FIELD_TRAFFIC_GB decimal(18,3) COMMENT"
+    replace: "FIELD_TRAFFIC_GB decimal(18,2) COMMENT"
+    categories: ["doc:contradiction", "doc:consistency"]
+    keywords: ["18,2", "18, 2", "decimal(18", "точност"]
+
+  - id: OFF-EXAMPLE
+    code: E2
+    difficulty: expert
+    description: "Пример данных содержит FIELD_RAT_NAME = 5G, которого нет в домене (2G, 3G, 4G, UNKNOWN)"
+    op: replace
+    find: "| 2024-05-01 | REGION_NAME_01 | 3G | 21077.113 | 58120 | 2024-06-02 03:41:12 |"
+    replace: "| 2024-05-01 | REGION_NAME_01 | 5G | 21077.113 | 58120 | 2024-06-02 03:41:12 |"
+    categories: []
+    keywords: ["5g"]
+
+  - id: OFF-HIST
+    code: C2
+    difficulty: medium
+    description: "История изменений ссылается на поле FIELD_ROAMING_FLAG, которого нет в структуре витрины"
+    op: replace
+    find: "| 1.1 | 2024-03-15 | USER_C | Уточнено правило учёта записей с пустым FIELD_REGION (код EMPTY_REGION) |"
+    replace: "| 1.1 | 2024-03-15 | USER_C | Добавлено поле FIELD_ROAMING_FLAG в структуру витрины |"
+    categories: ["graph:undefined_field"]
+    keywords: ["field_roaming_flag"]
+
+  - id: OFF-FAQ
+    code: D2
+    difficulty: hard
+    description: "FAQ: абонент относится к одному региону с наибольшим трафиком — противоречит группировке Шага 6 (учёт в каждой строке)"
+    op: replace
+    find: "**Почему сумма FIELD_USERS_CNT по всем регионам больше числа уникальных абонентов сети?** FIELD_USERS_CNT считается в каждой строке независимо: абонент с трафиком в двух регионах за месяц учитывается в обеих строках. Для числа уникальных абонентов сети витрина не предназначена."
+    replace: "**Как учитывается абонент с трафиком в нескольких регионах за месяц?** Абонент относится только к региону с наибольшим трафиком за месяц, поэтому сумма FIELD_USERS_CNT по регионам равна числу уникальных абонентов сети."
+    categories: ["doc:contradiction"]
+    keywords: ["наибольшим трафиком", "наибольший трафик", "одному региону", "только к региону", "только в регионе", "только в одном регионе"]

@@ -56,6 +56,7 @@ def run(doc: Document, rubric: dict[str, Any]) -> list[Finding]:
             ask="Добавь недостающие разделы или явно пометь их «не применимо».",
             source_pass="deterministic",
         ))
+    flagged_empty: set[str] = set()
     for req in rubric.get("required_sections", []):
         aliases = [normalize(a) for a in [req["name"], *req.get("aliases", [])]]
         matched = [s for s, tn in titles_norm if any(a in tn for a in aliases)]
@@ -82,5 +83,25 @@ def run(doc: Document, rubric: dict[str, Any]) -> list[Finding]:
                 ask="Заполни раздел или явно укажи «не применимо» с обоснованием.",
                 source_pass="deterministic",
             ))
+            flagged_empty.add(matched[0].title)
+
+    # Раздел официального шаблона есть заголовком, но пуст (прочерк/ничего) без
+    # «не применимо» — нарушение п.5 «Основных моментов» (раздел сохранён формально).
+    official_norm = [normalize(n) for n in rubric.get("official_sections", [])]
+    for s, tn in titles_norm:
+        if s.title in flagged_empty or not any(n in tn for n in official_norm):
+            continue
+        if re.sub(r"[\s\-—–*_.:;|]+", "", s.body) or "не применимо" in normalize(s.body):
+            continue
+        findings.append(Finding(
+            category="template:empty_section",
+            severity="medium",
+            section=s.title,
+            missing=True,
+            why=(f"Раздел официального шаблона «{s.title}» присутствует, но пуст: "
+                 "по правилам кейсодателя неиспользуемый раздел помечается «не применимо»."),
+            ask="Заполни раздел или явно укажи «не применимо» с обоснованием.",
+            source_pass="deterministic",
+        ))
 
     return findings

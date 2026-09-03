@@ -11,6 +11,8 @@
         op: replace | delete | insert_after
         find: уникальная подстрока базового документа
         replace / text: чем заменить / что вставить после
+        edits: [ {op, find, replace|text}, ... ] — несколько правок на один дефект
+               (факт продублирован: таблица + DDL и т.п.)
 
 Принципы качества (см. METRICS.md):
 - каждая инъекция — минимальная точечная правка, без LLM-переписывания (нет «швов»);
@@ -26,19 +28,27 @@ from pathlib import Path
 import yaml
 
 
-def apply_defect(text: str, d: dict) -> str:
-    find = d["find"]
+def _apply_edit(text: str, e: dict, did: str) -> str:
+    find = e["find"]
     n = text.count(find)
     if n != 1:
-        raise SystemExit(f"[{d['id']}] find встречается {n} раз (нужно ровно 1): {find[:80]!r}")
-    op = d.get("op", "replace")
+        raise SystemExit(f"[{did}] find встречается {n} раз (нужно ровно 1): {find[:80]!r}")
+    op = e.get("op", "replace")
     if op == "delete":
         return text.replace(find, "")
     if op == "replace":
-        return text.replace(find, d["replace"])
+        return text.replace(find, e["replace"])
     if op == "insert_after":
-        return text.replace(find, find + " " + d["text"])
-    raise SystemExit(f"[{d['id']}] неизвестный op: {op}")
+        return text.replace(find, find + " " + e["text"])
+    raise SystemExit(f"[{did}] неизвестный op: {op}")
+
+
+def apply_defect(text: str, d: dict) -> str:
+    """Один дефект = одна правка (op/find/replace) или список правок `edits`,
+    когда факт продублирован в нескольких местах документа (таблица + DDL)."""
+    for e in d.get("edits") or [d]:
+        text = _apply_edit(text, e, d["id"])
+    return text
 
 
 def main() -> int:
