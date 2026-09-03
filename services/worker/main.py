@@ -1,14 +1,19 @@
 """Воркер ревью: берёт задание из очереди, гонит конвейер tz_review, пишет результат,
 подтверждает сообщение только после записи. Метрики — на :9100/metrics.
 
-Семантика: prefetch=1; исключение → первый раз requeue, повторный сбой → DLQ (review.dead).
-Идемпотентность по (doc_hash, config_hash) через index.json.
+Семантика: prefetch=1; ревью идёт в отдельном потоке, а поток соединения продолжает
+обслуживать heartbeat'ы (ревью на 7 минут иначе рвёт соединение и сообщение
+доставляется повторно). Исключение → первый раз requeue, повторный сбой → DLQ
+(review.dead). Идемпотентность: повторная доставка уже посчитанного задания
+(потеря соединения на ack) — только ack, без пересчёта.
 """
 from __future__ import annotations
 
+import functools
 import json
 import os
 import sys
+import threading
 import time
 import traceback
 from pathlib import Path
@@ -17,7 +22,7 @@ from prometheus_client import Counter, Gauge, Histogram, start_http_server
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from services.common import (QUEUE, RESULTS_DIR, connect, declare, index_put,  # noqa: E402
-                             update_job)
+                             load_job, update_job)
 from tz_review.config import openai_settings_or_die, settings_or_die  # noqa: E402
 from tz_review.llm import LLM  # noqa: E402
 from tz_review.pipeline import review  # noqa: E402
@@ -59,11 +64,29 @@ def _account(llm: LLM, model: str, before: dict) -> dict:
     return delta
 
 
-def handle(ch, method, properties, body, *, llm: LLM, model: str, rubric: dict) -> None:
+def process(conn, ch, tag: int, redelivered: bool, body: bytes, *,
+            llm: LLM, model: str, rubric: dict) -> None:
+    """Рабочий поток: считает ревью и планирует ack/nack в поток соединения."""
+    ack = functools.partial(conn.add_callback_threadsafe, lambda: ch.basic_ack(tag))
+
+    def nack(requeue: bool) -> None:
+        conn.add_callback_threadsafe(lambda: ch.basic_nack(tag, requeue=requeue))
+
     msg = json.loads(body.decode("utf-8"))
     job_id = msg["job_id"]
+    prior = load_job(job_id) or {}
+    if prior.get("result"):
+        # Уже посчитано (повторная доставка после потери соединения на ack) — не пересчитываем.
+        update_job(job_id, status="done")
+        index_put(msg.get("doc_hash", ""), msg.get("config_hash", ""), job_id)
+        REVIEWS.labels("dup_ack").inc()
+        print(f"= {job_id}: повторная доставка, результат уже есть — ack", flush=True)
+        ack()
+        return
+
     text = msg.get("text") or (RESULTS_DIR / f"{job_id}.source.md").read_text(encoding="utf-8")
-    update_job(job_id, status="running", started_at=time.time(), worker_pid=os.getpid())
+    update_job(job_id, status="running", started_at=time.time(), worker_pid=os.getpid(),
+               redelivered=redelivered)
     INFLIGHT.inc()
     t0 = time.time()
     before = _snapshot(llm)
@@ -75,12 +98,12 @@ def handle(ch, method, properties, body, *, llm: LLM, model: str, rubric: dict) 
         INFLIGHT.dec()
         usage = _account(llm, model, before)
         err = f"{type(e).__name__}: {str(e)[:500]}"
-        requeue = not method.redelivered  # второй сбой подряд → DLQ, не бесконечный цикл
+        requeue = not redelivered  # второй сбой подряд → DLQ, не бесконечный цикл
         update_job(job_id, status="failed" if not requeue else "retrying", error=err,
                    traceback=traceback.format_exc()[-2000:], llm_usage=usage)
         REVIEWS.labels("failed" if not requeue else "retry").inc()
         print(f"! {job_id}: {err} (requeue={requeue})", file=sys.stderr, flush=True)
-        ch.basic_nack(method.delivery_tag, requeue=requeue)
+        nack(requeue)
         return
 
     dur = time.time() - t0
@@ -106,7 +129,15 @@ def handle(ch, method, properties, body, *, llm: LLM, model: str, rubric: dict) 
     REVIEWS.labels("done").inc()
     print(f"✓ {job_id}: {light} {vtext}; находок {len(result.findings)}, {dur:.0f}s, "
           f"вызовов {usage['calls']}", flush=True)
-    ch.basic_ack(method.delivery_tag)  # ack только после записи результата
+    ack()  # ack только после записи результата (в потоке соединения)
+
+
+def on_message(ch, method, properties, body, *, conn, llm, model, rubric) -> None:
+    """Колбэк консьюмера: не блокирует поток соединения — работа уходит в поток."""
+    threading.Thread(
+        target=process, args=(conn, ch, method.delivery_tag, method.redelivered, body),
+        kwargs={"llm": llm, "model": model, "rubric": rubric}, daemon=True,
+    ).start()
 
 
 def main() -> int:
@@ -120,8 +151,8 @@ def main() -> int:
         ch = conn.channel()
         declare(ch)
         ch.basic_qos(prefetch_count=1)
-        ch.basic_consume(queue=QUEUE, on_message_callback=lambda c, m, p, b: handle(
-            c, m, p, b, llm=llm, model=model, rubric=rubric))
+        ch.basic_consume(queue=QUEUE, on_message_callback=functools.partial(
+            on_message, conn=conn, llm=llm, model=model, rubric=rubric))
         print(f"worker: слушаю {QUEUE}", flush=True)
         try:
             ch.start_consuming()
