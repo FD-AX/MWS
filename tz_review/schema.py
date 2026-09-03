@@ -41,7 +41,8 @@ class ChecklistAnswer(BaseModel):
     """Ответ LLM на один бинарный вопрос рубрики."""
 
     id: str
-    status: Literal["OK", "MISSING", "UNCLEAR"]
+    # NA — аспект к документу не относится (нет Kafka → вопрос о кластере Kafka): не пробел
+    status: Literal["OK", "MISSING", "UNCLEAR", "NA"]
     quote: Optional[str] = None
     # why/ask приходят как null на OK-ответах — раньше str-поле роняло валидацию,
     # и OK-статус терялся молча (EXP-13/14: «UNKNOWN» у 7–10 слотов из 27).

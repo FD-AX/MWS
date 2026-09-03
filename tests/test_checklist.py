@@ -41,6 +41,23 @@ class NullFieldsLLM:
         ]}
 
 
+class NALLM:
+    def chat_json(self, system, user, temperature=0.0):
+        return {"answers": [
+            {"id": "Q1", "status": "NA", "quote": None, "why": "в документе нет Kafka", "ask": None},
+            {"id": "Q2", "status": "MISSING", "quote": None, "why": "нет", "ask": "где?"},
+            {"id": "Q3", "status": "OK", "quote": "q", "why": None, "ask": None},
+        ]}
+
+
+class TestChecklistNA(unittest.TestCase):
+    def test_na_is_not_a_finding_but_counts_as_closed(self):
+        findings, statuses = checklist.run("doc", RUBRIC, NALLM())
+        self.assertEqual(statuses, {"Q1": "NA", "Q2": "MISSING", "Q3": "OK"})
+        self.assertEqual([f.category for f in findings], ["checklist:Q2"])
+        self.assertEqual(checklist.coverage(statuses), (2, 3))
+
+
 class TestChecklistRetry(unittest.TestCase):
     def test_missing_answers_are_re_asked(self):
         llm = PartialLLM()
