@@ -134,7 +134,8 @@ def main() -> int:
                 groups = " ".join(f"{g} {a}/{b}" for g, (a, b) in sorted(by_group.items()))
                 diffs = " ".join(f"{d[:3]} {a}/{b}" for d, (a, b) in
                                  sorted(by_diff.items(),
-                                        key=lambda x: {"easy": 0, "medium": 1, "hard": 2}.get(x[0], 9)))
+                                        key=lambda x: {"easy": 0, "medium": 1, "hard": 2,
+                                                       "expert": 3}.get(x[0], 9)))
                 lines.append(f"| {vname} | {t['label']} | **{n_hit}/{len(gold)}** | {groups} "
                              f"| {diffs} | {n_findings} | {len(extras)} | {result.anchoring:.0%} |")
                 det = [f"### {vname} · {t['label']}", "", "Пропущено:"]

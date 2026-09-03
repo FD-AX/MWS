@@ -45,6 +45,7 @@ class LLM:
         self._client = OpenAI(base_url=settings.base_url, api_key=settings.api_key)
         self._model = settings.model
         self._no_temperature = False  # reasoning-модели OpenAI не принимают temperature
+        self._use_completion_tokens = False  # gpt-5.x: max_completion_tokens вместо max_tokens
 
     def _chat(self, system: str, user: str, temperature: float = 0.0, n: int = 1,
               max_tokens: int = 1600) -> list[str]:
@@ -53,7 +54,11 @@ class LLM:
         last_err: Exception | None = None
         for attempt in range(3):
             kwargs = {} if self._no_temperature else {"temperature": temperature}
-            kwargs["max_tokens"] = max_tokens
+            if self._use_completion_tokens:
+                # reasoning-модели тратят этот же бюджет на размышления — даём запас
+                kwargs["max_completion_tokens"] = max(max_tokens * 4, 6000)
+            else:
+                kwargs["max_tokens"] = max_tokens
             try:
                 resp = self._client.chat.completions.create(
                     model=self._model,
@@ -69,6 +74,9 @@ class LLM:
                 if "temperature" in str(e) and not self._no_temperature:
                     self._no_temperature = True
                     continue  # повтор без параметра, попытку не тратим
+                if "max_completion_tokens" in str(e) and not self._use_completion_tokens:
+                    self._use_completion_tokens = True
+                    continue
                 last_err = e
                 time.sleep(2 * (attempt + 1))
         raise RuntimeError(f"LLM недоступна после 3 попыток: {last_err}")

@@ -26,6 +26,8 @@ def main(argv: list[str] | None = None) -> int:
                         help="Включить semantic-entropy проход (дорого: N сэмплов на слот)")
     parser.add_argument("--baseline", action="store_true",
                         help="Режим V0b: один сильный вызов вместо конвейера (для замера дельт)")
+    parser.add_argument("--backend", choices=["pod", "openai"], default="pod",
+                        help="LLM-бэкенд: pod (TZR_*) или openai (OPENAI_*)")
     parser.add_argument("--threshold", type=float, default=3.0,
                         help="Порог критика 0-10 (default: 3.0)")
     parser.add_argument("--out", default="out", help="Каталог для отчётов (default: out)")
@@ -40,8 +42,10 @@ def main(argv: list[str] | None = None) -> int:
 
     llm = None
     if not args.no_llm:
+        from .config import openai_settings_or_die
         from .llm import LLM
-        llm = LLM(settings_or_die())
+        llm = LLM(openai_settings_or_die() if args.backend == "openai"
+                  else settings_or_die())
 
     result = review(text, rubric, llm,
                     use_entropy=args.entropy, use_baseline=args.baseline,

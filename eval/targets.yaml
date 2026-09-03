@@ -12,6 +12,9 @@ targets:
   - label: doc1_stream
     doc: casedata/doc1_stream_geo.md
     gold: eval/gold_doc1.yaml
+  - label: synth_v2hard
+    doc: synth/out/mart_traffic_v2h.md
+    gold: synth/out/mart_traffic_v2h.gold.yaml
   - label: clean_base (шум)
     doc: synth/base/mart_traffic_clean.md
     gold: null

@@ -1,0 +1,87 @@
+# v2hard: экспертные логические инъекции — разграничение сильнейших моделей/вариантов.
+# Текст остаётся гладким; дефекты видны только пониманию семантики данных.
+
+base: synth/base/mart_traffic_clean.md
+out_doc: synth/out/mart_traffic_v2h.md
+out_gold: synth/out/mart_traffic_v2h.gold.yaml
+
+defects:
+  - id: HRD-BOUND
+    code: D3
+    difficulty: expert
+    description: "Граница месяца включает 1-е число следующего (off-by-one, двойной учёт дня)"
+    op: replace
+    find: "Из TABLE_DPI_RAW_PS берутся все записи с FIELD_BIZ_DATE внутри календарного месяца агрегации."
+    replace: "Из TABLE_DPI_RAW_PS берутся все записи с FIELD_BIZ_DATE с 1-го числа месяца агрегации по 1-е число следующего месяца включительно."
+    categories: []
+    keywords: ["включительно", "границ", "дважды", "двойн"]
+
+  - id: HRD-VOID
+    code: B6
+    difficulty: expert
+    description: "Late-arriving: содержательное правило заменено канцелярской пустышкой «в установленном порядке» (текстура МТС: «fallback-логика (см. алгоритм)»)"
+    op: replace
+    find: "Записи за месяц M, появившиеся в источнике после планового расчёта, автоматически не подхватываются — они попадают в витрину только при ручном перезапуске месяца по заявке владельца витрины."
+    replace: "Записи за месяц M, появившиеся в источнике после планового расчёта, обрабатываются в установленном порядке."
+    categories: ["checklist:INC-02"]
+    keywords: ["установленном порядке", "какой порядок", "не определён порядок"]
+
+  - id: HRD-REFNAME
+    code: C1
+    difficulty: hard
+    description: "Ссылка на несуществующий раздел по имени («Оркестрация») — graph ловит только номера"
+    op: replace
+    find: "| FIELD_PROC_TS | timestamp | Время формирования строки | метка запуска DAG_AGG_TRAFFIC |"
+    replace: "| FIELD_PROC_TS | timestamp | Время формирования строки | метка запуска DAG_AGG_TRAFFIC (детали — в разделе «Оркестрация») |"
+    categories: []
+    keywords: ["оркестрац"]
+
+  - id: HRD-RET
+    code: D2
+    difficulty: hard
+    description: "Сверка на глубину 36 месяцев при ретеншене витрины 24 месяца"
+    op: insert_after
+    find: "- проверка наличия всех регионов справочника в партиции."
+    text: "Ежеквартально выполняется контрольная сверка агрегатов с источником на глубину 36 месяцев."
+    categories: []
+    keywords: ["36 месяц"]
+
+  - id: HRD-OVERLOAD
+    code: D1
+    difficulty: expert
+    description: "Категория UNKNOWN перегружена: и NULL-тип сети, и неизвестный регион"
+    op: replace
+    find: "коды, отсутствующие в справочнике, учитываются в категории NO_REGION."
+    replace: "коды, отсутствующие в справочнике, учитываются в категории UNKNOWN."
+    categories: []
+    keywords: ["unknown", "no_region", "перегруж", "две разн", "смешива"]
+
+  - id: HRD-TIME
+    code: D2
+    difficulty: expert
+    description: "Запуск 3-го числа при сроке готовности 10:00 2-го числа (готовность раньше запуска)"
+    op: replace
+    find: "Запуск: ежемесячно, 2-го числа в 03:00 UTC, оркестрация DAG_AGG_TRAFFIC."
+    replace: "Запуск: ежемесячно, 3-го числа в 03:00 UTC, оркестрация DAG_AGG_TRAFFIC."
+    categories: []
+    keywords: ["3-го числа", "раньше запуска", "до запуска", "невыполним"]
+
+  - id: HRD-KEY
+    code: D3
+    difficulty: hard
+    description: "Из ключа таблицы убран FIELD_RAT_NAME при группировке по трём полям"
+    op: replace
+    find: "Ключ таблицы: (FIELD_BIZ_DATE, FIELD_REGION_NAME, FIELD_RAT_NAME)."
+    replace: "Ключ таблицы: (FIELD_BIZ_DATE, FIELD_REGION_NAME)."
+    categories: []
+    keywords: ["ключ", "уникальн", "rat_name"]
+
+  - id: HRD-FILT
+    code: B9
+    difficulty: hard
+    description: "Нулевые записи исключаются «из расчёта FIELD_TRAFFIC_GB» — а из USERS_CNT?"
+    op: replace
+    find: "Записи с нулевым суммарным объёмом (FIELD_BYTES_UL + FIELD_BYTES_DL = 0) исключаются из расчёта;"
+    replace: "Записи с нулевым суммарным объёмом (FIELD_BYTES_UL + FIELD_BYTES_DL = 0) исключаются из расчёта FIELD_TRAFFIC_GB;"
+    categories: []
+    keywords: ["users_cnt", "исключ"]
