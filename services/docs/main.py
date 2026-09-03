@@ -28,7 +28,16 @@ _KNOWN_HEADINGS.update(norm_text(n) for n in (
     "Бизнес-требования", "Способ загрузки", "Регламент", "Глубина данных", "Команда",
     "Алгоритм расчёта", "Алгоритм расчета", "Требования к агрегату", "Структура данных CDM",
     "Источники данных", "Описание", "Контроль качества", "Нефункциональные требования",
+    "Источники и приёмники данных", "Источники и приемники данных", "Приёмники данных",
+    "Алгоритм обработки потока", "Структура данных", "FAQ", "История изменений",
 ))
+
+
+def _is_known_heading(key: str) -> bool:
+    """Точное совпадение или известное имя как префикс: «FAQ (обобщённо…)»,
+    «Алгоритм обработки потока» при известном «Алгоритм обработки»."""
+    return key in _KNOWN_HEADINGS or any(key.startswith(k + " ") or key.startswith(k + " (")
+                                         for k in _KNOWN_HEADINGS if len(k) >= 4)
 # Нумерация обязана быть с точкой/скобкой: «1 FIELD_X string …» из расплющенных
 # PDF-таблиц заголовком не считается.
 _NUM_HEADING = re.compile(r"^(\d+(?:\.\d+)*)[.)]\s+([А-ЯЁA-Z][^.|]{2,60})$")
@@ -45,7 +54,7 @@ def promote_headings(md: str) -> str:
         s = line.strip()
         if 3 <= len(s) <= 70 and not s.endswith((".", ";", ",")) and not s.startswith("|"):
             key = norm_text(s.rstrip(":"))
-            if key in _KNOWN_HEADINGS or _NUM_HEADING.match(s):
+            if _is_known_heading(key) or _NUM_HEADING.match(s):
                 out.append(f"## {s.rstrip(':')}")
                 continue
         out.append(line)
