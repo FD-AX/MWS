@@ -17,7 +17,7 @@ from pathlib import Path
 import httpx
 import pika
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
-from fastapi.responses import PlainTextResponse
+from fastapi.responses import FileResponse, PlainTextResponse
 from prometheus_client import Counter, make_asgi_app
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
@@ -31,9 +31,35 @@ app.mount("/metrics", make_asgi_app())
 ACCEPTED = Counter("tzr_api_reviews_total", "Запросов на ревью", ["outcome"])
 
 
+STATIC = Path(__file__).resolve().parent / "static"
+
+
+@app.get("/", include_in_schema=False)
+def index():
+    """Минимальный UI: загрузка документа, статус, вердикт и находки, последние проверки."""
+    return FileResponse(STATIC / "index.html")
+
+
 @app.get("/healthz")
 def healthz():
     return {"ok": True, "results_dir": str(RESULTS_DIR)}
+
+
+@app.get("/reviews")
+def list_reviews(limit: int = 20):
+    """Последние задания (для UI): без результата, только шапка."""
+    jobs = []
+    for p in RESULTS_DIR.glob("*.json"):
+        if p.name == "index.json" or p.name.endswith(".tmp"):
+            continue
+        try:
+            j = json.loads(p.read_text(encoding="utf-8"))
+        except Exception:  # noqa: BLE001
+            continue
+        jobs.append({k: j.get(k) for k in ("job_id", "status", "filename", "created_at",
+                                            "duration_s", "verdict", "model", "cached_from")})
+    jobs.sort(key=lambda j: j.get("created_at") or 0, reverse=True)
+    return jobs[:limit]
 
 
 @app.post("/reviews", status_code=202)
