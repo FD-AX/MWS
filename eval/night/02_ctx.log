@@ -1,0 +1,14 @@
+# Bench report — 2026-09-03
+Варианты: v2g
+
+## Сводка
+
+| Вариант | Цель | Recall | По группам | По сложности | Находок | Лишних | Anchoring |
+|---|---|---|---|---|---|---|---|
+| v2g | ctx_len0_start (~4k chars) | **7/12** | A 1/4 B 2/3 C 2/2 D 2/2 E 0/1 | eas 2/3 med 2/6 har 3/3 | 14 | 6 | 100% |
+| v2g | ctx_len2_start (~14k chars) | **7/12** | A 4/4 B 2/3 C 1/2 D 0/2 E 0/1 | eas 2/3 med 4/6 har 1/3 | 12 | 4 | 93% |
+| v2g | ctx_len2_end (~14k chars) | **9/12** | A 2/4 B 3/3 C 1/2 D 2/2 E 1/1 | eas 3/3 med 3/6 har 3/3 | 18 | 5 | 94% |
+| v2g | ctx_len5_start (~28k chars) | **3/12** | A 0/4 B 2/3 C 1/2 D 0/2 E 0/1 | eas 2/3 med 0/6 har 1/3 | 6 | 3 | 86% |
+| v2g | ctx_len5_end (~28k chars) | **4/12** | A 0/4 B 2/3 C 1/2 D 1/2 E 0/1 | eas 2/3 med 0/6 har 2/3 | 8 | 4 | 47% |
+
+Отчёт: C:\Users\user\OneDrive\Рабочий стол\ИТМО\net-review\eval\night\ctx_report_llm.md

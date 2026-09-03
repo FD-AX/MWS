@@ -117,11 +117,15 @@ def main() -> int:
         for t in targets:
             text = (ROOT / t["doc"]).read_text(encoding="utf-8")
             llm = get_llm(spec.get("backend", "pod")) if spec["llm"] else None
-            result = review(text, rubric, llm,
-                            use_baseline=spec["baseline"], use_entropy=spec["entropy"],
-                            use_graph=spec["graph"],
-                            llm_passes=frozenset(spec["passes"]) if spec.get("passes") else None,
-                            baseline_prompt=spec.get("bprompt", "baseline"))
+            try:
+                result = review(text, rubric, llm,
+                                use_baseline=spec["baseline"], use_entropy=spec["entropy"],
+                                use_graph=spec["graph"],
+                                llm_passes=frozenset(spec["passes"]) if spec.get("passes") else None,
+                                baseline_prompt=spec.get("bprompt", "baseline"))
+            except Exception as e:  # noqa: BLE001 — ночные прогоны не должны умирать целиком
+                lines.append(f"| {vname} | {t['label']} | ERROR | {str(e)[:80]} | | | | |")
+                continue
             n_findings = len(result.findings)
             if t.get("gold"):
                 gold = yaml.safe_load((ROOT / t["gold"]).read_text(encoding="utf-8"))["defects"]

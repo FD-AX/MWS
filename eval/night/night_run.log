@@ -1,0 +1,29 @@
+++ dirname scripts/night_run.sh
++ cd scripts/..
++ mkdir -p eval/night
++ export PYTHONIOENCODING=utf-8
++ PYTHONIOENCODING=utf-8
++ echo '=== 1. Канарейка v2g (гейт) ==='
++ tee eval/night/00_canary.log
+=== 1. Канарейка v2g (гейт) ===
++ python eval/canary.py --variant v2g
++ CANARY=1
++ echo 'canary exit=1 (информационно)'
++ tee -a eval/night/00_canary.log
+canary exit=1 (информационно)
++ echo '=== 2. Полная лестница на поде ==='
+=== 2. Полная лестница на поде ===
++ python eval/bench.py --variants p0,p1,p2,p3,v0b,v2g,h5,v3 --out eval/night/bench_pod_full.md
++ echo '=== 3. Длина контекста (v2g) ==='
+=== 3. Длина контекста (v2g) ===
++ python eval/bench.py --variants v2g --targets exp/targets_ctx.yaml --out eval/night/ctx_report_llm.md
++ echo '=== 4. Стабильность: v2g x3 на ключевых целях ==='
+=== 4. Стабильность: v2g x3 на ключевых целях ===
++ for i in 1 2 3
++ python eval/bench.py --variants v2g --targets eval/targets_key.yaml --out eval/night/stab_1.md
++ for i in 1 2 3
++ python eval/bench.py --variants v2g --targets eval/targets_key.yaml --out eval/night/stab_2.md
++ for i in 1 2 3
++ python eval/bench.py --variants v2g --targets eval/targets_key.yaml --out eval/night/stab_3.md
++ echo 'NIGHT RUN DONE'
+NIGHT RUN DONE

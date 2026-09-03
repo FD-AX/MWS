@@ -33,10 +33,14 @@ class LLM:
         self._model = settings.model
         self._no_temperature = False  # reasoning-модели OpenAI не принимают temperature
 
-    def _chat(self, system: str, user: str, temperature: float = 0.0, n: int = 1) -> list[str]:
+    def _chat(self, system: str, user: str, temperature: float = 0.0, n: int = 1,
+              max_tokens: int = 1600) -> list[str]:
+        # max_tokens ограничен: прокси RunPod (Cloudflare) рвёт запросы >120s,
+        # а длинные генерации на медленных картах в окно не влезают.
         last_err: Exception | None = None
         for attempt in range(3):
             kwargs = {} if self._no_temperature else {"temperature": temperature}
+            kwargs["max_tokens"] = max_tokens
             try:
                 resp = self._client.chat.completions.create(
                     model=self._model,
@@ -63,11 +67,11 @@ class LLM:
         """n независимых сэмплов (для semantic entropy). Некоторые локальные бэкенды
         не поддерживают n>1 — тогда добираем отдельными вызовами."""
         try:
-            outs = self._chat(system, user, temperature, n=n)
+            outs = self._chat(system, user, temperature, n=n, max_tokens=200)
             if len(outs) == n:
                 return outs
         except Exception:
             outs = []
         while len(outs) < n:
-            outs.extend(self._chat(system, user, temperature))
+            outs.extend(self._chat(system, user, temperature, max_tokens=200))
         return outs[:n]
