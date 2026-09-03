@@ -79,6 +79,8 @@ def main() -> int:
     ap.add_argument("--variants", default="v1")
     ap.add_argument("--targets", default="eval/targets.yaml")
     ap.add_argument("--out", default="eval/bench_report.md")
+    ap.add_argument("--json", default=None,
+                    help="Дополнительно сохранить сырые результаты (per-defect hit) в JSON")
     args = ap.parse_args()
 
     variants = [v.strip() for v in args.variants.split(",")]
@@ -121,6 +123,7 @@ def main() -> int:
              "| Вариант | Цель | Recall | По группам | По сложности | Находок | Лишних | Anchoring |",
              "|---|---|---|---|---|---|---|---|"]
     details = []
+    raw_records = []
 
     for vname in variants:
         spec = VARIANTS[vname]
@@ -151,6 +154,16 @@ def main() -> int:
                                                        "expert": 3}.get(x[0], 9)))
                 lines.append(f"| {vname} | {t['label']} | **{n_hit}/{len(gold)}** | {groups} "
                              f"| {diffs} | {n_findings} | {len(extras)} | {result.anchoring:.0%} |")
+                raw_records.append({
+                    "variant": vname, "target": t["label"],
+                    "defects": {d["id"]: {"code": str(d.get("code", "?")),
+                                          "difficulty": str(d.get("difficulty", "?")),
+                                          "description": d["description"],
+                                          "hit": bool(hits[d["id"]])}
+                                for d in gold},
+                    "extras": [{"category": f["category"], "severity": f["severity"],
+                                "why": (f["why"] or "")[:160]} for f in extras],
+                })
                 det = [f"### {vname} · {t['label']}", "", "Пропущено:"]
                 det += [f"- **[{d.get('code', '?')}] {d['id']}**: {d['description']}"
                         for d in gold if not hits[d["id"]]] or ["- (ничего)"]
@@ -162,10 +175,21 @@ def main() -> int:
             else:
                 lines.append(f"| {vname} | {t['label']} | — | — | {n_findings} "
                              f"| noise={n_findings} | {result.anchoring:.0%} |")
+                raw_records.append({
+                    "variant": vname, "target": t["label"], "defects": {},
+                    "noise": [{"category": f["category"], "severity": f["severity"],
+                               "why": (f["why"] or "")[:160]}
+                              for f in (x.model_dump() for x in result.findings)
+                              if f["severity"] in ("critical", "high", "medium")],
+                })
 
     report = "\n".join(lines) + "\n\n## Промахи и лишние\n\n" + "\n\n".join(details) + "\n"
     out = ROOT / args.out
     out.write_text(report, encoding="utf-8")
+    if args.json:
+        import json as _json
+        (ROOT / args.json).write_text(
+            _json.dumps(raw_records, ensure_ascii=False, indent=1), encoding="utf-8")
     print("\n".join(lines))
     print(f"\nОтчёт: {out}")
     return 0
