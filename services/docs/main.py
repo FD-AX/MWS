@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 import io
+import re
 import sys
 from pathlib import Path
 
@@ -14,7 +15,41 @@ from prometheus_client import Counter, Histogram, make_asgi_app
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from services.common import doc_hash  # noqa: E402
-from tz_review.document import parse  # noqa: E402
+from tz_review.document import normalize as norm_text, parse  # noqa: E402
+from tz_review.rubric import load_rubric  # noqa: E402
+
+_RUBRIC = load_rubric()
+# Имена разделов, которые в PDF/DOCX-выгрузках стоят голой строкой без разметки:
+# официальный шаблон + алиасы обязательных разделов + фактические заголовки доков МТС.
+_KNOWN_HEADINGS = {norm_text(n) for n in _RUBRIC.get("official_sections", [])}
+for req in _RUBRIC.get("required_sections", []):
+    _KNOWN_HEADINGS.update(norm_text(a) for a in [req["name"], *req.get("aliases", [])])
+_KNOWN_HEADINGS.update(norm_text(n) for n in (
+    "Бизнес-требования", "Способ загрузки", "Регламент", "Глубина данных", "Команда",
+    "Алгоритм расчёта", "Алгоритм расчета", "Требования к агрегату", "Структура данных CDM",
+    "Источники данных", "Описание", "Контроль качества", "Нефункциональные требования",
+))
+# Нумерация обязана быть с точкой/скобкой: «1 FIELD_X string …» из расплющенных
+# PDF-таблиц заголовком не считается.
+_NUM_HEADING = re.compile(r"^(\d+(?:\.\d+)*)[.)]\s+([А-ЯЁA-Z][^.|]{2,60})$")
+
+
+def promote_headings(md: str) -> str:
+    """Короткие строки, совпадающие с именем раздела шаблона или нумерованные
+    («1. Источники данных»), становятся заголовками markdown, если в тексте
+    заголовков ещё нет. Иначе секционный парсер видит один сплошной документ."""
+    if re.search(r"^#{1,6}\s", md, flags=re.M):
+        return md
+    out: list[str] = []
+    for line in md.splitlines():
+        s = line.strip()
+        if 3 <= len(s) <= 70 and not s.endswith((".", ";", ",")) and not s.startswith("|"):
+            key = norm_text(s.rstrip(":"))
+            if key in _KNOWN_HEADINGS or _NUM_HEADING.match(s):
+                out.append(f"## {s.rstrip(':')}")
+                continue
+        out.append(line)
+    return "\n".join(out)
 
 app = FastAPI(title="tz_review docs", version="0.1")
 app.mount("/metrics", make_asgi_app())
@@ -65,7 +100,7 @@ def healthz():
 
 
 @app.post("/normalize")
-async def normalize(file: UploadFile | None = File(None), text: str | None = Form(None)):
+async def normalize_endpoint(file: UploadFile | None = File(None), text: str | None = Form(None)):
     if file is not None:
         data = await file.read()
         name = (file.filename or "").lower()
@@ -88,6 +123,7 @@ async def normalize(file: UploadFile | None = File(None), text: str | None = For
     if not md.strip():
         NORMALIZED.labels(kind, "empty").inc()
         raise HTTPException(422, "документ пуст после нормализации")
+    md = promote_headings(md)
     doc = parse(md)
     NORMALIZED.labels(kind, "ok").inc()
     CHARS.observe(len(md))
