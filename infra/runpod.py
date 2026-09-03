@@ -111,8 +111,10 @@ def create_ollama(gpus: list[str], cloud: str = "SECURE", disk_gb: int = 120,
 
 def _ollama(pod_id: str, path: str, body: dict | None = None, stream: bool = False):
     url = f"https://{pod_id}-11434.proxy.runpod.net{path}"
+    # Cloudflare перед прокси RunPod отдаёт 403 на User-Agent «Python-urllib» — шлём свой.
     req = urllib.request.Request(url, method="POST" if body is not None else "GET",
-                                 headers={"Content-Type": "application/json"},
+                                 headers={"Content-Type": "application/json",
+                                          "User-Agent": "tzr-infra/1.0 (curl-compatible)"},
                                  data=json.dumps(body).encode() if body is not None else None)
     return urllib.request.urlopen(req, timeout=600 if stream else 120)
 
