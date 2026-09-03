@@ -21,8 +21,8 @@ from pathlib import Path
 from prometheus_client import Counter, Gauge, Histogram, start_http_server
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
-from services.common import (QUEUE, RESULTS_DIR, connect, declare, index_put,  # noqa: E402
-                             load_job, update_job)
+from services.common import (QUEUE, RESULTS_DIR, connect, declare, index_get,  # noqa: E402
+                             index_put, load_job, update_job)
 from tz_review.config import openai_settings_or_die, settings_or_die  # noqa: E402
 from tz_review.llm import LLM  # noqa: E402
 from tz_review.pipeline import review  # noqa: E402
@@ -81,6 +81,23 @@ def process(conn, ch, tag: int, redelivered: bool, body: bytes, *,
         index_put(msg.get("doc_hash", ""), msg.get("config_hash", ""), job_id)
         REVIEWS.labels("dup_ack").inc()
         print(f"= {job_id}: повторная доставка, результат уже есть — ack", flush=True)
+        ack()
+        return
+
+    # Тот же документ с тем же конфигом уже посчитан (двойной Execute, повторная загрузка):
+    # отдаём готовый результат, не тратим 7 минут модели.
+    twin_id = index_get(msg.get("doc_hash", ""), msg.get("config_hash", ""))
+    twin = load_job(twin_id) if twin_id and twin_id != job_id else None
+    if twin and twin.get("status") == "done" and twin.get("result"):
+        src = RESULTS_DIR / f"{twin_id}.report.md"
+        if src.exists():
+            (RESULTS_DIR / f"{job_id}.report.md").write_text(src.read_text(encoding="utf-8"),
+                                                            encoding="utf-8")
+        update_job(job_id, status="done", cached_from=twin_id, finished_at=time.time(),
+                   duration_s=0.0, verdict=twin.get("verdict"), llm_usage={"calls": 0},
+                   model=twin.get("model"), backend=twin.get("backend"), result=twin["result"])
+        REVIEWS.labels("cached").inc()
+        print(f"= {job_id}: дубль документа {twin_id} — результат из кэша", flush=True)
         ack()
         return
 
