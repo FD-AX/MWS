@@ -57,7 +57,7 @@ def run(doc_text: str, rubric: dict[str, Any], llm: LLM,
                 unanswered.append(q["id"])
                 continue
             statuses[q["id"]] = ans.status
-            if ans.status == "OK":
+            if ans.status in ("OK", "NA"):  # NA: аспект не относится к документу — не находка
                 continue
             findings.append(Finding(
                 category=f"checklist:{q['id']}",
@@ -79,7 +79,8 @@ def run(doc_text: str, rubric: dict[str, Any], llm: LLM,
 
 
 def coverage(statuses: dict[str, str]) -> tuple[int, int]:
-    ok = sum(1 for s in statuses.values() if s == "OK")
+    """Закрытые слоты: OK + NA (не применимо к документу)."""
+    ok = sum(1 for s in statuses.values() if s in ("OK", "NA"))
     return ok, len(statuses)
 
 

@@ -44,10 +44,12 @@ def to_markdown(result: ReviewResult, doc_name: str = "ТЗ") -> str:
 
     if result.statuses:
         ok = sum(1 for s in result.statuses.values() if s == "OK")
+        na = sum(1 for s in result.statuses.values() if s == "NA")
         total = len(result.statuses)
-        parts.append(f"**Покрытие чеклиста полноты:** {ok}/{total} слотов закрыто "
-                     f"({100 * ok // max(total, 1)}%). Anchoring rate цитат: "
-                     f"{result.anchoring:.0%}.")
+        parts.append(f"**Покрытие чеклиста полноты:** {ok + na}/{total} слотов закрыто "
+                     f"({100 * (ok + na) // max(total, 1)}%"
+                     + (f", из них {na} не применимо к документу" if na else "")
+                     + f"). Anchoring rate цитат: {result.anchoring:.0%}.")
 
     main = [f for f in result.findings if f.severity != "advisory"]
     advisory = [f for f in result.findings if f.severity == "advisory"]
