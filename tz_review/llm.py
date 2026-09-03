@@ -22,6 +22,19 @@ def _extract_json(text: str) -> Any:
             return json.loads(text[start:end])
         except json.JSONDecodeError:
             continue
+    # Ремонт обрезанного max_tokens'ом ответа: режем до последнего целого объекта
+    # массива и дозакрываем структуру ("...},{"неполный..." -> "...}]}").
+    body = text[start:]
+    cut = body.rfind("}")
+    tries = 0
+    while cut > 0 and tries < 8:
+        for suffix in ("]}", "}]}", "\"]}"):
+            try:
+                return json.loads(body[:cut + 1] + suffix)
+            except json.JSONDecodeError:
+                continue
+        cut = body.rfind("}", 0, cut)
+        tries += 1
     raise ValueError(f"Не удалось распарсить JSON из ответа: {text[:200]!r}")
 
 
