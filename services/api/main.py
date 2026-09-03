@@ -34,6 +34,17 @@ STATIC = Path(__file__).resolve().parent / "static"
 
 app = FastAPI(title="tz_review API", version="0.2")
 app.mount("/metrics", make_asgi_app())
+
+# Отдельный фронтенд (другой origin) ходит в API напрямую — CORS открыт для демо;
+# в контуре заказчика сузить до домена фронта (TZR_CORS_ORIGINS).
+from fastapi.middleware.cors import CORSMiddleware  # noqa: E402
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[o.strip() for o in os.environ.get("TZR_CORS_ORIGINS", "*").split(",")],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 ACCEPTED = Counter("tzr_api_reviews_total", "Запросов на ревью", ["outcome"])
 
 
