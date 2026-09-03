@@ -1,0 +1,17 @@
+# Bench report — 2026-09-03
+Варианты: v2g_gpt, v2e_gpt
+
+## Сводка
+
+| Вариант | Цель | Recall | По группам | По сложности | Находок | Лишних | Anchoring |
+|---|---|---|---|---|---|---|---|
+| v2g_gpt | synth_v1 | ERROR | В ответе модели нет JSON: '' | | | | |
+| v2g_gpt | doc3_mart (целевой тип) | **7/13** | A 2/7 B 2/2 C 1/1 D 1/2 F 1/1 | eas 1/1 med 3/8 har 3/4 | 13 | 1 | 90% |
+| v2g_gpt | synth_v2hard | **8/8** | B 2/2 C 1/1 D 5/5 | har 4/4 exp 4/4 | 16 | 5 | 100% |
+| v2g_gpt | clean_base (шум) | — | — | 10 | noise=10 | 67% |
+| v2e_gpt | synth_v1 | **9/12** | A 2/4 B 2/3 C 2/2 D 2/2 E 1/1 | eas 3/3 med 3/6 har 3/3 | 16 | 2 | 76% |
+| v2e_gpt | doc3_mart (целевой тип) | **11/13** | A 5/7 B 2/2 C 1/1 D 2/2 F 1/1 | eas 1/1 med 6/8 har 4/4 | 15 | 2 | 90% |
+| v2e_gpt | synth_v2hard | **7/8** | B 2/2 C 1/1 D 4/5 | har 3/4 exp 4/4 | 11 | 1 | 62% |
+| v2e_gpt | clean_base (шум) | — | — | 7 | noise=7 | 53% |
+
+Отчёт: C:\Users\user\OneDrive\Рабочий стол\ИТМО\net-review\eval\night\bench_gpt_v2e.md
