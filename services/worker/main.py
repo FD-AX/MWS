@@ -107,10 +107,23 @@ def process(conn, ch, tag: int, redelivered: bool, body: bytes, *,
     INFLIGHT.inc()
     t0 = time.time()
     before = _snapshot(llm)
+    def on_progress(stage: str, frac: float, info: dict | None = None) -> None:
+        # Ход ревью в задании: UI рисует полосу по этапам конвейера + живые цифры.
+        now = _snapshot(llm)
+        update_job(job_id, progress={
+            "stage": stage, "pct": round(frac * 100), "at": time.time(),
+            "elapsed_s": round(time.time() - t0),
+            "candidates": (info or {}).get("candidates"),
+            "batch": (info or {}).get("batch"), "batches": (info or {}).get("batches"),
+            "calls": now.get("calls", 0) - before.get("calls", 0),
+            "tokens": (now.get("prompt_tokens", 0) + now.get("completion_tokens", 0)
+                       - before.get("prompt_tokens", 0) - before.get("completion_tokens", 0)),
+        })
+
     try:
         result = review(text, rubric, llm, use_graph=True, use_entropy=USE_ENTROPY,
                         use_lp=USE_LP, llm_lp=llm if USE_LP else None,
-                        critic_threshold=THRESHOLD)
+                        critic_threshold=THRESHOLD, progress=on_progress)
     except Exception as e:  # noqa: BLE001
         INFLIGHT.dec()
         usage = _account(llm, model, before)

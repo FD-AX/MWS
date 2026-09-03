@@ -22,6 +22,9 @@
   .muted { color:var(--muted); font-size:13px; }
   .status { margin-top:14px; padding:12px 14px; border-radius:8px; background:#eef2ff; font-size:14px; }
   .status.done { background:#ecfdf5; } .status.failed { background:#fef2f2; }
+  .bar { height:10px; background:#e0e7ff; border-radius:999px; overflow:hidden; margin-top:10px; }
+  .bar > div { height:100%; background:var(--accent); width:0; transition:width .6s ease; }
+  .stage { display:flex; justify-content:space-between; font-size:13px; color:var(--muted); margin-top:6px; }
   .verdict { font-size:20px; margin:16px 0 6px; }
   .kpis { display:flex; flex-wrap:wrap; gap:10px; margin:10px 0 16px; }
   .kpi { border:1px solid var(--line); border-radius:8px; padding:8px 12px; min-width:110px; }
@@ -112,7 +115,44 @@ async function submit() {
   }
 }
 
-function showStatus(msg, cls) { const s = $("status"); s.hidden = false; s.className = "status " + cls; s.textContent = msg; }
+const STAGE_RU = { deterministic: "детерминированный слой: шаблон, паттерны", doc_graph: "граф сущностей",
+  checklist: "чеклист полноты (27 слотов)", document_level: "согласованность разделов", developer_sim: "взгляд разработчика",
+  spec_compile: "компиляция ТЗ", uncertainty: "семантическая энтропия", uncertainty_lp: "логит-зонд",
+  verify: "верификация цитат", critic: "критик", done: "готово" };
+
+let typicalDuration = null;  // медиана длительности готовых ревью (прошлые задания) — априорная оценка
+
+function fmtEta(sec) {
+  if (sec == null || !isFinite(sec)) return "";
+  if (sec < 45) return "меньше минуты";
+  const m = Math.round(sec / 60);
+  return `≈ ${m} мин`;
+}
+
+function showStatus(msg, cls, progress, elapsed) {
+  const s = $("status"); s.hidden = false; s.className = "status " + cls;
+  s.innerHTML = `<div>${esc(msg)}</div>`;
+  if (progress) {
+    const pct = Math.max(0, Math.min(100, progress.pct ?? 0));
+    // Грубая экстраполяция: пока прогресс мал — от типичной длительности прошлых ревью,
+    // дальше — линейно от пройденной доли и затраченного времени.
+    let eta = null;
+    const el = elapsed ?? progress.elapsed_s ?? 0;
+    if (pct >= 8 && el > 0) eta = el * (100 - pct) / pct;
+    else if (typicalDuration) eta = Math.max(0, typicalDuration - el);
+    const stage = (STAGE_RU[progress.stage] || progress.stage || "")
+      + (progress.batch ? ` · батч ${progress.batch}/${progress.batches}` : "");
+    const live = [
+      progress.candidates != null ? `кандидатов ${progress.candidates}` : "",
+      progress.calls ? `вызовов ${progress.calls}` : "",
+      progress.tokens ? `токенов ${Math.round(progress.tokens / 1000)}k` : "",
+    ].filter(Boolean).join(" · ");
+    s.innerHTML += `<div class="bar"><div style="width:${pct}%"></div></div>
+      <div class="stage"><span>${esc(stage)}</span>
+      <span>${pct}% · прошло ${Math.round(el / 60)} мин${eta != null ? " · осталось " + fmtEta(eta) : ""}</span></div>
+      ${live ? `<div class="stage"><span>${esc(live)}</span></div>` : ""}`;
+  }
+}
 
 function open(jobId) {
   current = jobId;
@@ -120,7 +160,7 @@ function open(jobId) {
   $("result").hidden = true;
   if (timer) clearInterval(timer);
   poll();
-  timer = setInterval(poll, 5000);
+  timer = setInterval(poll, 3000);
 }
 
 async function poll() {
@@ -129,8 +169,8 @@ async function poll() {
   if (!r.ok) { showStatus("Задание не найдено", "failed"); clearInterval(timer); return; }
   const j = await r.json();
   const started = j.started_at ? Math.round(Date.now() / 1000 - j.started_at) : null;
-  if (j.status === "queued") showStatus(`В очереди · ${current}`, "");
-  else if (j.status === "running" || j.status === "retrying") showStatus(`Идёт ревью · ${current} · ${started ?? 0} с${j.status === "retrying" ? " · повтор после сбоя" : ""}`, "");
+  if (j.status === "queued") showStatus(`В очереди · ${current}`, "", { stage: "queued", pct: 0 }, 0);
+  else if (j.status === "running" || j.status === "retrying") showStatus(`Идёт ревью · ${current} · ${started ?? 0} с${j.status === "retrying" ? " · повтор после сбоя" : ""}`, "", j.progress || { stage: "deterministic", pct: 1 }, started);
   else if (j.status === "failed") { showStatus("Сбой: " + (j.error || "неизвестно"), "failed"); clearInterval(timer); }
   else if (j.status === "done") { clearInterval(timer); showStatus(`Готово · ${current} · ${j.duration_s ?? 0} с · ${j.model || ""}${j.cached_from ? " · из кэша" : ""}`, "done"); render(j); }
   loadJobs();
@@ -169,6 +209,8 @@ async function loadJobs() {
   const r = await fetch("/reviews");
   if (!r.ok) return;
   const jobs = await r.json();
+  const durs = jobs.filter(j => j.status === "done" && j.duration_s > 0).map(j => j.duration_s).sort((a, b) => a - b);
+  if (durs.length) typicalDuration = durs[Math.floor(durs.length / 2)];
   $("jobs").innerHTML = jobs.map(j => `<a href="#${j.job_id}" onclick="open('${j.job_id}');return false;">
       ${esc(j.verdict?.light || "")} ${esc(j.filename || "текст")} <small>${esc(j.status)} · ${fmtTime(j.created_at)} · ${j.job_id}</small></a>`).join("") || "<span class='muted'>пусто</span>";
 }
