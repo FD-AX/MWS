@@ -1,0 +1,21 @@
+[22:41:24] start v1g · synth_v1
+[22:41:24] | v1g | synth_v1 | **6/12** | A 1/4 B 2/3 C 2/2 D 1/2 E 0/1 | eas 2/3 med 2/6 har 2/3 | 5 | 0 | 100% |
+[22:41:24] start v1g · doc3_mart (целевой тип)
+[22:41:24] | v1g | doc3_mart (целевой тип) | **3/16** | A 0/9 B 0/2 C 1/1 D 0/2 F 2/2 | eas 2/2 med 0/10 har 1/4 | 3 | 0 | 100% |
+[22:41:24] start v1g · synth_v2hard
+[22:41:24] | v1g | synth_v2hard | **0/8** | B 0/2 C 0/1 D 0/5 | har 0/4 exp 0/4 | 0 | 0 | 100% |
+[22:41:24] start v1g · synth_v3official
+[22:41:24] | v1g | synth_v3official | **3/13** | A 0/7 C 1/1 D 0/2 E 0/1 F 2/2 | eas 2/2 med 1/7 har 0/3 exp 0/1 | 3 | 0 | 100% |
+[22:41:24] start v1g · clean_base (шум)
+[22:41:24] | v1g | clean_base (шум) | — | — | 0 | noise=0 | 100% |
+[22:41:24] start v2g · synth_v1
+[22:46:25] | v2g | synth_v1 | **9/12** | A 3/4 B 2/3 C 2/2 D 2/2 E 0/1 | eas 2/3 med 4/6 har 3/3 | 14 | 2 | 71% |
+[22:46:25] start v2g · doc3_mart (целевой тип)
+[22:49:53] | v2g | doc3_mart (целевой тип) | **12/16** | A 7/9 B 1/2 C 1/1 D 1/2 F 2/2 | eas 2/2 med 7/10 har 3/4 | 24 | 8 | 87% |
+[22:49:53] start v2g · synth_v2hard
+[22:56:28] | v2g | synth_v2hard | **7/8** | B 2/2 C 1/1 D 4/5 | har 3/4 exp 4/4 | 10 | 3 | 62% |
+[22:56:28] start v2g · synth_v3official
+[23:03:04] | v2g | synth_v3official | **11/13** | A 6/7 C 1/1 D 1/2 E 1/1 F 2/2 | eas 2/2 med 7/7 har 1/3 exp 1/1 | 13 | 2 | 75% |
+[23:03:04] start v2g · clean_base (шум)
+[23:10:47] | v2g | clean_base (шум) | — | — | 11 | noise=11 | 58% |
+BENCH EXIT 0
