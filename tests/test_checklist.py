@@ -30,6 +30,17 @@ class SilentLLM:
         return {"answers": []}
 
 
+class NullFieldsLLM:
+    """Реальный ответ gpt-5.5 на OK: why/ask = null (EXP-14: терялись как UNKNOWN)."""
+
+    def chat_json(self, system, user, temperature=0.0):
+        return {"answers": [
+            {"id": "Q1", "status": "OK", "quote": "цитата", "why": None, "ask": None},
+            {"id": "Q2", "status": "MISSING", "quote": None, "why": None, "ask": None},
+            {"id": "Q3", "status": "OK", "quote": "цитата", "why": "", "ask": ""},
+        ]}
+
+
 class TestChecklistRetry(unittest.TestCase):
     def test_missing_answers_are_re_asked(self):
         llm = PartialLLM()
@@ -41,6 +52,13 @@ class TestChecklistRetry(unittest.TestCase):
         self.assertEqual(sorted(f.category for f in findings),
                          ["checklist:Q2", "checklist:Q3"])
         self.assertTrue(next(f for f in findings if f.category == "checklist:Q2").missing)
+
+    def test_null_why_ask_are_accepted(self):
+        findings, statuses = checklist.run("doc", RUBRIC, NullFieldsLLM())
+        self.assertEqual(statuses, {"Q1": "OK", "Q2": "MISSING", "Q3": "OK"})
+        self.assertEqual([f.category for f in findings], ["checklist:Q2"])
+        self.assertTrue(findings[0].why)  # why подставлен из вопроса, не None
+        self.assertTrue(findings[0].ask)
 
     def test_still_unanswered_becomes_unknown(self):
         findings, statuses = checklist.run("doc", RUBRIC, SilentLLM())
