@@ -114,7 +114,7 @@ async function submit() {
     const r = await fetch("/reviews", { method: "POST", body: fd });
     const j = await r.json();
     if (!r.ok) throw new Error(j.detail || r.statusText);
-    open(j.job_id);
+    openJob(j.job_id);
   } catch (e) {
     showStatus("Ошибка: " + e.message, "failed");
   } finally {
@@ -161,7 +161,7 @@ function showStatus(msg, cls, progress, elapsed) {
   }
 }
 
-function open(jobId) {
+function openJob(jobId) {
   current = jobId;
   history.replaceState(null, "", "#" + jobId);
   $("result").hidden = true;
@@ -234,7 +234,7 @@ async function loadHistory(docHash, jobId) {
   });
   if (rows.length < 2 && (h.versions || []).length < 2) { box.hidden = true; return; }
   $("historyBody").innerHTML = rows.map(rv => `
-    <a href="#${rv.job_id}" onclick="open('${rv.job_id}');return false;" ${rv.job_id === jobId ? 'style="font-weight:600"' : ""}>
+    <a href="#${rv.job_id}" onclick="openJob('${rv.job_id}');return false;" ${rv.job_id === jobId ? 'style="font-weight:600"' : ""}>
       v${rv.version} · ${esc(rv.verdict_light || "")} ${esc(rv.status)} · находок ${rv.findings ?? "—"} · ${esc(rv.model || "")}
       <small>${fmtTime(rv.created_at)} · ${rv.job_id}${rv.cached_from ? " · из кэша" : ""}</small></a>`).join("");
   box.hidden = false;
@@ -246,13 +246,13 @@ async function loadJobs() {
   const jobs = await r.json();
   const durs = jobs.filter(j => j.status === "done" && j.duration_s > 0).map(j => j.duration_s).sort((a, b) => a - b);
   if (durs.length) typicalDuration = durs[Math.floor(durs.length / 2)];
-  $("jobs").innerHTML = jobs.map(j => `<a href="#${j.job_id}" onclick="open('${j.job_id}');return false;">
+  $("jobs").innerHTML = jobs.map(j => `<a href="#${j.job_id}" onclick="openJob('${j.job_id}');return false;">
       ${esc(j.verdict?.light || "")} ${esc(j.filename || "текст")} <small>${esc(j.status)}${j.findings != null && j.status === "done" ? " · находок " + j.findings : ""} · ${fmtTime(j.created_at)} · ${j.job_id}${j.cached_from ? " · кэш" : ""}</small></a>`).join("") || "<span class='muted'>пусто</span>";
 }
 
 $("go").addEventListener("click", submit);
 loadJobs();
-if (location.hash.length > 1) open(location.hash.slice(1));
+if (location.hash.length > 1) openJob(location.hash.slice(1));
 </script>
 </body>
 </html>
