@@ -1,0 +1,113 @@
+# Контур ревью ТЗ (ARCHITECTURE.md). Запуск из корня репо:
+#   cp deploy/.env.example deploy/.env   # TZR_BASE_URL/TZR_MODEL (RunPod/vLLM/ollama) или OPENAI_*
+#   docker compose -f deploy/docker-compose.yml up --build
+# Профили: --profile gpu (vLLM с gpt-oss-120b на своей карте), --profile eval (бенч → results/bench.*)
+name: tzr
+
+x-app: &app
+  build:
+    context: ..
+    dockerfile: deploy/Dockerfile
+  env_file:
+    - path: ./.env
+      required: false
+  environment:
+    TZR_RABBIT_URL: amqp://guest:guest@rabbitmq:5672/%2F
+    TZR_DOCS_URL: http://docs:8081
+    TZR_RESULTS_DIR: /data/results
+  volumes:
+    - results:/data/results
+
+services:
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    ports: ["5672:5672", "15672:15672", "15692:15692"]
+    volumes:
+      - ./rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins:ro
+      - rabbitmq-data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  docs:
+    <<: *app
+    command: uvicorn services.docs.main:app --host 0.0.0.0 --port 8081
+    ports: ["8081:8081"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8081/healthz', timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  api:
+    <<: *app
+    command: uvicorn services.api.main:app --host 0.0.0.0 --port 8080
+    ports: ["8080:8080"]
+    depends_on:
+      rabbitmq: { condition: service_healthy }
+      docs: { condition: service_healthy }
+
+  worker:
+    <<: *app
+    command: python -m services.worker.main
+    # TZR_BACKEND=pod → TZR_BASE_URL/TZR_MODEL (vLLM/ollama/RunPod); openai → OPENAI_*
+    depends_on:
+      rabbitmq: { condition: service_healthy }
+    # масштабирование: docker compose up --scale worker=3
+
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    ports: ["9090:9090"]
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+
+  grafana:
+    image: grafana/grafana:11.2.0
+    ports: ["3000:3000"]
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana-data:/var/lib/grafana
+    depends_on: [prometheus]
+
+  # --- Сервер модели на своей карте (Hopper: gpt-oss-120b в MXFP4). На RunPod/в облаке — не нужен,
+  #     воркер ходит по TZR_BASE_URL. Профиль gpu.
+  llm:
+    profiles: ["gpu"]
+    image: vllm/vllm-openai:latest
+    command: >
+      --model ${LLM_MODEL:-openai/gpt-oss-120b} --host 0.0.0.0 --port 8000
+      --max-model-len ${LLM_MAX_LEN:-32768} --gpu-memory-utilization 0.92 --disable-log-requests
+    ports: ["8000:8000"]
+    environment:
+      VLLM_API_KEY: ${TZR_API_KEY:-tzr-local-token}
+      HF_HUB_ENABLE_HF_TRANSFER: "1"
+    volumes:
+      - hf-cache:/root/.cache/huggingface
+    deploy:
+      resources:
+        reservations:
+          devices: [{ driver: nvidia, count: 1, capabilities: [gpu] }]
+
+  # --- Quality-gate: бенч на синтетике и голдах МТС (профиль eval). Результат в results/bench.*
+  bench:
+    <<: *app
+    profiles: ["eval"]
+    command: >
+      sh -c "for r in synth/recipes/*.yaml; do python synth/inject.py $$r; done &&
+             python eval/bench.py --variants ${BENCH_VARIANTS:-v1g,v2g} --targets eval/targets_key.yaml
+             --out /data/results/bench.md --json /data/results/bench.json"
+
+volumes:
+  results:
+  rabbitmq-data:
+  prometheus-data:
+  grafana-data:
+  hf-cache:
