@@ -66,6 +66,8 @@ class LLM:
         self._model = settings.model
         self._no_temperature = False  # reasoning-модели OpenAI не принимают temperature
         self._use_completion_tokens = False  # gpt-5.x: max_completion_tokens вместо max_tokens
+        self._floor = int(getattr(settings, "max_tokens_floor", 0) or 0)
+        self._reasoning = getattr(settings, "reasoning_effort", None)
 
     def _chat(self, system: str, user: str, temperature: float = 0.0, n: int = 1,
               max_tokens: int = 1600) -> list[str]:
@@ -73,13 +75,16 @@ class LLM:
         # а длинные генерации на медленных картах в окно не влезают.
         last_err: Exception | None = None
         budget_mult = 1
+        max_tokens = max(max_tokens, self._floor)  # reasoning-модели на pod: пол бюджета
         for attempt in range(ATTEMPTS):
             kwargs = {} if self._no_temperature else {"temperature": temperature}
             if self._use_completion_tokens:
                 # reasoning-модели тратят этот же бюджет на размышления — даём запас
                 kwargs["max_completion_tokens"] = max(max_tokens * 4, 6000) * budget_mult
             else:
-                kwargs["max_tokens"] = max_tokens
+                kwargs["max_tokens"] = max_tokens * budget_mult
+            if self._reasoning:
+                kwargs["extra_body"] = {"reasoning_effort": self._reasoning}
             try:
                 resp = self._client.chat.completions.create(
                     model=self._model,
