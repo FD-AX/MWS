@@ -48,6 +48,12 @@ VARIANTS = {
     # H10: числовой логит-зонд вместо сэмплирования (неоднозначность из logprobs)
     "v2l_gpt": {"llm": True, "baseline": False, "entropy": False, "graph": True,
                 "backend": "openai", "lp": True},
+    # То же на self-hosted поде: vLLM отдаёт logprobs (harmony-зонд, TZR_PROBE_MODE=harmony)
+    "v2l": {"llm": True, "baseline": False, "entropy": False, "graph": True,
+            "lp": True, "lp_backend": "pod"},
+    # Полный набор сигналов на поде: энтропия (n>1 нативно в vLLM) + логит-зонд
+    "v2el": {"llm": True, "baseline": False, "entropy": True, "graph": True,
+             "lp": True, "lp_backend": "pod"},
     # h5 = граф + только «компиляция ТЗ» (изолированный вклад гипотезы H5)
     "h5":  {"llm": True,  "baseline": False, "entropy": False, "graph": True,
             "passes": ["compile"]},
@@ -147,7 +153,7 @@ def main() -> int:
             llm_cheap = (get_llm("openai_cheap")
                          if spec["llm"] and spec["entropy"] and spec.get("backend") == "openai"
                          else None)
-            llm_lp = (get_llm("openai_lp")
+            llm_lp = (get_llm(spec.get("lp_backend", "openai_lp"))
                       if spec["llm"] and spec.get("lp") else None)
             try:
                 result = review(text, rubric, llm, llm_cheap=llm_cheap,

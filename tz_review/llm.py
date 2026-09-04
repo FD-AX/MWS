@@ -9,6 +9,21 @@ from .config import Settings
 
 ATTEMPTS = 4  # попыток на вызов: транспортные сбои и пустые ответы ретраятся с jitter
 
+# Системная преамбула harmony (gpt-oss): reasoning low — зонду нужен только первый токен ответа.
+HARMONY_SYSTEM = ("You are ChatGPT, a large language model trained by OpenAI.\n"
+                  "Knowledge cutoff: 2024-06\n\nReasoning: low\n\n"
+                  "# Valid channels: analysis, commentary, final. "
+                  "Channel must be included for every message.")
+
+
+def harmony_prompt(system: str, user: str) -> str:
+    """Raw-промпт в формате harmony с уже открытым каналом final: следующий токен,
+    который сгенерирует gpt-oss, — первый токен ответа (а не служебный <|channel|>)."""
+    return ("<|start|>system<|message|>" + HARMONY_SYSTEM + "<|end|>"
+            "<|start|>developer<|message|># Instructions\n\n" + system + "<|end|>"
+            "<|start|>user<|message|>" + user + "<|end|>"
+            "<|start|>assistant<|channel|>final<|message|>")
+
 
 def _extract_json(text: str) -> Any:
     """Модели любят заворачивать JSON в ```-заборы и пояснения — достаём объект."""
@@ -70,6 +85,7 @@ class LLM:
         self._use_completion_tokens = False  # gpt-5.x: max_completion_tokens вместо max_tokens
         self._floor = int(getattr(settings, "max_tokens_floor", 0) or 0)
         self._reasoning = getattr(settings, "reasoning_effort", None)
+        self._probe_mode = getattr(settings, "probe_mode", "chat") or "chat"
         # Учёт вызовов/токенов (метрики воркера, стоимость документа)
         self.stats = {"calls": 0, "prompt_tokens": 0, "completion_tokens": 0}
 
@@ -151,6 +167,8 @@ class LLM:
         Требует бэкенд с поддержкой logprobs (gpt-4.1-*, vLLM; reasoning gpt-5.x — нет)."""
         import math
 
+        if self._probe_mode == "harmony":
+            return self._binary_probs_harmony(system, user, pos, neg)
         resp = self._client.chat.completions.create(
             model=self._model,
             messages=[{"role": "system", "content": system},
@@ -163,6 +181,30 @@ class LLM:
             return 0.0, 0.0
         tops = [(t.token, math.exp(t.logprob)) for t in content[0].top_logprobs]
         return aggregate_yes_no(tops, pos, neg)
+
+    def _binary_probs_harmony(self, system: str, user: str,
+                              pos: str, neg: str) -> tuple[float, float]:
+        """gpt-oss через vLLM: в chat-режиме первый токен — <|channel|>analysis…, поэтому
+        зонд идёт через /v1/completions с raw harmony-промптом и открытым каналом final."""
+        import math
+
+        last_err: Exception | None = None
+        for attempt in range(ATTEMPTS):
+            try:
+                resp = self._client.completions.create(
+                    model=self._model, prompt=harmony_prompt(system, user),
+                    max_tokens=1, temperature=0, logprobs=10,
+                )
+                self._account(resp)
+                lp = resp.choices[0].logprobs
+                if not lp or not lp.top_logprobs:
+                    return 0.0, 0.0
+                tops = [(tok, math.exp(v)) for tok, v in lp.top_logprobs[0].items()]
+                return aggregate_yes_no(tops, pos, neg)
+            except Exception as e:  # noqa: BLE001
+                last_err = e
+                time.sleep(2 * (attempt + 1) + random.uniform(0.0, 1.5))
+        raise RuntimeError(f"logprob-зонд недоступен после {ATTEMPTS} попыток: {last_err}")
 
     def sample(self, system: str, user: str, n: int = 5, temperature: float = 0.9) -> list[str]:
         """n независимых сэмплов (для semantic entropy). Некоторые локальные бэкенды

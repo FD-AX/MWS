@@ -33,6 +33,9 @@ class Settings:
     max_tokens_floor: int = 0
     # Уровень размышлений (low/medium/high) — extra_body.reasoning_effort; None = не слать.
     reasoning_effort: str | None = None
+    # Режим логит-зонда: "chat" (первый токен chat-ответа = ответ: gpt-4.1, обычные модели)
+    # или "harmony" (gpt-oss через vLLM: канал final открываем сами в raw-промпте).
+    probe_mode: str = "chat"
 
 
 def _int_env(name: str, default: int) -> int:
@@ -57,6 +60,7 @@ def settings_or_die() -> Settings:
         model=os.environ["TZR_MODEL"],
         max_tokens_floor=_int_env("TZR_MAX_TOKENS", 0),
         reasoning_effort=os.environ.get("TZR_REASONING_EFFORT") or None,
+        probe_mode=os.environ.get("TZR_PROBE_MODE") or "chat",
     )
 
 
