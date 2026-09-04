@@ -11,6 +11,26 @@ from . import load_prompt
 BATCH_SIZE = 5  # ограниченная задача на вызов: длинный контекст + много вопросов = деградация
 
 
+def slot_applies(q: dict[str, Any], doc_text: str) -> bool:
+    """Применим ли слот к документу по детерминированным условиям рубрики.
+    applies_if — регулярка, которая должна встретиться в тексте; not_if — которая не должна.
+    Нет условий → применим. Не применим → статус NA без вызова модели."""
+    import re
+    text = doc_text.lower()
+    ok = True
+    if q.get("applies_if"):
+        ok = re.search(q["applies_if"], text, flags=re.IGNORECASE) is not None
+    if ok and q.get("not_if"):
+        ok = re.search(q["not_if"], text, flags=re.IGNORECASE) is None
+    return ok
+
+
+def split_applicable(questions: list[dict], doc_text: str) -> tuple[list[dict], list[str]]:
+    applicable = [q for q in questions if slot_applies(q, doc_text)]
+    na = [q["id"] for q in questions if not slot_applies(q, doc_text)]
+    return applicable, na
+
+
 def _ask(batch: list[dict], doc_text: str, llm: LLM) -> dict[str, ChecklistAnswer]:
     """Один вызов на батч вопросов → валидные ответы по id (только из этого батча)."""
     ids = {q["id"] for q in batch}
@@ -35,9 +55,9 @@ def run(doc_text: str, rubric: dict[str, Any], llm: LLM,
     """Чеклист-аудит «слотов» полноты. Возвращает (находки, статусы всех слотов).
     Статусы нужны для coverage-метрики и для entropy-прохода.
     on_batch(i, n) — необязательный колбэк прогресса после каждого батча."""
-    questions = rubric["checklist"]
+    questions, na_slots = split_applicable(rubric["checklist"], doc_text)
     findings: list[Finding] = []
-    statuses: dict[str, str] = {}
+    statuses: dict[str, str] = {q: "NA" for q in na_slots}
     unanswered: list[str] = []
     n_batches = (len(questions) + BATCH_SIZE - 1) // BATCH_SIZE
 

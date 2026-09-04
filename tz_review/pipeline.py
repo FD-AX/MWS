@@ -5,7 +5,7 @@ from typing import Any
 
 from . import document as docmod
 from .passes import (baseline, checklist, critic, deterministic, developer_sim,
-                     doc_graph, document_level, spec_compile, uncertainty,
+                     doc_graph, document_level, filters, spec_compile, uncertainty,
                      uncertainty_lp)
 
 DEFAULT_LLM_PASSES = frozenset({"checklist", "document_level", "developer_sim"})
@@ -123,6 +123,8 @@ def review(text: str, rubric: dict[str, Any], llm=None, *,
             result.passes_run.append("uncertainty_lp")
             _p("uncertainty_lp", 0.92)
 
+    # Детерминированные фильтры до верификации: вопросы о настоящих именах заглушек — в rejected.
+    findings, placeholder_qs = filters.drop_placeholder_questions(findings)
     _p("verify", 0.93)
     verified, dropped = verify_findings(findings, doc)
     result.dropped = dropped
@@ -136,11 +138,12 @@ def review(text: str, rubric: dict[str, Any], llm=None, *,
         kept, rejected = critic.run(verified, text, llm, threshold=critic_threshold,
                                     protected=protected)
         result.findings = kept
-        result.rejected = rejected
+        result.rejected = rejected + placeholder_qs
         result.passes_run.append("critic")
     else:
         verified.sort(key=lambda f: f.sort_key())
         result.findings = verified
+        result.rejected = list(placeholder_qs)
 
     _p("done", 1.0)
     return result

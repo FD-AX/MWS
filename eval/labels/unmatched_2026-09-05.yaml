@@ -1,0 +1,346 @@
+date: '2026-09-05'
+labeler: Леонид + Claude (первый размётчик; к финалу — тройная разметка)
+classes:
+  new: реальный дефект, отсутствует в голде → в голд
+  gold-dup: тот же дефект, что в голде, матчер не сопоставил → ключи матчинга
+  na-slot: слот не применим к документу → детерминированное NA
+  placeholder-name: вопрос о настоящем имени заглушки → фильтр
+  generic-whatif: общий «что если» без привязки к тексту → требовать цитату / потолок
+  rule-threshold: детерминированное правило слишком строгое → порог/advisory
+labels:
+- review: a0085e792273
+  fid: F008
+  verdict: TP
+  cls: new
+  reason: судьба отфильтрованных записей не описана
+- review: a0085e792273
+  fid: F002
+  verdict: FP
+  cls: rule-threshold
+  reason: '«Способ загрузки: Инкремент» — короткий, но не пустой раздел'
+- review: a0085e792273
+  fid: F006
+  verdict: TP
+  cls: gold-dup
+  reason: '= G3-2: структура источников не описана'
+- review: a0085e792273
+  fid: F012
+  verdict: TP
+  cls: new
+  reason: NULL vs 0 в lac/cell не определено
+- review: a0085e792273
+  fid: F023
+  verdict: TP
+  cls: new
+  reason: нет ссылок на Data Catalog (п.2 МТС)
+- review: a0085e792273
+  fid: F025
+  verdict: TP
+  cls: new
+  reason: нет перечня типовых фильтров (п.4 МТС)
+- review: a0085e792273
+  fid: F032
+  verdict: TP
+  cls: new
+  reason: cell / cell_id / FIELD_CELL_ID — дрейф термина
+- review: 7110b92b22d5
+  fid: F034
+  verdict: TP
+  cls: new
+  reason: 'историзация справочника БС: несколько строк на lac/cell'
+- review: 7110b92b22d5
+  fid: F013
+  verdict: TP
+  cls: new
+  reason: ключ дедупликации и выживающая запись не заданы
+- review: 7110b92b22d5
+  fid: F022
+  verdict: TP
+  cls: new
+  reason: нет ссылок на Data Catalog
+- review: 7110b92b22d5
+  fid: F024
+  verdict: TP
+  cls: new
+  reason: нет перечня типовых фильтров
+- review: e814f5ad45bf
+  fid: F024
+  verdict: FP
+  cls: placeholder-name
+  reason: просит настоящее имя столбца FIELD_IMSI
+- review: e814f5ad45bf
+  fid: F028
+  verdict: FP
+  cls: placeholder-name
+  reason: просит точные имена столбцов для join
+- review: e814f5ad45bf
+  fid: F029
+  verdict: FP
+  cls: placeholder-name
+  reason: просит имена столбцов справочника регионов
+- review: e814f5ad45bf
+  fid: F009
+  verdict: NA
+  cls: na-slot
+  reason: полная перезапись партиции месяца → INC-03 не применим
+- review: e814f5ad45bf
+  fid: F022
+  verdict: NA
+  cls: na-slot
+  reason: в документе нет Kafka → LOC-02 не применим
+- review: e814f5ad45bf
+  fid: F023
+  verdict: NA
+  cls: na-slot
+  reason: нет файловых хранилищ → LOC-03 не применим
+- review: e814f5ad45bf
+  fid: F004
+  verdict: TP
+  cls: gold-dup
+  reason: = G3-2
+- review: e814f5ad45bf
+  fid: F017
+  verdict: TP
+  cls: new
+  reason: объёмы и ретеншен не заданы
+- review: e814f5ad45bf
+  fid: F019
+  verdict: TP
+  cls: new
+  reason: Data Catalog
+- review: e814f5ad45bf
+  fid: F021
+  verdict: TP
+  cls: new
+  reason: типовые фильтры
+- review: 5a7bb278b1f4
+  fid: F027
+  verdict: TP
+  cls: gold-dup
+  reason: '= G1-3: структура DDS/ADDS/CDM не описана'
+- review: 5a7bb278b1f4
+  fid: F009
+  verdict: TP
+  cls: new
+  reason: изменённые задним числом события — не описано
+- review: 5a7bb278b1f4
+  fid: F010
+  verdict: NA
+  cls: na-slot
+  reason: в doc1 нет расчётов → NUL-01 не применим
+- review: 5a7bb278b1f4
+  fid: F005
+  verdict: TP
+  cls: gold-dup
+  reason: '= G1-10: формат/сериализация от PROVIDER_GEO'
+- review: 5a7bb278b1f4
+  fid: F006
+  verdict: TP
+  cls: new
+  reason: правила фильтрации входных данных отсутствуют (зона внимания МТС)
+- review: 5a7bb278b1f4
+  fid: F011
+  verdict: NA
+  cls: na-slot
+  reason: нет формул → NUL-02 не применим
+- review: 5a7bb278b1f4
+  fid: F023
+  verdict: NA
+  cls: na-slot
+  reason: таблицы RAW/DDS/ADDS/CDM без указания файлового хранилища → LOC-03 не применим
+    (как на doc3)
+- review: 5a7bb278b1f4
+  fid: F015
+  verdict: TP
+  cls: new
+  reason: поведение при сбое не описано
+- review: 5a7bb278b1f4
+  fid: F016
+  verdict: TP
+  cls: new
+  reason: контроль полноты не описан
+- review: 5a7bb278b1f4
+  fid: F019
+  verdict: TP
+  cls: new
+  reason: 'Data Catalog: только мониторинг и gitlab'
+- review: 5a7bb278b1f4
+  fid: F033
+  verdict: FP
+  cls: generic-whatif
+  reason: «неправильный подход к подписке» — без привязки к тексту
+- review: 4a4c610f3510
+  fid: F006
+  verdict: NA
+  cls: na-slot
+  reason: RAW-приёмник 1:1 из Kafka → MAP-01 не применим
+- review: 4a4c610f3510
+  fid: F008
+  verdict: TP
+  cls: new
+  reason: как определяется инкремент для SFTP-файлов — не задано
+- review: 4a4c610f3510
+  fid: F036
+  verdict: TP
+  cls: gold-dup
+  reason: '= G2-3: структура TABLE_MSCP_RAW_SFTP не описана'
+- review: 4a4c610f3510
+  fid: F013
+  verdict: TP
+  cls: new
+  reason: дедупликация не описана
+- review: 4a4c610f3510
+  fid: F014
+  verdict: TP
+  cls: new
+  reason: ключи и гранулярность приёмников не заданы
+- review: 4a4c610f3510
+  fid: F032
+  verdict: TP
+  cls: new
+  reason: 'какое поле времени фильтруется: start или end'
+- review: 4a4c610f3510
+  fid: F037
+  verdict: TP
+  cls: new
+  reason: значения FIELD_OL_SERVICE_TYPE не перечислены
+- review: 4a4c610f3510
+  fid: F009
+  verdict: TP
+  cls: new
+  reason: late-arriving за окном [-7д,+2ч] — не описано
+- review: 4a4c610f3510
+  fid: F010
+  verdict: NA
+  cls: na-slot
+  reason: сырой CDR-поток → INC-03 не применим
+- review: 4a4c610f3510
+  fid: F011
+  verdict: NA
+  cls: na-slot
+  reason: расчётов нет → NUL-01 не применим
+- review: 4a4c610f3510
+  fid: F024
+  verdict: TP
+  cls: new
+  reason: кластеры Kafka для топиков не указаны (п.6 МТС)
+- review: 4a4c610f3510
+  fid: F025
+  verdict: FP
+  cls: placeholder-name
+  reason: «Папка» — заглушка пути, а не отсутствие
+- review: 4a4c610f3510
+  fid: F012
+  verdict: NA
+  cls: na-slot
+  reason: формул нет → NUL-02 не применим
+- review: 4a4c610f3510
+  fid: F015
+  verdict: TP
+  cls: new
+  reason: расписание загрузки SFTP не задано
+- review: 4a4c610f3510
+  fid: F002
+  verdict: FP
+  cls: rule-threshold
+  reason: «Регламент загрузки» — не раздел официального шаблона
+- review: 4a4c610f3510
+  fid: F003
+  verdict: FP
+  cls: rule-threshold
+  reason: «Контроль качества» — не раздел официального шаблона
+- review: 4a4c610f3510
+  fid: F021
+  verdict: TP
+  cls: new
+  reason: Data Catalog
+- review: 4a4c610f3510
+  fid: F026
+  verdict: TP
+  cls: new
+  reason: перечень справочников или «не применимо» (п.8 МТС)
+- review: 4a4c610f3510
+  fid: F027
+  verdict: TP
+  cls: new
+  reason: ключ Kafka / партиция не описаны
+- review: 4a4c610f3510
+  fid: F033
+  verdict: TP
+  cls: gold-dup
+  reason: '= G2-5: часы vs строка сдвига'
+- review: 4a4c610f3510
+  fid: F038
+  verdict: FP
+  cls: generic-whatif
+  reason: производительность партиционирования — общий совет
+- review: 4a4c610f3510
+  fid: F016
+  verdict: TP
+  cls: new
+  reason: SLA готовности не задан
+- review: 4a4c610f3510
+  fid: F017
+  verdict: TP
+  cls: new
+  reason: поведение при сбое
+- review: 4a4c610f3510
+  fid: F018
+  verdict: TP
+  cls: new
+  reason: контроль полноты
+- review: 4a4c610f3510
+  fid: F023
+  verdict: TP
+  cls: new
+  reason: типовые фильтры
+- review: 4a4c610f3510
+  fid: F019
+  verdict: TP
+  cls: new
+  reason: объёмы и ретеншен
+- review: 07190ce6b716
+  fid: F030
+  verdict: FP
+  cls: placeholder-name
+  reason: просит имена полей для join
+- review: 07190ce6b716
+  fid: F006
+  verdict: TP
+  cls: new
+  reason: судьба отфильтрованных записей
+- review: 07190ce6b716
+  fid: F010
+  verdict: TP
+  cls: new
+  reason: изменённые задним числом записи
+- review: 07190ce6b716
+  fid: F024
+  verdict: NA
+  cls: na-slot
+  reason: нет Kafka → LOC-02
+- review: 07190ce6b716
+  fid: F025
+  verdict: NA
+  cls: na-slot
+  reason: нет файловых хранилищ → LOC-03
+- review: 07190ce6b716
+  fid: F005
+  verdict: TP
+  cls: gold-dup
+  reason: = G3-2
+- review: 07190ce6b716
+  fid: F033
+  verdict: TP
+  cls: gold-dup
+  reason: '= G3-6: TAC не найден → vendor?'
+- review: 07190ce6b716
+  fid: F018
+  verdict: TP
+  cls: new
+  reason: объёмы и ретеншен
+- review: 07190ce6b716
+  fid: F021
+  verdict: TP
+  cls: new
+  reason: Data Catalog

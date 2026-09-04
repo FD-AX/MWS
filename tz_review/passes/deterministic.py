@@ -16,6 +16,21 @@ def _sentence_around(text: str, start: int, end: int, max_len: int = 200) -> str
     return quote[:max_len]
 
 
+_PLACEHOLDER_WORDS = {"tbd", "todo", "n/a", "na", "xxx", "???"}
+
+
+def _is_empty_body(body: str, min_chars: int) -> bool:
+    """Пуст ли раздел: нет ни одного слова, либо только маркер-заглушка (TBD/TODO).
+    Короткий содержательный ответ («Способ загрузки: Инкремент») пустым не считается
+    (разметка 05.09: ложное «пусто» на doc3)."""
+    words = re.findall(r"[а-яёa-z0-9/?]+", body.lower())
+    if not words:
+        return True
+    if all(w in _PLACEHOLDER_WORDS for w in words):
+        return True
+    return len(body.strip("-—* ")) < min_chars and len(words) < 2 and words[0] in _PLACEHOLDER_WORDS
+
+
 def run(doc: Document, rubric: dict[str, Any]) -> list[Finding]:
     """Детерминированный слой: языковые паттерны + пустые обязательные разделы.
     Бесплатно по токенам, precision правил ~100% на своих классах."""
@@ -61,9 +76,14 @@ def run(doc: Document, rubric: dict[str, Any]) -> list[Finding]:
         aliases = [normalize(a) for a in [req["name"], *req.get("aliases", [])]]
         matched = [s for s, tn in titles_norm if any(a in tn for a in aliases)]
         if not matched:
+            # Разделы нашей доменной рубрики, которых нет в официальном шаблоне МТС
+            # («Регламент загрузки», «Контроль качества»), — medium: это рекомендация,
+            # а не нарушение шаблона кейсодателя (разметка 05.09: 2 FP на doc2).
+            in_official = any(normalize(a) in normalize(o) or normalize(o) in normalize(a)
+                              for o in rubric.get("official_sections", []) for a in aliases if len(a) > 5)
             findings.append(Finding(
                 category="template:missing_section",
-                severity="high",
+                severity="high" if in_official else "medium",
                 section=req["name"],
                 missing=True,
                 why=f"Обязательный раздел шаблона «{req['name']}» отсутствует в документе.",
@@ -71,7 +91,7 @@ def run(doc: Document, rubric: dict[str, Any]) -> list[Finding]:
                 source_pass="deterministic",
             ))
             continue
-        if all(len(s.body.strip("-—* ")) < min_chars
+        if all(_is_empty_body(s.body, min_chars)
                and "не применимо" not in normalize(s.body) for s in matched):
             findings.append(Finding(
                 category="template:empty_section",

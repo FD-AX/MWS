@@ -10,6 +10,18 @@ DEFAULT_THRESHOLD = 4.0  # по свипу 2026-09-03: recall держится, 
 DETERMINISTIC_PASSES = frozenset({"deterministic", "doc_graph"})
 
 
+def severity_from_score(score: float) -> str:
+    """Итоговая критичность LLM-находки — по шкале критика (0–10), а не по проходу:
+    разметка 05.09 — «что будет, если…» без конкретики уходили как critical при score 5–7."""
+    if score >= 9:
+        return "critical"
+    if score >= 7:
+        return "high"
+    if score >= 4:
+        return "medium"
+    return "advisory"
+
+
 def run(findings: list[Finding], doc_text: str, llm: LLM,
         threshold: float = DEFAULT_THRESHOLD,
         protected: frozenset[str] = frozenset()) -> tuple[list[Finding], list[Finding]]:
@@ -56,6 +68,7 @@ def run(findings: list[Finding], doc_text: str, llm: LLM,
         if f.fid in drop_ids or f.score < threshold:
             rejected.append(f)
         else:
+            f.severity = severity_from_score(f.score)  # критичность — от судьи, не от прохода
             kept.append(f)
 
     result = det_findings + kept
