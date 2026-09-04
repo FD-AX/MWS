@@ -36,6 +36,9 @@ class TestResultFromPayload(unittest.TestCase):
         self.assertAlmostEqual(r.anchoring, 0.875)
         self.assertIn("api", r.passes_run)
 
+    def test_finding_db_ids(self):
+        self.assertEqual(api_client.finding_db_ids(PAYLOAD), {"F001": 7})  # F002 без db_id — не попадает
+
     def test_api_url_from_env(self):
         with mock.patch.dict(os.environ, {"TZR_API_URL": "http://api:8080/"}):
             self.assertEqual(api_client.api_url(), "http://api:8080")

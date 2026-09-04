@@ -136,6 +136,16 @@ def list_documents(limit: int = 50):
     return db.list_documents(limit)
 
 
+@app.get("/documents/{doc_hash}/text")
+def document_text(doc_hash: str):
+    """Нормализованный markdown документа (после docs-сервиса) — для вкладок «Текст»/«Структура» во фронте."""
+    d = db.get_document_text(doc_hash)
+    if not d:
+        raise HTTPException(404, "нет такого документа")
+    return {"doc_hash": d["doc_hash"], "filename": d["filename"], "kind": d["kind"],
+            "chars": d["chars"], "markdown": d["normalized_md"]}
+
+
 @app.get("/documents/{doc_hash}/history")
 def document_history(doc_hash: str):
     h = db.document_history(doc_hash)

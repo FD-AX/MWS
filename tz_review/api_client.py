@@ -58,6 +58,17 @@ def submit_review(text: str, filename: str = "документ.md") -> dict[str,
     return _request("POST", "/reviews", body, ctype)
 
 
+def submit_review_file(filename: str, data: bytes, content_type: str | None = None) -> dict[str, Any]:
+    """POST /reviews исходным файлом (pdf/docx/md/txt): таблицы и заголовки восстановит docs-сервис."""
+    ctype = content_type or {
+        ".pdf": "application/pdf",
+        ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        ".md": "text/markdown",
+    }.get(filename[filename.rfind("."):].lower() if "." in filename else "", "application/octet-stream")
+    body, mtype = _multipart({}, {"file": (filename, data, ctype)})
+    return _request("POST", "/reviews", body, mtype)
+
+
 def get_review(job_id: str) -> dict[str, Any]:
     return _request("GET", f"/reviews/{job_id}", timeout=30)
 
@@ -65,6 +76,27 @@ def get_review(job_id: str) -> dict[str, Any]:
 def list_reviews(limit: int = 20) -> list[dict[str, Any]]:
     data = _request("GET", f"/reviews?limit={limit}", timeout=30)
     return data if isinstance(data, list) else []
+
+
+def get_document_text(doc_hash: str) -> str:
+    """Нормализованный markdown документа из истории (после docs-сервиса)."""
+    data = _request("GET", f"/documents/{doc_hash}/text", timeout=30)
+    return str(data.get("markdown") or "")
+
+
+def document_history(doc_hash: str) -> dict[str, Any]:
+    return _request("GET", f"/documents/{doc_hash}/history", timeout=30)
+
+
+def send_feedback(finding_id: int, vote: int, author: str | None = None, comment: str | None = None) -> dict[str, Any]:
+    body = json.dumps({"vote": vote, "author": author, "comment": comment}).encode("utf-8")
+    return _request("POST", f"/findings/{finding_id}/feedback", body, "application/json", timeout=30)
+
+
+def finding_db_ids(job: dict[str, Any]) -> dict[str, int]:
+    """fid → id находки в базе (ключ для 👍/👎)."""
+    res = job.get("result") or {}
+    return {f["fid"]: f["db_id"] for f in res.get("findings", []) if f.get("fid") and f.get("db_id")}
 
 
 def wait_for_review(job_id: str, on_progress: Callable[[dict[str, Any]], None] | None = None,

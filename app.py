@@ -8,7 +8,9 @@ from pathlib import Path
 
 import streamlit as st
 
-from tz_review.api_client import api_url, result_from_payload, submit_review, wait_for_review
+from tz_review.api_client import (api_url, document_history, finding_db_ids, get_document_text,
+                                  get_review, list_reviews, result_from_payload, send_feedback,
+                                  submit_review, submit_review_file, wait_for_review)
 from tz_review.config import ENV_VARS, load_dotenv, settings_or_die
 from tz_review.document import parse
 from tz_review.input import DocumentInputError, extract_text
@@ -380,11 +382,46 @@ def _store_review(result, name: str, size: int, text: str, mode: str, **extra) -
     st.session_state["show_uploader"] = False
 
 
-def _run_via_api(text: str, name: str, size: int, mode: str) -> None:
-    """Ревью через API: очередь → воркер → история в Postgres; прогресс по этапам конвейера."""
+def _payload_from_api(payload: dict, name: str, size: int, mode: str, fallback_text: str,
+                      job_id: str, cached: bool) -> None:
+    """Собрать экран результата из ответа API: результат, нормализованный текст, ключи для 👍/👎."""
+    result = result_from_payload(payload)
+    doc_hash = payload.get("doc_hash")
+    text = fallback_text
+    if doc_hash:
+        try:
+            text = get_document_text(doc_hash) or fallback_text
+        except Exception:  # noqa: BLE001 — текст не критичен для отчёта
+            pass
+    model = payload.get("model") or ""
+    _store_review(result, name, size, text, f"{mode} · {model}".strip(" ·"),
+                  job_id=job_id, doc_hash=doc_hash, db_ids=finding_db_ids(payload),
+                  duration_s=payload.get("duration_s"), cached=cached)
+
+
+def load_review_from_api(job_id: str) -> bool:
+    """Открыть проверку из истории."""
+    try:
+        payload = get_review(job_id)
+    except Exception as exc:  # noqa: BLE001
+        st.error(f"Не удалось открыть проверку: {exc}")
+        return False
+    if payload.get("status") != "done":
+        st.info(f"Проверка {job_id} ещё не завершена: {payload.get('status')}")
+        return False
+    _payload_from_api(payload, payload.get("filename") or job_id, payload.get("chars") or 0,
+                      "Из истории", "", job_id, bool(payload.get("cached_from")))
+    return True
+
+
+def _run_via_api(text: str, name: str, size: int, mode: str,
+                 raw: tuple[str, bytes, str | None] | None = None) -> None:
+    """Ревью через API: очередь → воркер → история в Postgres; прогресс по этапам конвейера.
+    raw = (имя, байты, content-type) — исходный PDF/DOCX уходит как есть: таблицы и заголовки
+    восстанавливает docs-сервис, а не извлечение в приложении."""
     bar = st.progress(0, text="Отправляем документ…")
     try:
-        job = submit_review(text, name)
+        job = submit_review_file(raw[0], raw[1], raw[2]) if raw else submit_review(text, name)
     except Exception as exc:  # noqa: BLE001 — показать аналитику, а не падать
         bar.empty()
         st.error(f"Сервис ревью недоступен: {exc}")
@@ -413,16 +450,14 @@ def _run_via_api(text: str, name: str, size: int, mode: str) -> None:
     if payload.get("status") != "done":
         st.error(f"Ревью завершилось с ошибкой: {payload.get('error') or 'неизвестно'}")
         return
-    result = result_from_payload(payload)
-    model = payload.get("model") or ""
-    _store_review(result, name, size, text, f"{mode} · {model}".strip(" ·"),
-                  job_id=job_id, duration_s=payload.get("duration_s"),
-                  cached=bool(job.get("cached") or payload.get("cached_from")))
+    _payload_from_api(payload, name, size, mode, text, job_id,
+                      bool(job.get("cached") or payload.get("cached_from")))
 
 
-def run_analysis(text: str, name: str, size: int, mode: str, threshold: float) -> None:
+def run_analysis(text: str, name: str, size: int, mode: str, threshold: float,
+                 raw: tuple[str, bytes, str | None] | None = None) -> None:
     if mode == "Полная с LLM" and api_url():
-        _run_via_api(text, name, size, mode)
+        _run_via_api(text, name, size, mode, raw)
         st.rerun()
         return
     with st.spinner("Анализируем документ..."):
@@ -577,6 +612,75 @@ def filter_findings(findings, query: str, level: str, sort_order: str):
     return filtered
 
 
+def render_feedback(item) -> None:
+    """👍/👎 по находке → POST /findings/{id}/feedback (только в режиме API, когда известен id в базе)."""
+    db_ids = (st.session_state.get("review") or {}).get("db_ids") or {}
+    finding_id = db_ids.get(item.fid)
+    if not finding_id or not api_url():
+        return
+    votes = st.session_state.setdefault("votes", {})
+    if finding_id in votes:
+        st.caption("👍 учтено" if votes[finding_id] > 0 else "👎 учтено")
+        return
+    up_col, down_col, _ = st.columns((1, 1, 5), gap="small")
+    for col, vote, label in ((up_col, 1, "👍 полезно"), (down_col, -1, "👎 не по делу")):
+        with col:
+            if st.button(label, key=f"fb_{finding_id}_{vote}", use_container_width=True):
+                try:
+                    send_feedback(finding_id, vote, author="analyst")
+                    votes[finding_id] = vote
+                    st.rerun()
+                except Exception as exc:  # noqa: BLE001
+                    st.warning(f"Не сохранилось: {exc}")
+
+
+def render_history() -> None:
+    """История проверок из API: открыть любую, посмотреть версии текущего документа."""
+    if not api_url():
+        st.info("История доступна в режиме API (TZR_API_URL).")
+        return
+    try:
+        rows = list_reviews(30)
+    except Exception as exc:  # noqa: BLE001
+        st.error(f"История недоступна: {exc}")
+        return
+    current = st.session_state.get("review") or {}
+    if current.get("doc_hash"):
+        try:
+            hist = document_history(current["doc_hash"])
+            versions = hist.get("versions") or []
+            if len(versions) > 1 or sum(len(v.get("reviews") or []) for v in versions) > 1:
+                st.markdown("#### Версии этого документа")
+                for i, v in enumerate(versions, 1):
+                    for rv in v.get("reviews") or []:
+                        c1, c2 = st.columns((6, 1.2), gap="small", vertical_alignment="center")
+                        with c1:
+                            st.markdown(f"**v{i}** · {rv.get('verdict_light') or ''} {rv.get('status')} · "
+                                        f"находок {rv.get('findings') or 0} · {rv.get('model') or ''} · "
+                                        f"`{rv.get('job_id')}`")
+                        with c2:
+                            if rv.get("status") == "done" and st.button("Открыть", key=f"hist_v_{rv['job_id']}",
+                                                                       use_container_width=True):
+                                if load_review_from_api(rv["job_id"]):
+                                    st.rerun()
+        except Exception:  # noqa: BLE001
+            pass
+    st.markdown("#### Последние проверки")
+    if not rows:
+        st.caption("Пока пусто.")
+    for r in rows:
+        c1, c2 = st.columns((6, 1.2), gap="small", vertical_alignment="center")
+        created = datetime.fromtimestamp(r["created_at"]).strftime("%d.%m %H:%M") if r.get("created_at") else ""
+        with c1:
+            st.markdown(f"{(r.get('verdict') or {}).get('light') or ''} **{escape(r.get('filename') or 'текст')}** · "
+                        f"{r.get('status')}{' · находок ' + str(r['findings']) if r.get('findings') is not None and r.get('status') == 'done' else ''} · "
+                        f"{r.get('model') or ''} · {created} · `{r['job_id']}`{' · кэш' if r.get('cached_from') else ''}")
+        with c2:
+            if r.get("status") == "done" and st.button("Открыть", key=f"hist_{r['job_id']}", use_container_width=True):
+                if load_review_from_api(r["job_id"]):
+                    st.rerun()
+
+
 def render_finding_details(findings) -> None:
     if not findings:
         st.success("Существенных проблем не найдено.")
@@ -589,6 +693,7 @@ def render_finding_details(findings) -> None:
             elif item.missing:
                 st.caption("Информация в документе отсутствует.")
             st.markdown(f"**Почему это важно:** {item.why}")
+            render_feedback(item)
             if item.ask:
                 st.markdown(f"**Что уточнить:** {item.ask}")
             if item.suggested_fix:
@@ -646,7 +751,11 @@ if payload is None:
                               disabled=review_mode == "Быстрая", key="threshold")
     if review_mode == "Полная с LLM" and not llm_ready:
         st.warning("Модель не настроена. Заполните `.env`.")
-    file_tab, text_tab, example_tab = st.tabs(("Файл", "Текст документа", "Пример"))
+    file_tab, text_tab, example_tab, history_tab = st.tabs(("Файл", "Текст документа", "Пример",
+                                                             "История проверок"))
+
+    with history_tab:
+        render_history()
 
     with file_tab:
         uploaded = st.file_uploader("Загрузите техническое задание",
@@ -665,7 +774,9 @@ if payload is None:
                      icon=":material/fact_check:", disabled=not file_text or file_error is not None
                      or (review_mode == "Полная с LLM" and not llm_ready)):
             try:
-                run_analysis(file_text, uploaded.name, len(uploaded.getvalue()), review_mode, threshold)
+                # В режиме API исходный файл уходит как есть (PDF/DOCX → docs-сервис: таблицы, заголовки)
+                run_analysis(file_text, uploaded.name, len(uploaded.getvalue()), review_mode, threshold,
+                             raw=(uploaded.name, uploaded.getvalue(), uploaded.type))
             except Exception as exc:  # noqa: BLE001
                 st.error(f"Проверка не завершена: {exc}")
 
@@ -718,9 +829,12 @@ else:
                                mime="text/markdown", icon=":material/download:",
                                use_container_width=True)
 
-    result_tab, findings_tab, text_tab, structure_tab, recommendations_tab = st.tabs(
+    result_tab, findings_tab, text_tab, structure_tab, recommendations_tab, history_tab = st.tabs(
         ("Результат", f"Замечания  {len(result.findings)}", "Текст документа",
-         "Структура", "Рекомендации"))
+         "Структура", "Рекомендации", "История проверок"))
+
+    with history_tab:
+        render_history()
 
     with result_tab:
         overview_col, summary_col = st.columns((1.2, .88), gap="small")
@@ -779,9 +893,11 @@ else:
             st.markdown(f"**{index}. {section.title}**  ·  {len(section.body)} символов")
         if result.statuses:
             st.markdown("### Покрытие чек-листа")
-            ok_count = sum(status == "OK" for status in result.statuses.values())
+            ok_count = sum(status in ("OK", "NA") for status in result.statuses.values())
+            na_count = sum(status == "NA" for status in result.statuses.values())
             st.progress(ok_count / max(len(result.statuses), 1),
-                        text=f"Закрыто {ok_count} из {len(result.statuses)} пунктов")
+                        text=f"Закрыто {ok_count} из {len(result.statuses)} пунктов"
+                             + (f" (из них {na_count} не применимо)" if na_count else ""))
 
     with recommendations_tab:
         st.markdown("### Что уточнить в первую очередь")

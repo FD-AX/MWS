@@ -126,6 +126,13 @@ def upsert_document(doc_hash: str, filename: str | None, kind: str, chars: int, 
         return row["id"]
 
 
+def get_document_text(doc_hash: str) -> dict | None:
+    with connect() as c:
+        row = c.execute("SELECT doc_hash, filename, kind, chars, normalized_md FROM documents WHERE doc_hash = %s",
+                        (doc_hash,)).fetchone()
+    return dict(row) if row else None
+
+
 def list_documents(limit: int = 50) -> list[dict]:
     with connect() as c:
         rows = c.execute("""
