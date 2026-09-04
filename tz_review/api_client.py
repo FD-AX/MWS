@@ -85,8 +85,23 @@ def wait_for_review(job_id: str, on_progress: Callable[[dict[str, Any]], None] |
 
 
 def _findings(items: list[dict[str, Any]]) -> list[Finding]:
+    """Находки из JSON API. Лишние поля (db_id) отбрасываем; запись с невалидным
+    значением (например, неизвестная severity) приводим к medium, а не роняем UI."""
     allowed = set(Finding.model_fields)
-    return [Finding(**{k: v for k, v in f.items() if k in allowed}) for f in items or []]
+    out: list[Finding] = []
+    for f in items or []:
+        data = {k: v for k, v in (f or {}).items() if k in allowed}
+        try:
+            out.append(Finding(**data))
+        except Exception:  # noqa: BLE001
+            data["severity"] = "medium"
+            data.setdefault("why", "")
+            data.setdefault("category", "unknown")
+            try:
+                out.append(Finding(**data))
+            except Exception:  # noqa: BLE001 — совсем битая запись: пропускаем
+                continue
+    return out
 
 
 def result_from_payload(job: dict[str, Any]) -> ReviewResult:

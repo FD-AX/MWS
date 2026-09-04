@@ -17,7 +17,8 @@ PAYLOAD = {
             {"fid": "F002", "category": "dev_question", "severity": "medium", "quote": "текст", "why": "почему",
              "ask": "что", "score": 4.0, "source_pass": "developer_sim", "verified": True},
         ],
-        "rejected": [{"fid": "F003", "category": "dev_question", "severity": "low", "why": "мусор", "score": 1.0}],
+        "rejected": [{"fid": "F003", "category": "dev_question", "severity": "advisory", "why": "мусор", "score": 1.0},
+                     {"fid": "F004", "category": "dev_question", "severity": "unknown-level", "why": "битая severity"}],
         "dropped": [],
     },
 }
@@ -29,7 +30,8 @@ class TestResultFromPayload(unittest.TestCase):
         self.assertEqual([f.fid for f in r.findings], ["F001", "F002"])
         self.assertTrue(r.findings[0].missing)
         self.assertEqual(r.findings[0].score, 6.0)      # db_id (нет в схеме) не ломает сборку
-        self.assertEqual([f.fid for f in r.rejected], ["F003"])
+        self.assertEqual([f.fid for f in r.rejected], ["F003", "F004"])
+        self.assertEqual(r.rejected[1].severity, "medium")  # невалидная severity приведена, запись не потеряна
         self.assertEqual(r.statuses["LOC-02"], "NA")
         self.assertAlmostEqual(r.anchoring, 0.875)
         self.assertIn("api", r.passes_run)
