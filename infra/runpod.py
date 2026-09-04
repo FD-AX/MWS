@@ -1,6 +1,8 @@
 """Управление RunPod-подом с vLLM (OpenAI-совместимый endpoint).
 
 Использование (ключ берётся из RUNPOD_API_KEY в .env / окружении):
+    python infra/runpod.py create-vllm-oss [--gpu "NVIDIA H100 80GB HBM3"] [--cloud SECURE|COMMUNITY]  # gpt-oss-120b на vLLM
+    python infra/runpod.py wait <pod_id> [minutes] · balance
     python infra/runpod.py create [--gpu "NVIDIA GeForce RTX 4090"] [--model Qwen/Qwen2.5-14B-Instruct-AWQ]
     python infra/runpod.py status <pod_id>
     python infra/runpod.py list
@@ -146,6 +148,73 @@ def tags(pod_id: str) -> None:
             print(m.get("name"), round(m.get("size", 0) / 2**30, 1), "GiB")
 
 
+HOPPER_80GB = ["NVIDIA H100 80GB HBM3", "NVIDIA H100 NVL", "NVIDIA H100 PCIe", "NVIDIA H200"]
+
+
+def create_vllm_oss(gpus: list[str], cloud: str = "SECURE", disk_gb: int = 160,
+                    max_len: int = 32768, model: str = "openai/gpt-oss-120b") -> None:
+    """gpt-oss-120b на vLLM (OpenAI-совместимый API + logprobs → зонд v2l, энтропия n>1).
+    Только Hopper: веса MXFP4 ≈ 63 ГБ, на A100 bf16 не влезает. Диск 160 ГБ под кэш HF."""
+    vllm_key = os.environ.get("TZR_API_KEY", "tzr-local-token")
+    body = {
+        "name": "tzr-vllm-oss",
+        "imageName": "vllm/vllm-openai:latest",
+        "cloudType": cloud,
+        "gpuTypeIds": gpus,
+        "gpuCount": 1,
+        "containerDiskInGb": disk_gb,
+        "volumeInGb": 0,
+        "ports": ["8000/http"],
+        "env": {"VLLM_API_KEY": vllm_key},
+        "dockerEntrypoint": ["python3", "-m", "vllm.entrypoints.openai.api_server"],
+        "dockerStartCmd": [
+            "--host", "0.0.0.0", "--port", "8000",
+            "--model", model,
+            "--served-model-name", "gpt-oss-120b",
+            "--max-model-len", str(max_len),
+            "--gpu-memory-utilization", "0.90",
+            "--max-num-seqs", "16",
+        ],
+    }
+    pod = _req("POST", "/pods", body)
+    pid = pod.get("id")
+    print(json.dumps(pod, indent=1)[:600])
+    print("pod_id:", pid)
+    print(f"endpoint (после загрузки модели): https://{pid}-8000.proxy.runpod.net/v1  TZR_MODEL=gpt-oss-120b")
+
+
+def wait_vllm(pod_id: str, minutes: int = 40) -> int:
+    """Ждём, пока vLLM отдаст /v1/models (прокси до старта отвечает 502/503)."""
+    import time
+    key = os.environ.get("TZR_API_KEY", "tzr-local-token")
+    url = f"https://{pod_id}-8000.proxy.runpod.net/v1/models"
+    t0 = time.time()
+    while time.time() - t0 < minutes * 60:
+        req = urllib.request.Request(url, headers={"Authorization": f"Bearer {key}",
+                                                   "User-Agent": "tzr-infra/1.0 (curl-compatible)"})
+        try:
+            with urllib.request.urlopen(req, timeout=30) as r:
+                print("vLLM up:", r.read().decode()[:200]); return 0
+        except urllib.error.HTTPError as e:
+            code = e.code
+        except Exception as e:  # noqa: BLE001
+            code = type(e).__name__
+        print(f"  {int(time.time() - t0)}s: {code}", flush=True)
+        time.sleep(20)
+    print("timeout"); return 1
+
+
+def balance() -> None:
+    key = os.environ.get("RUNPOD_API_KEY")
+    req = urllib.request.Request("https://api.runpod.io/graphql", method="POST",
+                                 headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json",
+                                          # Cloudflare перед api.runpod.io режет UA «Python-urllib» (403)
+                                          "User-Agent": "tzr-infra/1.0 (curl-compatible)"},
+                                 data=json.dumps({"query": "{ myself { clientBalance spendLimit } }"}).encode())
+    with urllib.request.urlopen(req, timeout=30) as r:
+        print(r.read().decode())
+
+
 def main() -> int:
     load_dotenv()
     args = sys.argv[1:]
@@ -153,7 +222,15 @@ def main() -> int:
         print(__doc__)
         return 2
     cmd = args[0]
-    if cmd == "create-ollama":
+    if cmd == "create-vllm-oss":
+        gpus = [args[args.index("--gpu") + 1]] if "--gpu" in args else HOPPER_80GB
+        cloud = args[args.index("--cloud") + 1] if "--cloud" in args else "SECURE"
+        create_vllm_oss(gpus, cloud)
+    elif cmd == "wait":
+        return wait_vllm(args[1], int(args[2]) if len(args) > 2 else 40)
+    elif cmd == "balance":
+        balance()
+    elif cmd == "create-ollama":
         gpus = [args[args.index("--gpu") + 1]] if "--gpu" in args else OLLAMA_GPUS_80GB
         cloud = args[args.index("--cloud") + 1] if "--cloud" in args else "SECURE"
         create_ollama(gpus, cloud)
