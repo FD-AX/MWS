@@ -5,6 +5,30 @@ pre-review — находит места, которые разработчик�
 не хватает, с дословной цитатой-якорем и конкретным вопросом. Не заменяет
 аналитика: вердикт всегда за человеком.
 
+## Быстрый старт: скачать и запустить (docker compose)
+
+Нужны Docker Desktop и ключ модели (облако) или адрес своего OpenAI-совместимого сервера (vLLM/ollama).
+
+```bash
+git clone https://github.com/FD-AX/MWS.git && cd MWS
+cp deploy/.env.example deploy/.env      # заполнить: OPENAI_API_KEY (TZR_BACKEND=openai)
+                                        #   или TZR_BASE_URL/TZR_MODEL своего сервера (TZR_BACKEND=pod)
+docker compose -f deploy/docker-compose.yml up -d --build
+```
+
+| Что | Где |
+|---|---|
+| Интерфейс аналитика (загрузка md/txt/docx/pdf, прогресс, отчёт, история, 👍/👎) | http://localhost:18080/ |
+| API и Swagger | http://localhost:18080/docs · контракт: `services/api/API.md` |
+| Очередь RabbitMQ (guest/guest) | http://localhost:15672 |
+| Grafana (admin/admin), Prometheus | http://localhost:13000 · http://localhost:9090 |
+| История проверок (Postgres) | localhost:15432, tzr/tzr |
+
+Проверка без Docker и без модели: `pip install -r requirements.txt && python -m tz_review examples/sample_tz.md --no-llm`.
+Сценарий демо — [DEMO.md](DEMO.md); архитектура и обоснование — [ARCHITECTURE.md](ARCHITECTURE.md),
+[experiments/](experiments/README.md); готовность — [READINESS.md](READINESS.md); артефакты сдачи — [deliverables/](deliverables/).
+Фронтенд аналитика (отдельная сборка) подключается как сервис `front` — см. [front/README.md](front/README.md).
+
 Обоснование каждого архитектурного решения — в [RESEARCH.md](RESEARCH.md)
 (рисёрч: академия RE, коммерческие инструменты, LLM-практика).
 Предметка кейса — в [DOMAIN.md](DOMAIN.md).
