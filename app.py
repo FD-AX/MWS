@@ -8,6 +8,7 @@ from pathlib import Path
 
 import streamlit as st
 
+from tz_review.api_client import api_url, result_from_payload, submit_review, wait_for_review
 from tz_review.config import ENV_VARS, load_dotenv, settings_or_die
 from tz_review.document import parse
 from tz_review.input import DocumentInputError, extract_text
@@ -347,30 +348,91 @@ def build_demo_review() -> dict:
     }
 
 
+STAGE_RU = {
+    "queued": "в очереди", "deterministic": "детерминированный слой", "doc_graph": "граф сущностей",
+    "checklist": "чеклист полноты", "document_level": "согласованность разделов",
+    "developer_sim": "взгляд разработчика", "spec_compile": "компиляция ТЗ",
+    "uncertainty": "семантическая энтропия", "uncertainty_lp": "логит-зонд",
+    "verify": "верификация цитат", "critic": "критик", "done": "готово",
+}
+
+
 def model_is_configured() -> bool:
+    # Режим API (TZR_API_URL): модель настроена на стороне сервиса — воркер, очередь, история.
+    if api_url():
+        return True
     load_dotenv()
     return all(os.environ.get(name) for name in ENV_VARS)
 
 
+def _store_review(result, name: str, size: int, text: str, mode: str, **extra) -> None:
+    st.session_state["review"] = {
+        "result": result,
+        "name": name,
+        "size": size,
+        "text": text,
+        "markdown": to_markdown(result, name),
+        "json": to_json(result),
+        "mode": mode,
+        "created": datetime.now().strftime("%d.%m.%Y в %H:%M"),
+        **extra,
+    }
+    st.session_state["show_uploader"] = False
+
+
+def _run_via_api(text: str, name: str, size: int, mode: str) -> None:
+    """Ревью через API: очередь → воркер → история в Postgres; прогресс по этапам конвейера."""
+    bar = st.progress(0, text="Отправляем документ…")
+    try:
+        job = submit_review(text, name)
+    except Exception as exc:  # noqa: BLE001 — показать аналитику, а не падать
+        bar.empty()
+        st.error(f"Сервис ревью недоступен: {exc}")
+        return
+    job_id = job["job_id"]
+    if job.get("status") == "done":  # такой документ с таким конфигом уже проверен
+        payload = wait_for_review(job_id, poll_s=0.5, timeout_s=30)
+    else:
+        def on_progress(info: dict) -> None:
+            pct = int(info.get("pct") or 0)
+            stage = STAGE_RU.get(info.get("stage") or info.get("status") or "", info.get("stage") or "")
+            live = " · ".join(x for x in (
+                f"батч {info['batch']}/{info['batches']}" if info.get("batch") else "",
+                f"вызовов {info['calls']}" if info.get("calls") else "",
+                f"{info['elapsed_s']} с" if info.get("elapsed_s") else "",
+            ) if x)
+            bar.progress(min(max(pct, 1), 100) / 100, text=f"{stage} · {pct}%" + (f" · {live}" if live else ""))
+
+        try:
+            payload = wait_for_review(job_id, on_progress=on_progress)
+        except Exception as exc:  # noqa: BLE001
+            bar.empty()
+            st.error(f"Ревью не завершилось: {exc}")
+            return
+    bar.empty()
+    if payload.get("status") != "done":
+        st.error(f"Ревью завершилось с ошибкой: {payload.get('error') or 'неизвестно'}")
+        return
+    result = result_from_payload(payload)
+    model = payload.get("model") or ""
+    _store_review(result, name, size, text, f"{mode} · {model}".strip(" ·"),
+                  job_id=job_id, duration_s=payload.get("duration_s"),
+                  cached=bool(job.get("cached") or payload.get("cached_from")))
+
+
 def run_analysis(text: str, name: str, size: int, mode: str, threshold: float) -> None:
+    if mode == "Полная с LLM" and api_url():
+        _run_via_api(text, name, size, mode)
+        st.rerun()
+        return
     with st.spinner("Анализируем документ..."):
         llm = None
         if mode == "Полная с LLM":
             from tz_review.llm import LLM
 
             llm = LLM(settings_or_die())
-        result = review(text, load_rubric(), llm, critic_threshold=threshold)
-        st.session_state["review"] = {
-            "result": result,
-            "name": name,
-            "size": size,
-            "text": text,
-            "markdown": to_markdown(result, name),
-            "json": to_json(result),
-            "mode": mode,
-            "created": datetime.now().strftime("%d.%m.%Y в %H:%M"),
-        }
-        st.session_state["show_uploader"] = False
+        result = review(text, load_rubric(), llm, use_graph=True, critic_threshold=threshold)
+        _store_review(result, name, size, text, mode)
     st.rerun()
 
 

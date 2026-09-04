@@ -13,5 +13,8 @@ COPY services ./services
 COPY eval ./eval
 COPY synth ./synth
 COPY casedata ./casedata
+# Фронтенд аналитика (Streamlit) — сервис front
+COPY app.py ./app.py
+COPY .streamlit ./.streamlit
 
 HEALTHCHECK --interval=15s --timeout=5s --retries=5 CMD ["python", "-c", "import sys, urllib.request; port = sys.argv[1] if len(sys.argv) > 1 else '8080'; urllib.request.urlopen(f'http://127.0.0.1:{port}/healthz', timeout=3)"]
