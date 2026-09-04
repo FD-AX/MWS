@@ -1,0 +1,90 @@
+{
+  "uid": "tzr-overview",
+  "title": "TZ Review — обзор",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "15s",
+  "time": { "from": "now-6h", "to": "now" },
+  "tags": ["tzr"],
+  "panels": [
+    {
+      "id": 1, "type": "stat", "title": "Ревью завершено",
+      "gridPos": { "x": 0, "y": 0, "w": 4, "h": 4 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "refId": "A", "expr": "sum(tzr_worker_reviews_total{status=\"done\"}) or vector(0)" }]
+    },
+    {
+      "id": 2, "type": "stat", "title": "Сбоев / в DLQ",
+      "gridPos": { "x": 4, "y": 0, "w": 4, "h": 4 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "refId": "A", "expr": "sum(tzr_worker_reviews_total{status=\"failed\"}) or vector(0)" }],
+      "fieldConfig": { "defaults": { "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "red", "value": 1 } ] } }, "overrides": [] }
+    },
+    {
+      "id": 3, "type": "stat", "title": "Слотов UNKNOWN (последнее ревью)",
+      "gridPos": { "x": 8, "y": 0, "w": 4, "h": 4 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "refId": "A", "expr": "max(tzr_worker_unknown_slots) or vector(0)" }],
+      "fieldConfig": { "defaults": { "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "red", "value": 1 } ] } }, "overrides": [] }
+    },
+    {
+      "id": 4, "type": "stat", "title": "Anchoring (последнее ревью)",
+      "gridPos": { "x": 12, "y": 0, "w": 4, "h": 4 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "refId": "A", "expr": "max(tzr_worker_anchoring_rate)" }],
+      "fieldConfig": { "defaults": { "unit": "percentunit", "min": 0, "max": 1 }, "overrides": [] }
+    },
+    {
+      "id": 5, "type": "stat", "title": "В очереди review.jobs",
+      "gridPos": { "x": 16, "y": 0, "w": 4, "h": 4 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "refId": "A", "expr": "sum(rabbitmq_queue_messages_ready) or vector(0)" }]
+    },
+    {
+      "id": 6, "type": "stat", "title": "В работе",
+      "gridPos": { "x": 20, "y": 0, "w": 4, "h": 4 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "refId": "A", "expr": "sum(tzr_worker_inflight) or vector(0)" }]
+    },
+    {
+      "id": 7, "type": "timeseries", "title": "Длительность ревью, с (p50 / p95)",
+      "gridPos": { "x": 0, "y": 4, "w": 12, "h": 8 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        { "refId": "p50", "legendFormat": "p50", "expr": "histogram_quantile(0.5, sum(rate(tzr_worker_review_seconds_bucket[30m])) by (le))" },
+        { "refId": "p95", "legendFormat": "p95", "expr": "histogram_quantile(0.95, sum(rate(tzr_worker_review_seconds_bucket[30m])) by (le))" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "s" }, "overrides": [] }
+    },
+    {
+      "id": 8, "type": "timeseries", "title": "Вызовы LLM / мин по модели",
+      "gridPos": { "x": 12, "y": 4, "w": 12, "h": 8 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "refId": "A", "legendFormat": "{{backend}}/{{model}}", "expr": "sum(rate(tzr_worker_llm_calls_total[5m])) by (backend, model) * 60" }]
+    },
+    {
+      "id": 9, "type": "barchart", "title": "Находки по классам и проходам",
+      "gridPos": { "x": 0, "y": 12, "w": 12, "h": 8 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "refId": "A", "format": "table", "instant": true, "legendFormat": "{{klass}} · {{source_pass}}", "expr": "sum(tzr_worker_findings_total) by (klass, source_pass)" }]
+    },
+    {
+      "id": 10, "type": "barchart", "title": "Статусы слотов чеклиста",
+      "gridPos": { "x": 12, "y": 12, "w": 12, "h": 8 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "refId": "A", "format": "table", "instant": true, "legendFormat": "{{status}}", "expr": "sum(tzr_worker_checklist_status_total) by (status)" }]
+    },
+    {
+      "id": 11, "type": "timeseries", "title": "Токены LLM / мин",
+      "gridPos": { "x": 0, "y": 20, "w": 12, "h": 7 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "refId": "A", "legendFormat": "{{kind}} {{model}}", "expr": "sum(rate(tzr_worker_llm_tokens_total[5m])) by (kind, model) * 60" }]
+    },
+    {
+      "id": 12, "type": "timeseries", "title": "Документов принято / мин",
+      "gridPos": { "x": 12, "y": 20, "w": 12, "h": 7 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "refId": "A", "legendFormat": "{{outcome}}", "expr": "sum(rate(tzr_api_reviews_total[5m])) by (outcome) * 60" }]
+    }
+  ]
+}

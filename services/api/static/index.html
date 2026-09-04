@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TZ Review</title>
+<style>
+  :root { --bg:#f6f7f9; --card:#fff; --ink:#1f2328; --muted:#6b7280; --line:#e5e7eb; --accent:#2563eb;
+          --crit:#b91c1c; --high:#c2410c; --med:#a16207; --low:#4b5563; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  header { padding:18px 28px; background:var(--card); border-bottom:1px solid var(--line); display:flex; gap:16px; align-items:baseline; }
+  header h1 { margin:0; font-size:18px; }
+  header span { color:var(--muted); font-size:13px; }
+  main { max-width:1100px; margin:0 auto; padding:20px 28px 60px; display:grid; grid-template-columns: 1fr 320px; gap:20px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:18px 20px; }
+  .card h2 { margin:0 0 12px; font-size:15px; }
+  textarea { width:100%; min-height:120px; padding:10px; border:1px solid var(--line); border-radius:8px; font:13px/1.4 ui-monospace, Consolas, monospace; resize:vertical; }
+  input[type=file] { display:block; margin:8px 0 12px; }
+  button { background:var(--accent); color:#fff; border:0; border-radius:8px; padding:10px 18px; font-size:15px; cursor:pointer; }
+  button:disabled { opacity:.5; cursor:default; }
+  .muted { color:var(--muted); font-size:13px; }
+  .status { margin-top:14px; padding:12px 14px; border-radius:8px; background:#eef2ff; font-size:14px; }
+  .status.done { background:#ecfdf5; } .status.failed { background:#fef2f2; }
+  .bar { height:10px; background:#e0e7ff; border-radius:999px; overflow:hidden; margin-top:10px; }
+  .bar > div { height:100%; background:var(--accent); width:0; transition:width .6s ease; }
+  .stage { display:flex; justify-content:space-between; font-size:13px; color:var(--muted); margin-top:6px; }
+  .verdict { font-size:20px; margin:16px 0 6px; }
+  .kpis { display:flex; flex-wrap:wrap; gap:10px; margin:10px 0 16px; }
+  .kpi { border:1px solid var(--line); border-radius:8px; padding:8px 12px; min-width:110px; }
+  .kpi b { display:block; font-size:18px; } .kpi span { color:var(--muted); font-size:12px; }
+  .finding { border-top:1px solid var(--line); padding:12px 0; }
+  .finding .head { display:flex; gap:10px; align-items:baseline; flex-wrap:wrap; }
+  .sev { font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.03em; padding:2px 8px; border-radius:999px; color:#fff; }
+  .sev.critical { background:var(--crit); } .sev.high { background:var(--high); } .sev.medium { background:var(--med); } .sev.low, .sev.advisory { background:var(--low); }
+  .cat { font:12px ui-monospace, Consolas, monospace; color:var(--muted); }
+  .quote { margin:8px 0; padding:8px 12px; border-left:3px solid var(--line); color:#374151; font-size:14px; white-space:pre-wrap; }
+  .why { margin:6px 0; } .ask { margin:6px 0; color:#1e3a8a; }
+  .jobs a { display:block; padding:8px 0; border-top:1px solid var(--line); color:inherit; text-decoration:none; font-size:14px; }
+  .jobs a:hover { background:#f9fafb; }
+  .jobs small { color:var(--muted); display:block; }
+  .links a { margin-right:14px; font-size:14px; }
+  details summary { cursor:pointer; color:var(--muted); font-size:13px; margin-top:10px; }
+  button.mini { background:#f3f4f6; color:var(--ink); border:1px solid var(--line); padding:3px 10px; font-size:12px; border-radius:6px; }
+  .fb { margin-top:6px; }
+  @media (max-width: 860px) { main { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<header><h1>TZ Review</h1><span>предварительное ревью ТЗ на потоки и витрины данных · вердикт всегда за аналитиком</span></header>
+<main>
+  <section>
+    <div class="card">
+      <h2>Документ</h2>
+      <input id="file" type="file" accept=".md,.txt,.docx,.pdf">
+      <div class="muted">или вставь текст ТЗ:</div>
+      <textarea id="text" placeholder="# Описание витрины …"></textarea>
+      <div style="margin-top:12px; display:flex; gap:12px; align-items:center;">
+        <button id="go">Проверить</button>
+        <span id="hint" class="muted">md / txt / docx / pdf · на self-hosted модели около 5–8 минут</span>
+      </div>
+      <div id="status" class="status" hidden></div>
+    </div>
+
+    <div id="result" class="card" hidden style="margin-top:20px;">
+      <div class="verdict" id="verdict"></div>
+      <div class="kpis" id="kpis"></div>
+      <div class="links" id="links"></div>
+      <h2 style="margin-top:16px;">Находки</h2>
+      <div id="findings"></div>
+      <details><summary>Срезано критиком / отброшено верификацией</summary><div id="rejected"></div></details>
+    </div>
+
+    <div id="history" class="card jobs" hidden style="margin-top:20px;">
+      <h2>История этого документа</h2>
+      <div id="historyBody"></div>
+    </div>
+  </section>
+
+  <aside>
+    <div class="card jobs">
+      <h2>Последние проверки</h2>
+      <div id="jobs" class="muted">пусто</div>
+    </div>
+    <div class="card" style="margin-top:20px;">
+      <h2>Мониторинг</h2>
+      <div class="links">
+        <a href="http://localhost:13000" target="_blank">Grafana</a>
+        <a href="http://localhost:15672" target="_blank">RabbitMQ</a>
+        <a href="http://localhost:9090/targets" target="_blank">Prometheus</a>
+        <a href="/docs" target="_blank">Swagger</a>
+      </div>
+    </div>
+  </aside>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+const SEV_ORDER = { critical: 0, high: 1, medium: 2, low: 3, advisory: 4 };
+const SEV_RU = { critical: "критично", high: "важно", medium: "средне", low: "низко", advisory: "совет" };
+let timer = null, current = null;
+
+function esc(s) { return (s ?? "").toString().replace(/[&<>]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])); }
+function fmtTime(ts) { return ts ? new Date(ts * 1000).toLocaleTimeString("ru-RU", {hour:"2-digit", minute:"2-digit"}) : ""; }
+
+async function submit() {
+  const file = $("file").files[0];
+  const text = $("text").value.trim();
+  if (!file && !text) { alert("Выбери файл или вставь текст"); return; }
+  const fd = new FormData();
+  if (file) fd.append("file", file); else fd.append("text", text);
+  $("go").disabled = true;
+  showStatus("Отправляю…", "");
+  try {
+    const r = await fetch("/reviews", { method: "POST", body: fd });
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.detail || r.statusText);
+    openJob(j.job_id);
+  } catch (e) {
+    showStatus("Ошибка: " + e.message, "failed");
+  } finally {
+    $("go").disabled = false;
+  }
+}
+
+const STAGE_RU = { deterministic: "детерминированный слой: шаблон, паттерны", doc_graph: "граф сущностей",
+  checklist: "чеклист полноты (27 слотов)", document_level: "согласованность разделов", developer_sim: "взгляд разработчика",
+  spec_compile: "компиляция ТЗ", uncertainty: "семантическая энтропия", uncertainty_lp: "логит-зонд",
+  verify: "верификация цитат", critic: "критик", done: "готово" };
+
+let typicalDuration = null;  // медиана длительности готовых ревью (прошлые задания) — априорная оценка
+
+function fmtEta(sec) {
+  if (sec == null || !isFinite(sec)) return "";
+  if (sec < 45) return "меньше минуты";
+  const m = Math.round(sec / 60);
+  return `≈ ${m} мин`;
+}
+
+function showStatus(msg, cls, progress, elapsed) {
+  const s = $("status"); s.hidden = false; s.className = "status " + cls;
+  s.innerHTML = `<div>${esc(msg)}</div>`;
+  if (progress) {
+    const pct = Math.max(0, Math.min(100, progress.pct ?? 0));
+    // Грубая экстраполяция: пока прогресс мал — от типичной длительности прошлых ревью,
+    // дальше — линейно от пройденной доли и затраченного времени.
+    let eta = null;
+    const el = elapsed ?? progress.elapsed_s ?? 0;
+    if (pct >= 8 && el > 0) eta = el * (100 - pct) / pct;
+    else if (typicalDuration) eta = Math.max(0, typicalDuration - el);
+    const stage = (STAGE_RU[progress.stage] || progress.stage || "")
+      + (progress.batch ? ` · батч ${progress.batch}/${progress.batches}` : "");
+    const live = [
+      progress.candidates != null ? `кандидатов ${progress.candidates}` : "",
+      progress.calls ? `вызовов ${progress.calls}` : "",
+      progress.tokens ? `токенов ${Math.round(progress.tokens / 1000)}k` : "",
+    ].filter(Boolean).join(" · ");
+    s.innerHTML += `<div class="bar"><div style="width:${pct}%"></div></div>
+      <div class="stage"><span>${esc(stage)}</span>
+      <span>${pct}% · прошло ${Math.round(el / 60)} мин${eta != null ? " · осталось " + fmtEta(eta) : ""}</span></div>
+      ${live ? `<div class="stage"><span>${esc(live)}</span></div>` : ""}`;
+  }
+}
+
+function openJob(jobId) {
+  current = jobId;
+  history.replaceState(null, "", "#" + jobId);
+  $("result").hidden = true;
+  if (timer) clearInterval(timer);
+  poll();
+  timer = setInterval(poll, 3000);
+}
+
+async function poll() {
+  if (!current) return;
+  const r = await fetch("/reviews/" + current);
+  if (!r.ok) { showStatus("Задание не найдено", "failed"); clearInterval(timer); return; }
+  const j = await r.json();
+  const started = j.started_at ? Math.round(Date.now() / 1000 - j.started_at) : null;
+  if (j.status === "queued") showStatus(`В очереди · ${current}`, "", { stage: "queued", pct: 0 }, 0);
+  else if (j.status === "running" || j.status === "retrying") showStatus(`Идёт ревью · ${current} · ${started ?? 0} с${j.status === "retrying" ? " · повтор после сбоя" : ""}`, "", j.progress || { stage: "deterministic", pct: 1 }, started);
+  else if (j.status === "failed") { showStatus("Сбой: " + (j.error || "неизвестно"), "failed"); clearInterval(timer); }
+  else if (j.status === "done") { clearInterval(timer); showStatus(`Готово · ${current} · ${j.duration_s ?? 0} с · ${j.model || ""}${j.cached_from ? " · из кэша" : ""}`, "done"); render(j); }
+  loadJobs();
+}
+
+function render(j) {
+  const res = j.result || {};
+  const f = res.findings || [];
+  const v = j.verdict || {};
+  $("verdict").textContent = `${v.light || ""} ${v.text || ""}`;
+  const st = res.checklist_statuses || {};
+  const count = (s) => Object.values(st).filter(x => x === s).length;
+  const bySev = (s) => f.filter(x => x.severity === s).length;
+  $("kpis").innerHTML = [
+    ["Находок", f.length], ["Критично", bySev("critical")], ["Важно", bySev("high")], ["Средне", bySev("medium")],
+    ["Слотов закрыто", `${count("OK")}/${Object.keys(st).length}`], ["Не закрыто", count("MISSING")], ["Неоднозначно", count("UNCLEAR")],
+    ["Anchoring", Math.round((res.anchoring_rate || 0) * 100) + "%"], ["Вызовов модели", j.llm_calls ?? (j.llm_usage || {}).calls ?? "—"],
+    ["Токенов", ((j.prompt_tokens || 0) + (j.completion_tokens || 0)) ? Math.round(((j.prompt_tokens || 0) + (j.completion_tokens || 0)) / 1000) + "k" : "—"],
+  ].map(([k, val]) => `<div class="kpi"><b>${esc(val)}</b><span>${k}</span></div>`).join("");
+  $("links").innerHTML = `<a href="/reviews/${j.job_id}/report.md" target="_blank">Отчёт (markdown)</a><a href="/reviews/${j.job_id}" target="_blank">JSON</a>`;
+  loadHistory(j.doc_hash, j.job_id);
+  const sorted = [...f].sort((a, b) => (SEV_ORDER[a.severity] ?? 9) - (SEV_ORDER[b.severity] ?? 9) || (b.score || 0) - (a.score || 0));
+  $("findings").innerHTML = sorted.map(x => `
+    <div class="finding">
+      <div class="head"><span class="sev ${esc(x.severity)}">${SEV_RU[x.severity] || esc(x.severity)}</span>
+        <span class="cat">${esc(x.category)}</span>${x.section ? `<span class="muted">· ${esc(x.section)}</span>` : ""}
+        ${x.score != null ? `<span class="muted">· score ${x.score}</span>` : ""}</div>
+      ${x.quote ? `<div class="quote">${esc(x.quote)}</div>` : `<div class="muted">информация в документе отсутствует</div>`}
+      <div class="why"><b>Почему:</b> ${esc(x.why)}</div>
+      ${x.ask ? `<div class="ask"><b>Что уточнить:</b> ${esc(x.ask)}</div>` : ""}
+      ${x.db_id ? `<div class="fb" data-id="${x.db_id}"><button class="mini" onclick="feedback(${x.db_id}, 1, this)">👍 полезно</button> <button class="mini" onclick="feedback(${x.db_id}, -1, this)">👎 не по делу</button></div>` : ""}
+    </div>`).join("") || "<div class='muted'>Замечаний нет.</div>";
+  const rej = [...(res.rejected || []).map(x => ({...x, _why: "критик"})), ...(res.dropped || []).map(x => ({...x, _why: "цитата не найдена"}))];
+  $("rejected").innerHTML = rej.map(x => `<div class="finding"><div class="head"><span class="cat">${esc(x.category)}</span><span class="muted">· ${x._why}${x.score != null ? " · score " + x.score : ""}</span></div><div class="why">${esc(x.why)}</div></div>`).join("") || "<div class='muted'>ничего</div>";
+  $("result").hidden = false;
+}
+
+async function feedback(findingId, vote, btn) {
+  const r = await fetch(`/findings/${findingId}/feedback`, { method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ vote, author: "analyst" }) });
+  const box = btn.parentElement;
+  box.innerHTML = r.ok ? `<span class="muted">${vote > 0 ? "👍" : "👎"} учтено</span>` : `<span class="muted">не сохранилось</span>`;
+}
+
+async function loadHistory(docHash, jobId) {
+  const box = $("history");
+  if (!docHash) { box.hidden = true; return; }
+  const r = await fetch(`/documents/${docHash}/history`);
+  if (!r.ok) { box.hidden = true; return; }
+  const h = await r.json();
+  const rows = [];
+  (h.versions || []).forEach((v, i) => {
+    (v.reviews || []).forEach(rv => rows.push({ ...rv, version: i + 1, chars: v.chars }));
+  });
+  if (rows.length < 2 && (h.versions || []).length < 2) { box.hidden = true; return; }
+  $("historyBody").innerHTML = rows.map(rv => `
+    <a href="#${rv.job_id}" onclick="openJob('${rv.job_id}');return false;" ${rv.job_id === jobId ? 'style="font-weight:600"' : ""}>
+      v${rv.version} · ${esc(rv.verdict_light || "")} ${esc(rv.status)} · находок ${rv.findings ?? "—"} · ${esc(rv.model || "")}
+      <small>${fmtTime(rv.created_at)} · ${rv.job_id}${rv.cached_from ? " · из кэша" : ""}</small></a>`).join("");
+  box.hidden = false;
+}
+
+async function loadJobs() {
+  const r = await fetch("/reviews");
+  if (!r.ok) return;
+  const jobs = await r.json();
+  const durs = jobs.filter(j => j.status === "done" && j.duration_s > 0).map(j => j.duration_s).sort((a, b) => a - b);
+  if (durs.length) typicalDuration = durs[Math.floor(durs.length / 2)];
+  $("jobs").innerHTML = jobs.map(j => `<a href="#${j.job_id}" onclick="openJob('${j.job_id}');return false;">
+      ${esc(j.verdict?.light || "")} ${esc(j.filename || "текст")} <small>${esc(j.status)}${j.findings != null && j.status === "done" ? " · находок " + j.findings : ""} · ${fmtTime(j.created_at)} · ${j.job_id}${j.cached_from ? " · кэш" : ""}</small></a>`).join("") || "<span class='muted'>пусто</span>";
+}
+
+$("go").addEventListener("click", submit);
+loadJobs();
+if (location.hash.length > 1) openJob(location.hash.slice(1));
+</script>
+</body>
+</html>

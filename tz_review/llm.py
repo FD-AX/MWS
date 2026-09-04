@@ -70,6 +70,15 @@ class LLM:
         self._use_completion_tokens = False  # gpt-5.x: max_completion_tokens вместо max_tokens
         self._floor = int(getattr(settings, "max_tokens_floor", 0) or 0)
         self._reasoning = getattr(settings, "reasoning_effort", None)
+        # Учёт вызовов/токенов (метрики воркера, стоимость документа)
+        self.stats = {"calls": 0, "prompt_tokens": 0, "completion_tokens": 0}
+
+    def _account(self, resp) -> None:
+        self.stats["calls"] += 1
+        usage = getattr(resp, "usage", None)
+        if usage is not None:
+            self.stats["prompt_tokens"] += getattr(usage, "prompt_tokens", 0) or 0
+            self.stats["completion_tokens"] += getattr(usage, "completion_tokens", 0) or 0
 
     def _chat(self, system: str, user: str, temperature: float = 0.0, n: int = 1,
               max_tokens: int = 1600) -> list[str]:
@@ -97,6 +106,7 @@ class LLM:
                     n=n,
                     **kwargs,
                 )
+                self._account(resp)
                 outs = [c.message.content or "" for c in resp.choices]
                 self.last_finish = (getattr(resp.choices[0], "finish_reason", None)
                                     if resp.choices else None)
@@ -147,6 +157,7 @@ class LLM:
                       {"role": "user", "content": user}],
             max_tokens=1, temperature=0, logprobs=True, top_logprobs=10,
         )
+        self._account(resp)
         content = resp.choices[0].logprobs.content
         if not content:
             return 0.0, 0.0
