@@ -217,6 +217,9 @@ def main() -> int:
                     "findings": [{k: f.get(k) for k in ("fid", "category", "severity", "section", "quote",
                                                          "why", "ask", "source_pass", "score")}
                                  for f in (x.model_dump() for x in result.findings)],
+                    # Отброшенные верификацией цитат — диагностика заякоренности (EXP-19: 29% ↔ 93% на одном поде)
+                    "dropped": [{"category": f.category, "source_pass": f.source_pass,
+                                 "quote": (f.quote or "")[:120]} for f in result.dropped],
                     "defects": {d["id"]: {"code": str(d.get("code", "?")),
                                           "difficulty": str(d.get("difficulty", "?")),
                                           "description": d["description"],
@@ -243,7 +246,10 @@ def main() -> int:
                     # Полные находки — для офлайн-пересчёта матчинга (PROTOCOL п.4: поправка на матчер)
                     "findings": [{k: f.get(k) for k in ("fid", "category", "severity", "section", "quote",
                                                          "why", "ask", "source_pass", "score")}
-                                 for f in (x.model_dump() for x in result.findings)], "defects": {},
+                                 for f in (x.model_dump() for x in result.findings)],
+                    # Отброшенные верификацией цитат — диагностика заякоренности (EXP-19: 29% ↔ 93% на одном поде)
+                    "dropped": [{"category": f.category, "source_pass": f.source_pass,
+                                 "quote": (f.quote or "")[:120]} for f in result.dropped], "defects": {},
                     "noise": [{"category": f["category"], "severity": f["severity"],
                                "why": (f["why"] or "")[:160]}
                               for f in (x.model_dump() for x in result.findings)
