@@ -1411,6 +1411,26 @@
     color: rgba(17,17,17,0.38);
   }
 
+  /* Architecture diagram */
+  .architecture-figure {
+    flex: 1;
+    min-height: 0;
+    margin: 0;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid rgba(17,17,17,0.18);
+  }
+
+  .architecture-figure img {
+    display: block;
+    width: 90%;
+    height: auto;
+    max-height: 90%;
+    object-fit: contain;
+  }
+
   /* Two-column content */
   .grid-2 {
     gap: 0;
@@ -1466,12 +1486,12 @@
   .final-line strong { font-weight: 800; }
 
   /* Appendix */
-  .slide:nth-of-type(6) .grid-2 {
+  .slide:nth-of-type(9) .grid-2 {
     grid-template-columns: 1fr 1fr;
     gap: 1.4rem 2.6rem;
   }
 
-  .slide:nth-of-type(6) .card {
+  .slide:nth-of-type(9) .card {
     padding-top: 1.1rem;
   }
 
@@ -1558,7 +1578,7 @@
     .slide:first-of-type .grid-3,
     .slide:nth-of-type(2) .grid-3 { flex: none; }
     .metric-row,
-    .slide:nth-of-type(6) .grid-2 { grid-template-columns: 1fr; }
+    .slide:nth-of-type(9) .grid-2 { grid-template-columns: 1fr; }
     .metric { border-right: 0; border-bottom: 1px solid rgba(255,255,255,0.2); }
   }
 </style>
@@ -1679,17 +1699,45 @@
       <div class="blank-stage"><span>место для демо</span></div>
     </section>
 
-    <!-- 4 · TECH -->
-    <section class="slide" data-notes="1 мин. Слайд зарезервирован под архитектуру, поток данных, выбор модели и ограничения.">
+    <!-- 3 · ARCHITECTURE -->
+    <section class="slide" data-notes="Документ проходит через API и очередь к воркеру. Внутри воркера — гибридный конвейер: правила, LLM-проверки, верификация цитат и критик. Модель подключена по OpenAI-совместимому API; результаты и обратная связь сохраняются в Postgres.">
       <div class="topbar">
-        <span>Техника</span>
-        <span class="badge"><span class="dot"></span>3:10–4:10 · техника</span>
+        <span>Техническая часть · архитектура</span>
       </div>
-      <h1 class="wide">Техническая часть</h1>
-      <div class="blank-stage"><span>место для архитектуры и технических решений</span></div>
+      <h1 class="wide">Архитектура решения</h1>
+      <figure class="architecture-figure">
+        <img src="../interim/architecture.png" alt="Архитектура DocReview AI: аналитик, API, RabbitMQ, worker, LLM, нормализация документов, Postgres, мониторинг и конвейер проверки">
+      </figure>
     </section>
 
-    <!-- 5 · FINALE -->
+    <!-- 4 · DATASET -->
+    <section class="slide" data-notes="Слайд зарезервирован под описание датасета, источников и разметки.">
+      <div class="topbar">
+        <span>Техническая часть · датасет</span>
+      </div>
+      <h1 class="wide">Датасет и разметка</h1>
+      <div class="blank-stage"><span>место для данных, источников и разметки</span></div>
+    </section>
+
+    <!-- 5 · METRICS -->
+    <section class="slide" data-notes="Слайд зарезервирован под методику оценки и итоговые метрики.">
+      <div class="topbar">
+        <span>Техническая часть · метрики</span>
+      </div>
+      <h1 class="wide">Метрики качества</h1>
+      <div class="blank-stage"><span>место для метрик и результатов оценки</span></div>
+    </section>
+
+    <!-- 6 · VALIDATED HYPOTHESES -->
+    <section class="slide" data-notes="Слайд зарезервирован под подтверждённые и отвергнутые гипотезы.">
+      <div class="topbar">
+        <span>Техническая часть · эксперименты</span>
+      </div>
+      <h1 class="wide">Проверенные гипотезы</h1>
+      <div class="blank-stage"><span>место для результатов экспериментов</span></div>
+    </section>
+
+    <!-- 7 · FINALE -->
     <section class="slide" data-notes="50 с. Сделано / проверено / следующий шаг. Запрос — закрытая проверка на новых ТЗ и оценка полезности аналитиками NET.">
       <div class="topbar">
         <span>Готовность и следующий шаг</span>
