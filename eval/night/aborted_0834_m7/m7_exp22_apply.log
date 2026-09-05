@@ -1,0 +1,23 @@
+rubric.yaml: INC-01.not_if = полн(ая|ой|ую|ый|ое)\s+(перезапис|перезагруз|пересч[её]т|перегруз)
+rubric.yaml: INC-03.not_if = полн(ая|ой|ую|ый|ое)\s+(перезапис|перезагруз|пересч[её]т|перегруз)
+Traceback (most recent call last):
+  File "C:\Users\user\OneDrive\Рабочий стол\ИТМО\mws-main\infra\apply_exp22.py", line 60, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\Users\user\OneDrive\Рабочий стол\ИТМО\mws-main\infra\apply_exp22.py", line 45, in main
+    patch_yaml(extra, "ORD-01", "applies_if", ORD_APPLIES)
+  File "C:\Users\user\OneDrive\Рабочий стол\ИТМО\mws-main\infra\apply_exp22.py", line 32, in patch_yaml
+    block = re.sub(rf"^    {key}:.*\n", line, block, count=1, flags=re.M)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Programs\Python\Python311\Lib\re\__init__.py", line 185, in sub
+    return _compile(pattern, flags).sub(repl, string, count)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Programs\Python\Python311\Lib\re\__init__.py", line 317, in _subx
+    template = _compile_repl(template, pattern)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Programs\Python\Python311\Lib\re\__init__.py", line 308, in _compile_repl
+    return _parser.parse_template(repl, pattern)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Programs\Python\Python311\Lib\re\_parser.py", line 1087, in parse_template
+    raise s.error('bad escape %s' % this, len(this)) from None
+re.error: bad escape \w at position 24 (line 1, column 25)

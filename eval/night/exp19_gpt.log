@@ -1,0 +1,30 @@
+[02:58:20] start v2g_gpt · synth_v1
+[03:03:36] | v2g_gpt | synth_v1 | **9/12** | A 3/4 B 2/3 C 2/2 D 2/2 E 0/1 | eas 2/3 med 4/6 har 3/3 | 13 | 1 | 70% |
+[03:03:36] start v2g_gpt · doc3_mart (целевой тип)
+[03:07:13] | v2g_gpt | doc3_mart (целевой тип) | **16/16** | A 9/9 B 2/2 C 1/1 D 2/2 F 2/2 | eas 2/2 med 10/10 har 4/4 | 32 | 4 | 88% |
+[03:07:13] start v2g_gpt · synth_v2hard
+[03:12:24] | v2g_gpt | synth_v2hard | **8/8** | B 2/2 C 1/1 D 5/5 | har 4/4 exp 4/4 | 12 | 2 | 74% |
+[03:12:24] start v2g_gpt · synth_v3official
+[03:18:20] | v2g_gpt | synth_v3official | **12/13** | A 6/7 C 1/1 D 2/2 E 1/1 F 2/2 | eas 2/2 med 6/7 har 3/3 exp 1/1 | 13 | 2 | 72% |
+[03:18:20] start v2g_gpt · clean_base (шум)
+[03:22:33] | v2g_gpt | clean_base (шум) | — | — | 6 | noise=6 | 70% |
+[03:22:33] start v2e_gpt · synth_v1
+[03:28:57] | v2e_gpt | synth_v1 | **10/12** | A 3/4 B 2/3 C 2/2 D 2/2 E 1/1 | eas 3/3 med 4/6 har 3/3 | 18 | 1 | 96% |
+[03:28:57] start v2e_gpt · doc3_mart (целевой тип)
+[03:32:42] | v2e_gpt | doc3_mart (целевой тип) | **14/16** | A 7/9 B 2/2 C 1/1 D 2/2 F 2/2 | eas 2/2 med 8/10 har 4/4 | 26 | 4 | 90% |
+[03:32:42] start v2e_gpt · synth_v2hard
+[03:37:31] | v2e_gpt | synth_v2hard | **8/8** | B 2/2 C 1/1 D 5/5 | har 4/4 exp 4/4 | 14 | 2 | 82% |
+[03:37:31] start v2e_gpt · synth_v3official
+[03:42:03] | v2e_gpt | synth_v3official | **13/13** | A 7/7 C 1/1 D 2/2 E 1/1 F 2/2 | eas 2/2 med 7/7 har 3/3 exp 1/1 | 14 | 0 | 65% |
+[03:42:03] start v2e_gpt · clean_base (шум)
+[03:47:01] | v2e_gpt | clean_base (шум) | — | — | 5 | noise=5 | 50% |
+[03:47:01] start v2l_gpt · synth_v1
+[03:52:16] | v2l_gpt | synth_v1 | **8/12** | A 2/4 B 2/3 C 2/2 D 2/2 E 0/1 | eas 2/3 med 3/6 har 3/3 | 12 | 1 | 72% |
+[03:52:16] start v2l_gpt · doc3_mart (целевой тип)
+[03:55:32] | v2l_gpt | doc3_mart (целевой тип) | **15/16** | A 8/9 B 2/2 C 1/1 D 2/2 F 2/2 | eas 2/2 med 9/10 har 4/4 | 26 | 2 | 84% |
+[03:55:32] start v2l_gpt · synth_v2hard
+[03:59:26] | v2l_gpt | synth_v2hard | **7/8** | B 2/2 C 1/1 D 4/5 | har 3/4 exp 4/4 | 8 | 1 | 75% |
+[03:59:26] start v2l_gpt · synth_v3official
+[04:03:37] | v2l_gpt | synth_v3official | **12/13** | A 6/7 C 1/1 D 2/2 E 1/1 F 2/2 | eas 2/2 med 6/7 har 3/3 exp 1/1 | 16 | 4 | 74% |
+[04:03:37] start v2l_gpt · clean_base (шум)
+[04:07:55] | v2l_gpt | clean_base (шум) | — | — | 9 | noise=9 | 100% |

@@ -1,0 +1,31 @@
+[08:34:09] exp22 v2x,v2g start
+# Bench report — 2026-09-05
+Варианты: v2x, v2g
+
+## Сводка
+
+| Вариант | Цель | Recall | По группам | По сложности | Находок | Лишних | Anchoring |
+|---|---|---|---|---|---|---|---|
+| v2x | synth_v1 #1 | **9/12** | A 3/4 B 2/3 C 2/2 D 2/2 E 0/1 | eas 2/3 med 4/6 har 3/3 | 17 | 6 | 100% |
+| v2x | doc3_mart (целевой тип) #1 | **14/16** | A 8/9 B 1/2 C 1/1 D 2/2 F 2/2 | eas 2/2 med 9/10 har 3/4 | 33 | 5 | 94% |
+| v2x | synth_v2hard #1 | **6/8** | B 2/2 C 1/1 D 3/5 | har 3/4 exp 3/4 | 9 | 2 | 100% |
+| v2x | synth_v3official #1 | **12/13** | A 6/7 C 1/1 D 2/2 E 1/1 F 2/2 | eas 2/2 med 7/7 har 2/3 exp 1/1 | 19 | 6 | 85% |
+| v2x | clean_base (шум) #1 | — | — | 8 | noise=8 | 92% |
+| v2x | synth_v1 #2 | **10/12** | A 4/4 B 2/3 C 2/2 D 2/2 E 0/1 | eas 2/3 med 5/6 har 3/3 | 18 | 4 | 96% |
+| v2x | doc3_mart (целевой тип) #2 | **16/16** | A 9/9 B 2/2 C 1/1 D 2/2 F 2/2 | eas 2/2 med 10/10 har 4/4 | 32 | 9 | 100% |
+| v2x | synth_v2hard #2 | **6/8** | B 2/2 C 1/1 D 3/5 | har 2/4 exp 4/4 | 11 | 3 | 100% |
+| v2x | synth_v3official #2 | **13/13** | A 7/7 C 1/1 D 2/2 E 1/1 F 2/2 | eas 2/2 med 7/7 har 3/3 exp 1/1 | 18 | 4 | 93% |
+| v2x | clean_base (шум) #2 | — | — | 10 | noise=10 | 90% |
+| v2g | synth_v1 #1 | **11/12** | A 3/4 B 3/3 C 2/2 D 2/2 E 1/1 | eas 3/3 med 5/6 har 3/3 | 15 | 2 | 95% |
+| v2g | doc3_mart (целевой тип) #1 | **10/16** | A 3/9 B 2/2 C 1/1 D 2/2 F 2/2 | eas 2/2 med 4/10 har 4/4 | 13 | 2 | 92% |
+| v2g | synth_v2hard #1 | **6/8** | B 2/2 C 1/1 D 3/5 | har 2/4 exp 4/4 | 11 | 3 | 100% |
+| v2g | synth_v3official #1 | **13/13** | A 7/7 C 1/1 D 2/2 E 1/1 F 2/2 | eas 2/2 med 7/7 har 3/3 exp 1/1 | 19 | 5 | 100% |
+| v2g | clean_base (шум) #1 | — | — | 6 | noise=6 | 100% |
+| v2g | synth_v1 #2 | **9/12** | A 3/4 B 2/3 C 2/2 D 2/2 E 0/1 | eas 2/3 med 4/6 har 3/3 | 15 | 3 | 95% |
+| v2g | doc3_mart (целевой тип) #2 | **10/16** | A 3/9 B 2/2 C 1/1 D 2/2 F 2/2 | eas 2/2 med 4/10 har 4/4 | 13 | 2 | 92% |
+| v2g | synth_v2hard #2 | **6/8** | B 2/2 C 1/1 D 3/5 | har 2/4 exp 4/4 | 11 | 3 | 100% |
+| v2g | synth_v3official #2 | **13/13** | A 7/7 C 1/1 D 2/2 E 1/1 F 2/2 | eas 2/2 med 7/7 har 3/3 exp 1/1 | 19 | 5 | 100% |
+| v2g | clean_base (шум) #2 | — | — | 6 | noise=6 | 100% |
+
+Отчёт: C:\Users\user\OneDrive\Рабочий стол\ИТМО\mws-main\eval\night\m7_pod_v2x.md
+[09:16:01] exp22 done

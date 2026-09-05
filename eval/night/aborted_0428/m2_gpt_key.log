@@ -1,0 +1,7 @@
+[04:14:02] start v2g · synth_v1 #1
+[04:20:34] llm: no_temperature=True completion_tokens=True calls=10 dropped=0
+[04:20:34] | v2g | synth_v1 #1 | **10/12** | A 3/4 B 2/3 C 2/2 D 2/2 E 1/1 | eas 3/3 med 4/6 har 3/3 | 16 | 1 | 100% |
+[04:20:34] start v2g · doc3_mart (целевой тип) #1
+[04:24:43] llm: no_temperature=True completion_tokens=True calls=18 dropped=1
+[04:24:43] | v2g | doc3_mart (целевой тип) #1 | **15/16** | A 8/9 B 2/2 C 1/1 D 2/2 F 2/2 | eas 2/2 med 9/10 har 4/4 | 26 | 3 | 95% |
+[04:24:43] start v2g · synth_v2hard #1

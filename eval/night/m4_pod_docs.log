@@ -1,0 +1,24 @@
+[06:41:25] start v2g · doc1_stream_geo #1
+[06:42:38] llm: no_temperature=False completion_tokens=False calls=9 dropped=1
+[06:42:38] | v2g | doc1_stream_geo #1 | **11/12** | A 6/6 B 0/1 C 1/1 D 3/3 F 1/1 | eas 1/1 med 7/8 har 3/3 | 32 | 15 | 91% |
+[06:42:38] start v2g · doc2_source_cdr #1
+[06:43:46] llm: no_temperature=False completion_tokens=False calls=17 dropped=0
+[06:43:46] | v2g | doc2_source_cdr #1 | **6/8** | A 2/3 B 1/1 C 1/1 D 1/1 E 0/1 F 1/1 | eas 1/1 med 3/5 har 2/2 | 32 | 24 | 100% |
+[06:43:46] start v2g · doc1_stream_geo #2
+[06:45:11] llm: no_temperature=False completion_tokens=False calls=26 dropped=0
+[06:45:11] | v2g | doc1_stream_geo #2 | **9/12** | A 5/6 B 0/1 C 1/1 D 2/3 F 1/1 | eas 1/1 med 6/8 har 2/3 | 31 | 11 | 100% |
+[06:45:11] start v2g · doc2_source_cdr #2
+[06:46:23] llm: no_temperature=False completion_tokens=False calls=34 dropped=0
+[06:46:23] | v2g | doc2_source_cdr #2 | **6/8** | A 2/3 B 1/1 C 1/1 D 1/1 E 0/1 F 1/1 | eas 1/1 med 3/5 har 2/2 | 35 | 26 | 100% |
+[06:46:23] start v2f · doc1_stream_geo #1
+[06:48:04] llm: no_temperature=False completion_tokens=False calls=52 dropped=0
+[06:48:04] | v2f | doc1_stream_geo #1 | **10/12** | A 6/6 B 0/1 C 1/1 D 2/3 F 1/1 | eas 1/1 med 7/8 har 2/3 | 37 | 14 | 100% |
+[06:48:04] start v2f · doc2_source_cdr #1
+[06:49:35] llm: no_temperature=False completion_tokens=False calls=67 dropped=0
+[06:49:35] | v2f | doc2_source_cdr #1 | **6/8** | A 2/3 B 1/1 C 1/1 D 1/1 E 0/1 F 1/1 | eas 1/1 med 3/5 har 2/2 | 45 | 33 | 100% |
+[06:49:35] start v2f · doc1_stream_geo #2
+[06:51:16] llm: no_temperature=False completion_tokens=False calls=85 dropped=0
+[06:51:16] | v2f | doc1_stream_geo #2 | **10/12** | A 6/6 B 0/1 C 1/1 D 2/3 F 1/1 | eas 1/1 med 7/8 har 2/3 | 35 | 13 | 100% |
+[06:51:16] start v2f · doc2_source_cdr #2
+[06:52:43] llm: no_temperature=False completion_tokens=False calls=100 dropped=0
+[06:52:43] | v2f | doc2_source_cdr #2 | **6/8** | A 2/3 B 1/1 C 1/1 D 1/1 E 0/1 F 1/1 | eas 1/1 med 3/5 har 2/2 | 42 | 32 | 100% |

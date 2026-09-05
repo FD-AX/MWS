@@ -1,0 +1,110 @@
+# Bench report Ч 2026-09-05
+¬арианты: v2g, v2e, v2s, v2x, v2f
+
+## —водка
+
+| ¬ариант | ÷ель | Recall | ѕо группам | ѕо сложности | Ќаходок | Ћишних | Anchoring |
+|---|---|---|---|---|---|---|---|
+| v2g | synth_v1 #1 | **8/12** | A 2/4 B 2/3 C 2/2 D 2/2 E 0/1 | eas 2/3 med 3/6 har 3/3 | 14 | 2 | 100% |
+| v2g | doc3_mart (целевой тип) #1 | **14/16** | A 8/9 B 2/2 C 1/1 D 1/2 F 2/2 | eas 2/2 med 9/10 har 3/4 | 31 | 12 | 100% |
+| v2g | synth_v2hard #1 | **6/8** | B 2/2 C 1/1 D 3/5 | har 2/4 exp 4/4 | 17 | 5 | 100% |
+| v2g | synth_v3official #1 | **11/13** | A 6/7 C 1/1 D 2/2 E 0/1 F 2/2 | eas 2/2 med 6/7 har 3/3 exp 0/1 | 14 | 3 | 83% |
+| v2g | clean_base (шум) #1 | Ч | Ч | 10 | noise=10 | 100% |
+| v2g | synth_v1 #2 | **9/12** | A 3/4 B 2/3 C 2/2 D 2/2 E 0/1 | eas 2/3 med 4/6 har 3/3 | 20 | 4 | 100% |
+| v2g | doc3_mart (целевой тип) #2 | **12/16** | A 7/9 B 1/2 C 1/1 D 1/2 F 2/2 | eas 2/2 med 7/10 har 3/4 | 24 | 9 | 100% |
+| v2g | synth_v2hard #2 | **4/8** | B 1/2 C 1/1 D 2/5 | har 1/4 exp 3/4 | 11 | 3 | 100% |
+| v2g | synth_v3official #2 | **12/13** | A 6/7 C 1/1 D 2/2 E 1/1 F 2/2 | eas 2/2 med 6/7 har 3/3 exp 1/1 | 18 | 4 | 100% |
+| v2g | clean_base (шум) #2 | Ч | Ч | 8 | noise=8 | 100% |
+| v2e | synth_v1 #1 | **9/12** | A 3/4 B 2/3 C 2/2 D 2/2 E 0/1 | eas 2/3 med 4/6 har 3/3 | 16 | 4 | 94% |
+| v2e | doc3_mart (целевой тип) #1 | **15/16** | A 8/9 B 2/2 C 1/1 D 2/2 F 2/2 | eas 2/2 med 9/10 har 4/4 | 31 | 6 | 93% |
+| v2e | synth_v2hard #1 | **6/8** | B 2/2 C 1/1 D 3/5 | har 2/4 exp 4/4 | 14 | 6 | 100% |
+| v2e | synth_v3official #1 | **12/13** | A 6/7 C 1/1 D 2/2 E 1/1 F 2/2 | eas 2/2 med 6/7 har 3/3 exp 1/1 | 17 | 4 | 92% |
+| v2e | clean_base (шум) #1 | Ч | Ч | 14 | noise=14 | 100% |
+| v2e | synth_v1 #2 | **9/12** | A 3/4 B 2/3 C 2/2 D 2/2 E 0/1 | eas 2/3 med 4/6 har 3/3 | 18 | 5 | 100% |
+| v2e | doc3_mart (целевой тип) #2 | **15/16** | A 8/9 B 2/2 C 1/1 D 2/2 F 2/2 | eas 2/2 med 9/10 har 4/4 | 32 | 7 | 93% |
+| v2e | synth_v2hard #2 | **6/8** | B 2/2 C 1/1 D 3/5 | har 3/4 exp 3/4 | 37 | 24 | 100% |
+| v2e | synth_v3official #2 | **12/13** | A 6/7 C 1/1 D 2/2 E 1/1 F 2/2 | eas 2/2 med 6/7 har 3/3 exp 1/1 | 19 | 5 | 92% |
+| v2e | clean_base (шум) #2 | Ч | Ч | 12 | noise=12 | 100% |
+| v2s | synth_v1 #1 | **9/12** | A 3/4 B 2/3 C 2/2 D 2/2 E 0/1 | eas 2/3 med 4/6 har 3/3 | 17 | 3 | 100% |
+| v2s | doc3_mart (целевой тип) #1 | **15/16** | A 8/9 B 2/2 C 1/1 D 2/2 F 2/2 | eas 2/2 med 9/10 har 4/4 | 29 | 7 | 93% |
+| v2s | synth_v2hard #1 | **5/8** | B 2/2 C 1/1 D 2/5 | har 2/4 exp 3/4 | 12 | 5 | 100% |
+| v2s | synth_v3official #1 | **13/13** | A 7/7 C 1/1 D 2/2 E 1/1 F 2/2 | eas 2/2 med 7/7 har 3/3 exp 1/1 | 20 | 6 | 92% |
+| v2s | clean_base (шум) #1 | Ч | Ч | 13 | noise=13 | 100% |
+| v2s | synth_v1 #2 | **9/12** | A 3/4 B 2/3 C 2/2 D 2/2 E 0/1 | eas 2/3 med 4/6 har 3/3 | 17 | 3 | 100% |
+| v2s | doc3_mart (целевой тип) #2 | **15/16** | A 8/9 B 2/2 C 1/1 D 2/2 F 2/2 | eas 2/2 med 9/10 har 4/4 | 31 | 6 | 93% |
+| v2s | synth_v2hard #2 | **5/8** | B 2/2 C 1/1 D 2/5 | har 2/4 exp 3/4 | 10 | 3 | 100% |
+| v2s | synth_v3official #2 | **13/13** | A 7/7 C 1/1 D 2/2 E 1/1 F 2/2 | eas 2/2 med 7/7 har 3/3 exp 1/1 | 20 | 6 | 92% |
+| v2s | clean_base (шум) #2 | Ч | Ч | 13 | noise=13 | 100% |
+| v2x | synth_v1 #1 | **10/12** | A 4/4 B 2/3 C 2/2 D 2/2 E 0/1 | eas 2/3 med 5/6 har 3/3 | 20 | 4 | 100% |
+| v2x | doc3_mart (целевой тип) #1 | **14/16** | A 7/9 B 2/2 C 1/1 D 2/2 F 2/2 | eas 2/2 med 8/10 har 4/4 | 32 | 8 | 93% |
+| v2x | synth_v2hard #1 | **5/8** | B 1/2 C 1/1 D 3/5 | har 1/4 exp 4/4 | 9 | 3 | 100% |
+| v2x | synth_v3official #1 | **12/13** | A 7/7 C 1/1 D 2/2 E 0/1 F 2/2 | eas 2/2 med 7/7 har 3/3 exp 0/1 | 16 | 4 | 85% |
+| v2x | clean_base (шум) #1 | Ч | Ч | 13 | noise=13 | 100% |
+| v2x | synth_v1 #2 | **10/12** | A 4/4 B 2/3 C 2/2 D 2/2 E 0/1 | eas 2/3 med 5/6 har 3/3 | 16 | 4 | 100% |
+| v2x | doc3_mart (целевой тип) #2 | **16/16** | A 9/9 B 2/2 C 1/1 D 2/2 F 2/2 | eas 2/2 med 10/10 har 4/4 | 32 | 10 | 100% |
+| v2x | synth_v2hard #2 | **4/8** | B 1/2 C 1/1 D 2/5 | har 1/4 exp 3/4 | 10 | 1 | 100% |
+| v2x | synth_v3official #2 | **10/13** | A 5/7 C 1/1 D 2/2 E 0/1 F 2/2 | eas 2/2 med 6/7 har 2/3 exp 0/1 | 15 | 4 | 83% |
+| v2x | clean_base (шум) #2 | Ч | Ч | 7 | noise=7 | 100% |
+| v2f | synth_v1 #1 | **10/12** | A 4/4 B 2/3 C 2/2 D 2/2 E 0/1 | eas 2/3 med 5/6 har 3/3 | 22 | 7 | 100% |
+| v2f | doc3_mart (целевой тип) #1 | **16/16** | A 9/9 B 2/2 C 1/1 D 2/2 F 2/2 | eas 2/2 med 10/10 har 4/4 | 32 | 7 | 94% |
+| v2f | synth_v2hard #1 | **6/8** | B 1/2 C 1/1 D 4/5 | har 3/4 exp 3/4 | 13 | 5 | 100% |
+| v2f | synth_v3official #1 | **12/13** | A 6/7 C 1/1 D 2/2 E 1/1 F 2/2 | eas 2/2 med 6/7 har 3/3 exp 1/1 | 17 | 4 | 92% |
+| v2f | clean_base (шум) #1 | Ч | Ч | 13 | noise=13 | 100% |
+| v2f | synth_v1 #2 | **10/12** | A 4/4 B 2/3 C 2/2 D 2/2 E 0/1 | eas 2/3 med 5/6 har 3/3 | 43 | 24 | 100% |
+| v2f | doc3_mart (целевой тип) #2 | **16/16** | A 9/9 B 2/2 C 1/1 D 2/2 F 2/2 | eas 2/2 med 10/10 har 4/4 | 35 | 7 | 94% |
+| v2f | synth_v2hard #2 | **6/8** | B 1/2 C 1/1 D 4/5 | har 3/4 exp 3/4 | 39 | 24 | 100% |
+| v2f | synth_v3official #2 | **13/13** | A 7/7 C 1/1 D 2/2 E 1/1 F 2/2 | eas 2/2 med 7/7 har 3/3 exp 1/1 | 41 | 23 | 92% |
+| v2f | clean_base (шум) #2 | Ч | Ч | 12 | noise=12 | 100% |
+
+ќтчЄт: C:\Users\user\OneDrive\–абочий стол\»“ћќ\mws-main\eval\night\m4_pod_key.md
+# Bench report Ч 2026-09-05
+¬арианты: v2g, v2f
+
+## —водка
+
+| ¬ариант | ÷ель | Recall | ѕо группам | ѕо сложности | Ќаходок | Ћишних | Anchoring |
+|---|---|---|---|---|---|---|---|
+| v2g | doc1_stream_geo #1 | **11/12** | A 6/6 B 0/1 C 1/1 D 3/3 F 1/1 | eas 1/1 med 7/8 har 3/3 | 32 | 15 | 91% |
+| v2g | doc2_source_cdr #1 | **6/8** | A 2/3 B 1/1 C 1/1 D 1/1 E 0/1 F 1/1 | eas 1/1 med 3/5 har 2/2 | 32 | 24 | 100% |
+| v2g | doc1_stream_geo #2 | **9/12** | A 5/6 B 0/1 C 1/1 D 2/3 F 1/1 | eas 1/1 med 6/8 har 2/3 | 31 | 11 | 100% |
+| v2g | doc2_source_cdr #2 | **6/8** | A 2/3 B 1/1 C 1/1 D 1/1 E 0/1 F 1/1 | eas 1/1 med 3/5 har 2/2 | 35 | 26 | 100% |
+| v2f | doc1_stream_geo #1 | **10/12** | A 6/6 B 0/1 C 1/1 D 2/3 F 1/1 | eas 1/1 med 7/8 har 2/3 | 37 | 14 | 100% |
+| v2f | doc2_source_cdr #1 | **6/8** | A 2/3 B 1/1 C 1/1 D 1/1 E 0/1 F 1/1 | eas 1/1 med 3/5 har 2/2 | 45 | 33 | 100% |
+| v2f | doc1_stream_geo #2 | **10/12** | A 6/6 B 0/1 C 1/1 D 2/3 F 1/1 | eas 1/1 med 7/8 har 2/3 | 35 | 13 | 100% |
+| v2f | doc2_source_cdr #2 | **6/8** | A 2/3 B 1/1 C 1/1 D 1/1 E 0/1 F 1/1 | eas 1/1 med 3/5 har 2/2 | 42 | 32 | 100% |
+
+ќтчЄт: C:\Users\user\OneDrive\–абочий стол\»“ћќ\mws-main\eval\night\m4_pod_docs.md
+[06:52:44] pod matrix done
+# Bench report Ч 2026-09-05
+¬арианты: v2q
+
+## —водка
+
+| ¬ариант | ÷ель | Recall | ѕо группам | ѕо сложности | Ќаходок | Ћишних | Anchoring |
+|---|---|---|---|---|---|---|---|
+| v2q | synth_v1 #1 | **8/12** | A 2/4 B 2/3 C 2/2 D 2/2 E 0/1 | eas 2/3 med 3/6 har 3/3 | 17 | 6 | 100% |
+| v2q | doc3_mart (целевой тип) #1 | **14/16** | A 8/9 B 2/2 C 1/1 D 1/2 F 2/2 | eas 2/2 med 9/10 har 3/4 | 31 | 10 | 100% |
+| v2q | synth_v2hard #1 | **7/8** | B 2/2 C 1/1 D 4/5 | har 3/4 exp 4/4 | 16 | 3 | 100% |
+| v2q | synth_v3official #1 | **10/13** | A 5/7 C 1/1 D 2/2 E 0/1 F 2/2 | eas 2/2 med 6/7 har 2/3 exp 0/1 | 15 | 4 | 86% |
+| v2q | clean_base (шум) #1 | Ч | Ч | 12 | noise=12 | 100% |
+| v2q | synth_v1 #2 | **9/12** | A 3/4 B 2/3 C 2/2 D 2/2 E 0/1 | eas 2/3 med 4/6 har 3/3 | 13 | 2 | 100% |
+| v2q | doc3_mart (целевой тип) #2 | **12/16** | A 7/9 B 1/2 C 1/1 D 1/2 F 2/2 | eas 2/2 med 7/10 har 3/4 | 24 | 9 | 100% |
+| v2q | synth_v2hard #2 | **7/8** | B 2/2 C 1/1 D 4/5 | har 3/4 exp 4/4 | 16 | 3 | 100% |
+| v2q | synth_v3official #2 | **10/13** | A 5/7 C 1/1 D 2/2 E 0/1 F 2/2 | eas 2/2 med 6/7 har 2/3 exp 0/1 | 18 | 7 | 86% |
+| v2q | clean_base (шум) #2 | Ч | Ч | 12 | noise=12 | 100% |
+
+ќтчЄт: C:\Users\user\OneDrive\–абочий стол\»“ћќ\mws-main\eval\night\m4_pod_v2q.md
+# Bench report Ч 2026-09-05
+¬арианты: v2q
+
+## —водка
+
+| ¬ариант | ÷ель | Recall | ѕо группам | ѕо сложности | Ќаходок | Ћишних | Anchoring |
+|---|---|---|---|---|---|---|---|
+| v2q | doc1_stream_geo #1 | **11/12** | A 6/6 B 0/1 C 1/1 D 3/3 F 1/1 | eas 1/1 med 7/8 har 3/3 | 37 | 16 | 100% |
+| v2q | doc2_source_cdr #1 | **6/8** | A 2/3 B 1/1 C 1/1 D 1/1 E 0/1 F 1/1 | eas 1/1 med 3/5 har 2/2 | 34 | 26 | 100% |
+| v2q | doc1_stream_geo #2 | **9/12** | A 6/6 B 0/1 C 1/1 D 1/3 F 1/1 | eas 1/1 med 7/8 har 1/3 | 34 | 16 | 94% |
+| v2q | doc2_source_cdr #2 | **5/8** | A 2/3 B 1/1 C 1/1 D 0/1 E 0/1 F 1/1 | eas 1/1 med 3/5 har 1/2 | 36 | 27 | 100% |
+
+ќтчЄт: C:\Users\user\OneDrive\–абочий стол\»“ћќ\mws-main\eval\night\m4_pod_v2q_docs.md
+[07:23:01] pod v2q done

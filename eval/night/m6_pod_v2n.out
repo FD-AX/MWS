@@ -1,0 +1,21 @@
+[07:23:43] exp23 start (parallel with exp21)
+# Bench report — 2026-09-05
+Варианты: v2n
+
+## Сводка
+
+| Вариант | Цель | Recall | По группам | По сложности | Находок | Лишних | Anchoring |
+|---|---|---|---|---|---|---|---|
+| v2n | synth_v1 #1 | **9/12** | A 3/4 B 2/3 C 2/2 D 2/2 E 0/1 | eas 2/3 med 4/6 har 3/3 | 16 | 4 | 100% |
+| v2n | doc3_mart (целевой тип) #1 | **15/16** | A 9/9 B 1/2 C 1/1 D 2/2 F 2/2 | eas 2/2 med 9/10 har 4/4 | 32 | 8 | 100% |
+| v2n | synth_v2hard #1 | **7/8** | B 2/2 C 1/1 D 4/5 | har 3/4 exp 4/4 | 11 | 3 | 100% |
+| v2n | synth_v3official #1 | **13/13** | A 7/7 C 1/1 D 2/2 E 1/1 F 2/2 | eas 2/2 med 7/7 har 3/3 exp 1/1 | 15 | 3 | 100% |
+| v2n | clean_base (шум) #1 | — | — | 28 | noise=28 | 96% |
+| v2n | synth_v1 #2 | **9/12** | A 3/4 B 2/3 C 2/2 D 2/2 E 0/1 | eas 2/3 med 4/6 har 3/3 | 15 | 2 | 94% |
+| v2n | doc3_mart (целевой тип) #2 | **15/16** | A 8/9 B 2/2 C 1/1 D 2/2 F 2/2 | eas 2/2 med 9/10 har 4/4 | 26 | 5 | 95% |
+| v2n | synth_v2hard #2 | **6/8** | B 2/2 C 1/1 D 3/5 | har 2/4 exp 4/4 | 12 | 5 | 96% |
+| v2n | synth_v3official #2 | **13/13** | A 7/7 C 1/1 D 2/2 E 1/1 F 2/2 | eas 2/2 med 7/7 har 3/3 exp 1/1 | 21 | 7 | 100% |
+| v2n | clean_base (шум) #2 | — | — | 28 | noise=28 | 100% |
+
+Отчёт: C:\Users\user\OneDrive\Рабочий стол\ИТМО\mws-main\eval\night\m6_pod_v2n.md
+[07:54:29] exp23 done

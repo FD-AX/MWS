@@ -1,0 +1,60 @@
+[08:34:11] start v2x · synth_v1 #1
+[08:40:14] llm: no_temperature=False completion_tokens=False calls=12 dropped=0
+[08:40:14] | v2x | synth_v1 #1 | **9/12** | A 3/4 B 2/3 C 2/2 D 2/2 E 0/1 | eas 2/3 med 4/6 har 3/3 | 17 | 6 | 100% |
+[08:40:14] start v2x · doc3_mart (целевой тип) #1
+[08:41:43] llm: no_temperature=False completion_tokens=False calls=21 dropped=1
+[08:41:43] | v2x | doc3_mart (целевой тип) #1 | **14/16** | A 8/9 B 1/2 C 1/1 D 2/2 F 2/2 | eas 2/2 med 9/10 har 3/4 | 33 | 5 | 94% |
+[08:41:43] start v2x · synth_v2hard #1
+[08:43:53] llm: no_temperature=False completion_tokens=False calls=31 dropped=0
+[08:43:53] | v2x | synth_v2hard #1 | **6/8** | B 2/2 C 1/1 D 3/5 | har 3/4 exp 3/4 | 9 | 2 | 100% |
+[08:43:53] start v2x · synth_v3official #1
+[08:45:29] llm: no_temperature=False completion_tokens=False calls=40 dropped=2
+[08:45:29] | v2x | synth_v3official #1 | **12/13** | A 6/7 C 1/1 D 2/2 E 1/1 F 2/2 | eas 2/2 med 7/7 har 2/3 exp 1/1 | 19 | 6 | 85% |
+[08:45:29] start v2x · clean_base (шум) #1
+[08:47:54] llm: no_temperature=False completion_tokens=False calls=50 dropped=1
+[08:47:54] | v2x | clean_base (шум) #1 | — | — | 8 | noise=8 | 92% |
+[08:47:54] start v2x · synth_v1 #2
+[08:49:41] llm: no_temperature=False completion_tokens=False calls=59 dropped=1
+[08:49:41] | v2x | synth_v1 #2 | **10/12** | A 4/4 B 2/3 C 2/2 D 2/2 E 0/1 | eas 2/3 med 5/6 har 3/3 | 18 | 4 | 96% |
+[08:49:41] start v2x · doc3_mart (целевой тип) #2
+[08:51:08] llm: no_temperature=False completion_tokens=False calls=68 dropped=0
+[08:51:08] | v2x | doc3_mart (целевой тип) #2 | **16/16** | A 9/9 B 2/2 C 1/1 D 2/2 F 2/2 | eas 2/2 med 10/10 har 4/4 | 32 | 9 | 100% |
+[08:51:08] start v2x · synth_v2hard #2
+[08:53:52] llm: no_temperature=False completion_tokens=False calls=79 dropped=0
+[08:53:52] | v2x | synth_v2hard #2 | **6/8** | B 2/2 C 1/1 D 3/5 | har 2/4 exp 4/4 | 11 | 3 | 100% |
+[08:53:52] start v2x · synth_v3official #2
+[08:56:19] llm: no_temperature=False completion_tokens=False calls=90 dropped=1
+[08:56:19] | v2x | synth_v3official #2 | **13/13** | A 7/7 C 1/1 D 2/2 E 1/1 F 2/2 | eas 2/2 med 7/7 har 3/3 exp 1/1 | 18 | 4 | 93% |
+[08:56:19] start v2x · clean_base (шум) #2
+[08:58:52] llm: no_temperature=False completion_tokens=False calls=101 dropped=1
+[08:58:52] | v2x | clean_base (шум) #2 | — | — | 10 | noise=10 | 90% |
+[08:58:52] start v2g · synth_v1 #1
+[09:00:15] llm: no_temperature=False completion_tokens=False calls=109 dropped=1
+[09:00:15] | v2g | synth_v1 #1 | **11/12** | A 3/4 B 3/3 C 2/2 D 2/2 E 1/1 | eas 3/3 med 5/6 har 3/3 | 15 | 2 | 95% |
+[09:00:15] start v2g · doc3_mart (целевой тип) #1
+[09:01:30] llm: no_temperature=False completion_tokens=False calls=117 dropped=1
+[09:01:30] | v2g | doc3_mart (целевой тип) #1 | **10/16** | A 3/9 B 2/2 C 1/1 D 2/2 F 2/2 | eas 2/2 med 4/10 har 4/4 | 13 | 2 | 92% |
+[09:01:30] start v2g · synth_v2hard #1
+[09:03:05] llm: no_temperature=False completion_tokens=False calls=125 dropped=0
+[09:03:05] | v2g | synth_v2hard #1 | **6/8** | B 2/2 C 1/1 D 3/5 | har 2/4 exp 4/4 | 11 | 3 | 100% |
+[09:03:05] start v2g · synth_v3official #1
+[09:05:06] llm: no_temperature=False completion_tokens=False calls=134 dropped=0
+[09:05:06] | v2g | synth_v3official #1 | **13/13** | A 7/7 C 1/1 D 2/2 E 1/1 F 2/2 | eas 2/2 med 7/7 har 3/3 exp 1/1 | 19 | 5 | 100% |
+[09:05:06] start v2g · clean_base (шум) #1
+[09:07:24] llm: no_temperature=False completion_tokens=False calls=144 dropped=0
+[09:07:24] | v2g | clean_base (шум) #1 | — | — | 6 | noise=6 | 100% |
+[09:07:24] start v2g · synth_v1 #2
+[09:08:55] llm: no_temperature=False completion_tokens=False calls=152 dropped=1
+[09:08:55] | v2g | synth_v1 #2 | **9/12** | A 3/4 B 2/3 C 2/2 D 2/2 E 0/1 | eas 2/3 med 4/6 har 3/3 | 15 | 3 | 95% |
+[09:08:55] start v2g · doc3_mart (целевой тип) #2
+[09:10:10] llm: no_temperature=False completion_tokens=False calls=160 dropped=1
+[09:10:10] | v2g | doc3_mart (целевой тип) #2 | **10/16** | A 3/9 B 2/2 C 1/1 D 2/2 F 2/2 | eas 2/2 med 4/10 har 4/4 | 13 | 2 | 92% |
+[09:10:10] start v2g · synth_v2hard #2
+[09:11:44] llm: no_temperature=False completion_tokens=False calls=168 dropped=0
+[09:11:44] | v2g | synth_v2hard #2 | **6/8** | B 2/2 C 1/1 D 3/5 | har 2/4 exp 4/4 | 11 | 3 | 100% |
+[09:11:44] start v2g · synth_v3official #2
+[09:13:43] llm: no_temperature=False completion_tokens=False calls=177 dropped=0
+[09:13:43] | v2g | synth_v3official #2 | **13/13** | A 7/7 C 1/1 D 2/2 E 1/1 F 2/2 | eas 2/2 med 7/7 har 3/3 exp 1/1 | 19 | 5 | 100% |
+[09:13:43] start v2g · clean_base (шум) #2
+[09:16:01] llm: no_temperature=False completion_tokens=False calls=187 dropped=0
+[09:16:01] | v2g | clean_base (шум) #2 | — | — | 6 | noise=6 | 100% |

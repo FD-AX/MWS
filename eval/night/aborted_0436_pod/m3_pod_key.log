@@ -1,0 +1,6 @@
+[04:26:29] start v2g · synth_v1 #1
+[04:32:20] | v2g | synth_v1 #1 | ERROR | LLM недоступна после 4 попыток: Error code: 524 - {'type': 'https://developers.c | | | | |
+[04:32:20] start v2g · doc3_mart (целевой тип) #1
+[04:33:38] llm: no_temperature=False completion_tokens=False calls=17 dropped=0
+[04:33:38] | v2g | doc3_mart (целевой тип) #1 | **13/16** | A 8/9 B 1/2 C 1/1 D 1/2 F 2/2 | eas 2/2 med 8/10 har 3/4 | 30 | 11 | 100% |
+[04:33:38] start v2g · synth_v2hard #1

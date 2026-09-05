@@ -1,0 +1,19 @@
+# Bench report — 2026-09-05
+Варианты: v2e, v2l
+
+## Сводка
+
+| Вариант | Цель | Recall | По группам | По сложности | Находок | Лишних | Anchoring |
+|---|---|---|---|---|---|---|---|
+| v2e | synth_v1 | **8/12** | A 2/4 B 2/3 C 2/2 D 2/2 E 0/1 | eas 2/3 med 3/6 har 3/3 | 15 | 2 | 68% |
+| v2e | doc3_mart (целевой тип) | **13/16** | A 7/9 B 1/2 C 1/1 D 2/2 F 2/2 | eas 2/2 med 7/10 har 4/4 | 28 | 5 | 71% |
+| v2e | synth_v2hard | **4/8** | B 2/2 C 0/1 D 2/5 | har 1/4 exp 3/4 | 8 | 3 | 60% |
+| v2e | synth_v3official | **12/13** | A 6/7 C 1/1 D 2/2 E 1/1 F 2/2 | eas 2/2 med 6/7 har 3/3 exp 1/1 | 14 | 3 | 73% |
+| v2e | clean_base (шум) | — | — | 7 | noise=7 | 56% |
+| v2l | synth_v1 | **8/12** | A 2/4 B 2/3 C 2/2 D 2/2 E 0/1 | eas 2/3 med 3/6 har 3/3 | 16 | 5 | 90% |
+| v2l | doc3_mart (целевой тип) | **12/16** | A 7/9 B 0/2 C 1/1 D 2/2 F 2/2 | eas 2/2 med 6/10 har 4/4 | 30 | 10 | 86% |
+| v2l | synth_v2hard | **5/8** | B 2/2 C 0/1 D 3/5 | har 2/4 exp 3/4 | 9 | 4 | 67% |
+| v2l | synth_v3official | **12/13** | A 6/7 C 1/1 D 2/2 E 1/1 F 2/2 | eas 2/2 med 6/7 har 3/3 exp 1/1 | 17 | 4 | 77% |
+| v2l | clean_base (шум) | — | — | 10 | noise=10 | 80% |
+
+Отчёт: C:\Users\user\OneDrive\Рабочий стол\ИТМО\mws-main\eval\night\bench_exp19_oss_b1.md

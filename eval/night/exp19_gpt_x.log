@@ -1,0 +1,10 @@
+[03:08:47] start v2g_gpt_x · synth_v1
+[03:13:14] | v2g_gpt_x | synth_v1 | **10/12** | A 4/4 B 2/3 C 2/2 D 2/2 E 0/1 | eas 2/3 med 5/6 har 3/3 | 15 | 1 | 77% |
+[03:13:14] start v2g_gpt_x · doc3_mart (целевой тип)
+[03:17:19] | v2g_gpt_x | doc3_mart (целевой тип) | **15/16** | A 8/9 B 2/2 C 1/1 D 2/2 F 2/2 | eas 2/2 med 9/10 har 4/4 | 34 | 6 | 88% |
+[03:17:19] start v2g_gpt_x · synth_v2hard
+[03:22:37] | v2g_gpt_x | synth_v2hard | **7/8** | B 2/2 C 1/1 D 4/5 | har 3/4 exp 4/4 | 11 | 2 | 74% |
+[03:22:37] start v2g_gpt_x · synth_v3official
+[03:27:30] | v2g_gpt_x | synth_v3official | **12/13** | A 6/7 C 1/1 D 2/2 E 1/1 F 2/2 | eas 2/2 med 6/7 har 3/3 exp 1/1 | 13 | 2 | 65% |
+[03:27:30] start v2g_gpt_x · clean_base (шум)
+[03:33:37] | v2g_gpt_x | clean_base (шум) | — | — | 11 | noise=11 | 100% |

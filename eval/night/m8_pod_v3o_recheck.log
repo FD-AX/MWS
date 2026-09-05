@@ -1,0 +1,24 @@
+[09:16:56] start v2q · synth_v3official #1
+[09:19:03] llm: no_temperature=False completion_tokens=False calls=10 dropped=2
+[09:19:03] | v2q | synth_v3official #1 | **10/13** | A 6/7 C 1/1 D 1/2 E 0/1 F 2/2 | eas 2/2 med 7/7 har 1/3 exp 0/1 | 15 | 4 | 85% |
+[09:19:03] start v2q · synth_v2hard #1
+[09:21:25] llm: no_temperature=False completion_tokens=False calls=21 dropped=0
+[09:21:25] | v2q | synth_v2hard #1 | **6/8** | B 2/2 C 1/1 D 3/5 | har 2/4 exp 4/4 | 9 | 1 | 100% |
+[09:21:25] start v2q · synth_v3official #2
+[09:24:00] llm: no_temperature=False completion_tokens=False calls=33 dropped=0
+[09:24:00] | v2q | synth_v3official #2 | **13/13** | A 7/7 C 1/1 D 2/2 E 1/1 F 2/2 | eas 2/2 med 7/7 har 3/3 exp 1/1 | 19 | 5 | 100% |
+[09:24:00] start v2q · synth_v2hard #2
+[09:26:42] llm: no_temperature=False completion_tokens=False calls=44 dropped=0
+[09:26:42] | v2q | synth_v2hard #2 | **6/8** | B 2/2 C 1/1 D 3/5 | har 2/4 exp 4/4 | 9 | 1 | 100% |
+[09:26:42] start v2g · synth_v3official #1
+[09:28:56] llm: no_temperature=False completion_tokens=False calls=55 dropped=0
+[09:28:56] | v2g | synth_v3official #1 | **13/13** | A 7/7 C 1/1 D 2/2 E 1/1 F 2/2 | eas 2/2 med 7/7 har 3/3 exp 1/1 | 21 | 5 | 100% |
+[09:28:56] start v2g · synth_v2hard #1
+[09:30:58] llm: no_temperature=False completion_tokens=False calls=65 dropped=0
+[09:30:58] | v2g | synth_v2hard #1 | **6/8** | B 2/2 C 1/1 D 3/5 | har 2/4 exp 4/4 | 9 | 1 | 100% |
+[09:30:58] start v2g · synth_v3official #2
+[09:33:14] llm: no_temperature=False completion_tokens=False calls=76 dropped=0
+[09:33:14] | v2g | synth_v3official #2 | **13/13** | A 7/7 C 1/1 D 2/2 E 1/1 F 2/2 | eas 2/2 med 7/7 har 3/3 exp 1/1 | 21 | 5 | 100% |
+[09:33:14] start v2g · synth_v2hard #2
+[09:35:15] llm: no_temperature=False completion_tokens=False calls=86 dropped=0
+[09:35:15] | v2g | synth_v2hard #2 | **6/8** | B 2/2 C 1/1 D 3/5 | har 2/4 exp 4/4 | 9 | 1 | 100% |
