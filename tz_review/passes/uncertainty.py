@@ -15,15 +15,29 @@ TEMPERATURE = 0.9
 ENTROPY_THRESHOLD = 0.9  # бит; калибровать бэктестом на исторических корректировках
 
 
+_HARD = re.compile(r"[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)+|\d+(?:[:.,]\d+)*|\b(?:utc|msk|gmt)\b|\b(?:да|нет|no|yes)\b|нет ответа",
+                   re.IGNORECASE)
+_STOP = {"в", "на", "по", "из", "за", "и", "с", "для", "данных", "данные", "поле", "поля", "то", "есть",
+         "это", "что", "как", "а", "но", "или", "у", "о", "об", "при", "к", "до", "от", "не"}
+
+
 def _canon(answer: str) -> str:
-    """Грубая семантическая канонизация ответа перед кластеризацией.
-    TODO: заменить на эмбеддинг-кластеризацию (multilingual MiniLM из GraphRLM)."""
-    a = answer.strip().lower().replace("ё", "е")
-    a = re.sub(r"[«»\"'`.,;:!]", "", a)
-    a = re.sub(r"\s+", " ", a)
-    stop = {"в", "на", "по", "из", "за", "и", "с", "для", "данных", "данные", "поле", "поля"}
-    tokens = sorted(t for t in a.split() if t not in stop)
-    return " ".join(tokens) if tokens else a
+    """Канонизация ответа перед кластеризацией (EXP-21).
+    Пять сэмплов gpt-oss-120b при t=0.9 говорят одно и то же разными словами
+    («ежемесячно — 2‑го числа в 03:00 UTC» / «ежемесячный запуск 2‑го числа в 03:00 UTC»),
+    и лексическая канонизация считала это разными смыслами: 18–27 ложных entropy-находок
+    на документ (EXP-19, матрица m4). Теперь ключ кластера — «жёсткие» токены: идентификаторы
+    FIELD_*/TABLE_*, числа и времена, полярность да/нет, «нет ответа». Слова — только запасной ключ,
+    когда жёстких токенов нет, и тогда сравниваются основы (первые 5 символов), чтобы склеивать формы слов."""
+    a = answer.strip().replace("ё", "е").replace("Ё", "Е").replace("‑", "-").replace(" ", " ")
+    hard = [h.lower() for h in _HARD.findall(a)]
+    hard = [re.sub(r"[-]?го$", "", h) for h in hard]  # «2-го» → «2»
+    if hard:
+        return "H:" + " ".join(sorted(set(hard)))
+    low = re.sub(r"[«»\"'`.,;:!()]", "", a.lower())
+    low = re.sub(r"\s+", " ", low)
+    stems = sorted({t[:5] for t in low.split() if t not in _STOP and len(t) > 1})
+    return "S:" + " ".join(stems) if stems else low
 
 
 def semantic_entropy(answers: list[str]) -> tuple[float, list[list[str]]]:

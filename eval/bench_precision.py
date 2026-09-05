@@ -31,6 +31,11 @@ def _items(r: dict) -> list[dict]:
     return r.get("extras") or r.get("noise") or []
 
 
+def _norm(s: str) -> str:
+    import re
+    return re.sub(r"\W+", " ", (s or "").lower()).strip()
+
+
 def skeleton(paths: list[str], blind_key: str | None) -> None:
     rows, key = [], {}
     for r in load_raw(paths):
@@ -40,13 +45,19 @@ def skeleton(paths: list[str], blind_key: str | None) -> None:
                          "category": f["category"], "severity": f["severity"], "why": f["why"],
                          "verdict": "?", "cls": "?"})
     if blind_key:
-        random.Random(20260905).shuffle(rows)
+        # Одинаковые находки повторяются в разных вариантах/повторах — размечаем уникальные группы
+        # (цель × категория × начало why), метка группы распространяется на всех членов при score.
+        groups: dict[tuple, list[dict]] = {}
+        for row in rows:
+            g = (row["target"].split(" #")[0], row["category"], _norm(row["why"])[:70])
+            groups.setdefault(g, []).append(row)
+        items = list(groups.items())
+        random.Random(20260905).shuffle(items)
         out_rows = []
-        for n, row in enumerate(rows, 1):
-            key[n] = {k: row[k] for k in ("variant", "target", "idx", "model")}
-            out_rows.append({"n": n, "target": row["target"].split(" #")[0],
-                             "category": row["category"], "severity": row["severity"],
-                             "why": row["why"], "verdict": "?", "cls": "?"})
+        for n, (g, members) in enumerate(items, 1):
+            key[n] = [{k: m[k] for k in ("variant", "target", "idx", "model")} for m in members]
+            out_rows.append({"n": n, "target": g[0], "category": g[1], "severity": members[0]["severity"],
+                             "why": members[0]["why"], "members": len(members), "verdict": "?", "cls": "?"})
         Path(blind_key).write_text(json.dumps(key, ensure_ascii=False, indent=1), encoding="utf-8")
         rows = out_rows
     print(yaml.safe_dump({"labels": rows}, allow_unicode=True, sort_keys=False, width=200))
@@ -56,8 +67,12 @@ def score(labels_path: str, key_path: str | None, paths: list[str]) -> None:
     labels = yaml.safe_load(Path(labels_path).read_text(encoding="utf-8"))["labels"]
     if key_path:
         key = json.loads(Path(key_path).read_text(encoding="utf-8"))
+        expanded = []
         for x in labels:
-            x.update(key[str(x["n"])])
+            members = key[str(x["n"])]
+            for m in (members if isinstance(members, list) else [members]):
+                expanded.append({**x, **m})
+        labels = expanded
     lab = {(x["variant"], x["target"], x["idx"]): x for x in labels}
     per: dict = defaultdict(lambda: defaultdict(int))
     cls_count: dict = defaultdict(lambda: defaultdict(int))

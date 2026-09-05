@@ -1,0 +1,2774 @@
+labels:
+- n: 1
+  target: synth_v2hard
+  category: entropy:NUL-03
+  severity: medium
+  why: Документ формально отвечает на вопрос «Для каждого поля витрины явно указан признак обязательности NOT NULL / NULLABLE (отдельной колонкой или пометкой; тип дан
+  verdict: '?'
+  cls: '?'
+- n: 2
+  target: synth_v2hard
+  category: entropy:OWN-01
+  severity: medium
+  why: Документ формально отвечает на вопрос «Названы ли владелец потока/витрины и потребители данных?», но 5 независимых прочтений дали разные ответы (Да, владелец US
+  verdict: '?'
+  cls: '?'
+- n: 3
+  target: doc3_mart (целевой тип)
+  category: checklist:NUL-01
+  severity: medium
+  why: Нет правил обработки отсутствующих значений (NULL vs 0 vs default) для полей, участвующих в расчётах.
+  verdict: '?'
+  cls: '?'
+- n: 4
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Неправильный порядок округления даст отклонения от допустимого порога 0.1 % в проверке суммы байтов, что приведёт к откату партиции.
+  verdict: '?'
+  cls: '?'
+- n: 5
+  target: clean_base (шум)
+  category: doc:terminology
+  severity: medium
+  why: 'Одно и то же название FIELD_BIZ_DATE используется для разных смыслов: в источнике – дата сессии, в витрине – первое число месяца. Это может привести к путанице '
+  verdict: '?'
+  cls: '?'
+- n: 6
+  target: clean_base (шум)
+  category: doc:consistency
+  severity: high
+  why: Код NO_REGION присутствует в журнале и используется в контроле качества, однако в алгоритме обработки нет шага, где записи с этим кодом записываются в TABLE_AGG
+  verdict: '?'
+  cls: '?'
+- n: 7
+  target: synth_v2hard
+  category: entropy:ORD-01
+  severity: medium
+  why: 'Документ формально отвечает на вопрос «Если алгоритм выбирает «последнюю/первую/актуальную» запись (последний IMEI за период, актуальный тариф), указано ли, по '
+  verdict: '?'
+  cls: '?'
+- n: 8
+  target: clean_base (шум)
+  category: dev_question
+  severity: high
+  why: Неправильное трактование пустой строки может привести к неожиданному появлению строк UNKNOWN или к потере данных.
+  verdict: '?'
+  cls: '?'
+- n: 9
+  target: synth_v1
+  category: dev_question
+  severity: critical
+  why: Неправильный часовой пояс сместит время начала расчёта, что может привести к несвоевременному запуску, отсутствию файла _SUCCESS и пропуску расчёта за месяц.
+  verdict: '?'
+  cls: '?'
+- n: 10
+  target: synth_v2hard
+  category: dev_question
+  severity: medium
+  why: Неправильный выбор может привести к непредсказуемому распределению трафика по типам сети и к ошибкам в проверках контроля качества.
+  verdict: '?'
+  cls: '?'
+- n: 11
+  target: doc3_mart (целевой тип)
+  category: checklist:VOL-01
+  severity: medium
+  why: Документ указывает только глубину данных (с 01.05.2023), но не содержит ожидаемых объёмов данных и периода хранения (retention).
+  verdict: '?'
+  cls: '?'
+- n: 12
+  target: synth_v1
+  category: entropy:SER-01
+  severity: medium
+  why: 'Документ формально отвечает на вопрос «Указана ли модель входного И выходного потока данных: формат хранения/сериализация и схема отдельно для каждого источника'
+  verdict: '?'
+  cls: '?'
+- n: 13
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Неправильный набор записей для подсчёта уникальных абонентов изменит значение FIELD_USERS_CNT и может вызвать несоответствие проверкам качества.
+  verdict: '?'
+  cls: '?'
+- n: 14
+  target: clean_base (шум)
+  category: dev_question
+  severity: high
+  why: Если правило будет неверно интерпретировано, записи могут быть либо ошибочно отбрасываемы, либо ошибочно включены в агрегат, нарушая контроль качества.
+  verdict: '?'
+  cls: '?'
+- n: 15
+  target: synth_v3official
+  category: entropy:SLA-01
+  severity: medium
+  why: 'Документ формально отвечает на вопрос «Задано ли расписание загрузки: периодичность и конкретное время запуска?», но 5 независимых прочтений дали разные ответы '
+  verdict: '?'
+  cls: '?'
+- n: 16
+  target: doc3_mart (целевой тип)
+  category: checklist:FIL-01
+  severity: medium
+  why: В документе нет описания правил фильтрации входных данных и указания, что происходит с отфильтрованными записями (отбрасываются, логируются, карантин и т.д.).
+  verdict: '?'
+  cls: '?'
+- n: 17
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Неоднозначность в поведении проверки может привести к пропуску реальных ошибок в данных или к избыточным алертам, что усложнит эксплуатацию.
+  verdict: '?'
+  cls: '?'
+- n: 18
+  target: synth_v1
+  category: checklist:NUL-02
+  severity: medium
+  why: В документе описаны формулы расчёта, но нет указаний, как обрабатываются краевые случаи (деление на ноль, пустой знаменатель, отсутствие счётчика).
+  verdict: '?'
+  cls: '?'
+- n: 19
+  target: synth_v1
+  category: dev_question
+  severity: medium
+  why: Неправильный момент удаления может привести к потере данных, конфликтам при перезаписи или к накоплению лишних партиций, нарушая требования к хранению.
+  verdict: '?'
+  cls: '?'
+- n: 20
+  target: doc3_mart (целевой тип)
+  category: checklist:DED-01
+  severity: medium
+  why: Указано лишь, что дубли удаляются, но не указано, какой ключ используется и какое правило выбора (например, последняя запись) применяется.
+  verdict: '?'
+  cls: '?'
+- n: 21
+  target: synth_v2hard
+  category: doc:terminology
+  severity: medium
+  why: Одно и то же название поля используется с разным смыслом в источнике и в витрине, что может вызвать путаницу при написании запросов и проверок.
+  verdict: '?'
+  cls: '?'
+- n: 22
+  target: synth_v3official
+  category: checklist:INC-03
+  severity: high
+  why: В документе отсутствует описание поведения при удалении или изменении записей в источнике задним числом.
+  verdict: '?'
+  cls: '?'
+- n: 23
+  target: clean_base (шум)
+  category: doc:contradiction
+  severity: medium
+  why: Расчёт 85 регионов × 4 типа сети = 340, плюс две служебные категории дает 342 строки, а не ~350, как указано. Несоответствие может вводить в заблуждение при пла
+  verdict: '?'
+  cls: '?'
+- n: 24
+  target: synth_v1
+  category: dev_question
+  severity: medium
+  why: Неправильная реализация может либо скрыть нужные данные от потребителей, либо случайно раскрыть служебные категории без явного запроса, нарушая согласованные пр
+  verdict: '?'
+  cls: '?'
+- n: 25
+  target: synth_v3official
+  category: lp:NUL-02
+  severity: medium
+  why: 'Логит-зонд: по вопросу «Определено ли поведение расчётных формул в краевых случаях (деление на ноль, пустой знаменатель, отсутствие счётчика за период)?» модель'
+  verdict: '?'
+  cls: '?'
+- n: 26
+  target: synth_v2hard
+  category: entropy:FIL-02
+  severity: medium
+  why: Документ формально отвечает на вопрос «Зафиксирован ли отдельный перечень типовых (стандартных) условий фильтрации, применяемых при построении витрины И при выг
+  verdict: '?'
+  cls: '?'
+- n: 27
+  target: synth_v3official
+  category: lp:INC-02
+  severity: medium
+  why: 'Логит-зонд: по вопросу «Описана ли обработка данных, пришедших с опозданием (late-arriving): окно повторной обработки/перезагрузки?» модель колеблется между про'
+  verdict: '?'
+  cls: '?'
+- n: 28
+  target: synth_v2hard
+  category: dev_question
+  severity: medium
+  why: Неправильный порядок может привести к потере данных (удаление только что записанной партиции) или к накоплению устаревших партиций, нарушая SLA по объёму хранил
+  verdict: '?'
+  cls: '?'
+- n: 29
+  target: doc3_mart (целевой тип)
+  category: checklist:CAT-01
+  severity: medium
+  why: В документе нет ни ссылки вида LINK_*, ни упоминания карточек Data Catalog для приёмника и источников.
+  verdict: '?'
+  cls: '?'
+- n: 30
+  target: synth_v3official
+  category: entropy:ERR-02
+  severity: medium
+  why: 'Документ формально отвечает на вопрос «Предусмотрен ли контроль полноты загрузки (сверка количества записей/контрольные суммы/реконсиляция)?», но 5 независимых '
+  verdict: '?'
+  cls: '?'
+- n: 31
+  target: synth_v1
+  category: dev_question
+  severity: medium
+  why: Неправильная реализация может либо скрыть нужные данные от потребителей, либо случайно раскрыть служебные категории без явного запроса, нарушая согласованные пр
+  verdict: '?'
+  cls: '?'
+- n: 32
+  target: synth_v1
+  category: checklist:TZ-01
+  severity: medium
+  why: Указан часовой пояс UTC для расписания и поля FIELD_TIME_STAMP, но не описано, в каком часовом поясе определяются границы агрегации и как приводится время из др
+  verdict: '?'
+  cls: '?'
+- n: 33
+  target: clean_base (шум)
+  category: checklist:NUL-02
+  severity: medium
+  why: В документе описаны формулы расчёта, но нет указаний, как они ведут себя в краевых ситуациях (деление на ноль, отсутствие записей, пустой знаменатель).
+  verdict: '?'
+  cls: '?'
+- n: 34
+  target: doc3_mart (целевой тип)
+  category: checklist:MAP-02
+  severity: medium
+  why: В документе указаны только типы данных (string, bigint, timestamp, date) без указания точности или длины, что требуется в вопросе.
+  verdict: '?'
+  cls: '?'
+- n: 35
+  target: synth_v2hard
+  category: doc:terminology
+  severity: medium
+  why: Одно и то же название поля используется с разным смыслом в источнике и в витрине, что может вызвать путаницу при написании запросов и проверок.
+  verdict: '?'
+  cls: '?'
+- n: 36
+  target: synth_v1
+  category: entropy:FIL-02
+  severity: medium
+  why: Документ формально отвечает на вопрос «Зафиксирован ли отдельный перечень типовых (стандартных) условий фильтрации, применяемых при построении витрины И при выг
+  verdict: '?'
+  cls: '?'
+- n: 37
+  target: synth_v2hard
+  category: entropy:LOC-02
+  severity: medium
+  why: Документ формально отвечает на вопрос «Для каждого потокового источника/приёмника (Kafka-топика) указан кластер Kafka (заглушка KAFKA_*/CLUSTER_* считается; топ
+  verdict: '?'
+  cls: '?'
+- n: 38
+  target: doc3_mart (целевой тип)
+  category: checklist:VOL-01
+  severity: high
+  why: Документ указывает только глубину данных (с 01.05.2023), но не содержит ожидаемых объёмов данных и периода хранения (retention).
+  verdict: '?'
+  cls: '?'
+- n: 39
+  target: synth_v3official
+  category: entropy:TZ-01
+  severity: medium
+  why: Документ формально отвечает на вопрос «Если в документе фигурируют часовые пояса (UTC, локальное/региональное время), определено ли, в каком поясе считаются гра
+  verdict: '?'
+  cls: '?'
+- n: 40
+  target: synth_v1
+  category: dev_question
+  severity: medium
+  why: Неправильный формат записи затруднит автоматический мониторинг и может привести к пропуску критических алертов.
+  verdict: '?'
+  cls: '?'
+- n: 41
+  target: synth_v3official
+  category: entropy:DED-01
+  severity: medium
+  why: 'Документ формально отвечает на вопрос «Указан ли ключ дедупликации и правило выбора выжившей записи при повторной выгрузке/дублях?», но 5 независимых прочтений '
+  verdict: '?'
+  cls: '?'
+- n: 42
+  target: synth_v3official
+  category: checklist:INC-03
+  severity: high
+  why: В документе отсутствует описание поведения при удалении или изменении записей в источнике задним числом.
+  verdict: '?'
+  cls: '?'
+- n: 43
+  target: synth_v1
+  category: dev_question
+  severity: medium
+  why: Без точного понимания этих проверок невозможно корректно реализовать контроль качества; неверные значения в журнале могут скрыть реальные отклонения или вызвать
+  verdict: '?'
+  cls: '?'
+- n: 44
+  target: doc3_mart (целевой тип)
+  category: checklist:INC-03
+  severity: high
+  why: В документе не указано, что происходит с записями, удалёнными или изменёнными в источнике задним числом.
+  verdict: '?'
+  cls: '?'
+- n: 45
+  target: synth_v1
+  category: checklist:INC-03
+  severity: high
+  why: В документе нет описания поведения при удалении или изменении записей в источнике задним числом.
+  verdict: '?'
+  cls: '?'
+- n: 46
+  target: doc3_mart (целевой тип)
+  category: dev_question
+  severity: critical
+  why: Если выбрать неверный столбец, будут включены данные из других периодов или исключены нужные записи, что исказит количество абонентов и все последующие расчёты.
+  verdict: '?'
+  cls: '?'
+- n: 47
+  target: synth_v1
+  category: dev_question
+  severity: medium
+  why: Неправильный момент удаления может привести к потере данных, конфликтам при перезаписи или к накоплению лишних партиций, нарушая требования к хранению.
+  verdict: '?'
+  cls: '?'
+- n: 48
+  target: clean_base (шум)
+  category: dev_question
+  severity: high
+  why: Неправильный порядок округления даст отклонения от допустимого порога 0.1 % в проверке суммы байтов, что приведёт к откату партиции.
+  verdict: '?'
+  cls: '?'
+- n: 49
+  target: doc3_mart (целевой тип)
+  category: checklist:INC-02
+  severity: medium
+  why: Отсутствует описание обработки данных, пришедших с опозданием (late-arriving), и окна повторной обработки.
+  verdict: '?'
+  cls: '?'
+- n: 50
+  target: synth_v3official
+  category: entropy:HIS-01
+  severity: medium
+  why: 'Документ формально отвечает на вопрос «Если требуется загрузка исторических данных (бэкфилл, «загрузить историю»), описан ли процесс: глубина истории, откуда бе'
+  verdict: '?'
+  cls: '?'
+- n: 51
+  target: synth_v1
+  category: checklist:NUL-02
+  severity: medium
+  why: В документе нет описания поведения расчётных формул в краевых случаях (деление на ноль, пустой знаменатель, отсутствие данных за период).
+  verdict: '?'
+  cls: '?'
+- n: 52
+  target: clean_base (шум)
+  category: dev_question
+  severity: high
+  why: Подсчёт на неверном наборе данных приведёт к завышенному (или заниженному) количеству абонентов, что нарушит бизнес‑требования и контроль качества.
+  verdict: '?'
+  cls: '?'
+- n: 53
+  target: synth_v1
+  category: entropy:ERR-02
+  severity: medium
+  why: 'Документ формально отвечает на вопрос «Предусмотрен ли контроль полноты загрузки (сверка количества записей/контрольные суммы/реконсиляция)?», но 5 независимых '
+  verdict: '?'
+  cls: '?'
+- n: 54
+  target: doc3_mart (целевой тип)
+  category: checklist:INC-03
+  severity: medium
+  why: Документ не содержит информации о том, как обрабатываются записи, удалённые или изменённые в источнике задним числом.
+  verdict: '?'
+  cls: '?'
+- n: 55
+  target: synth_v1
+  category: checklist:ORD-01
+  severity: high
+  why: В документе нет описания выбора «последней/первой/актуальной» записи, поля времени или версии, из какой таблицы берётся поле и правила при равенстве.
+  verdict: '?'
+  cls: '?'
+- n: 56
+  target: synth_v1
+  category: dev_question
+  severity: medium
+  why: Без согласованного механизма потребители могут получить либо лишние, либо недостаточные данные, что нарушит SLA и договорные обязательства.
+  verdict: '?'
+  cls: '?'
+- n: 57
+  target: synth_v1
+  category: checklist:INC-03
+  severity: medium
+  why: Отсутствует описание поведения системы при удалении или изменении записей в источнике после их первоначального включения в витрину.
+  verdict: '?'
+  cls: '?'
+- n: 58
+  target: clean_base (шум)
+  category: doc:terminology
+  severity: medium
+  why: 'Одно и то же название FIELD_BIZ_DATE используется для разных смыслов: в источнике – дата сессии, в витрине – первое число месяца. Это может привести к путанице '
+  verdict: '?'
+  cls: '?'
+- n: 59
+  target: synth_v2hard
+  category: entropy:MAP-01
+  severity: medium
+  why: 'Документ формально отвечает на вопрос «Для каждого поля целевой таблицы указан источник: конкретное поле источника или формула расчёта?», но 5 независимых прочт'
+  verdict: '?'
+  cls: '?'
+- n: 60
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Неправильный порядок или метод удаления может привести к потере только что записанных данных или к оставлению «мусорных» файлов, нарушая целостность витрины.
+  verdict: '?'
+  cls: '?'
+- n: 61
+  target: synth_v2hard
+  category: entropy:REF-01
+  severity: medium
+  why: Документ формально отвечает на вопрос «Приведён ли перечень справочников (НСИ), используемых витриной («не применимо» допустимо только если алгоритм не использу
+  verdict: '?'
+  cls: '?'
+- n: 62
+  target: synth_v1
+  category: checklist:INC-03
+  severity: medium
+  why: В документе нет описания поведения при удалении или изменении записей в источнике задним числом.
+  verdict: '?'
+  cls: '?'
+- n: 63
+  target: synth_v3official
+  category: dev_question
+  severity: medium
+  why: Если подсчёт будет выполнен в другом месте, итоговое значение FIELD_USERS_CNT может не соответствовать ожидаемому, что нарушит бизнес‑логика и контроль качества
+  verdict: '?'
+  cls: '?'
+- n: 64
+  target: clean_base (шум)
+  category: checklist:INC-03
+  severity: medium
+  why: В документе нет описания поведения при удалении или изменении записей в источнике задним числом.
+  verdict: '?'
+  cls: '?'
+- n: 65
+  target: synth_v3official
+  category: dev_question
+  severity: medium
+  why: Неправильное понимание ретеншена может привести к потере исторических данных или к накоплению лишних партиций, нарушая требования к хранению и доступности.
+  verdict: '?'
+  cls: '?'
+- n: 66
+  target: doc3_mart (целевой тип)
+  category: checklist:MAP-02
+  severity: critical
+  why: В документе указаны типы данных полей, но отсутствуют детали о точности или длине (например, длина string, масштаб bigint, точность timestamp), поэтому непонятн
+  verdict: '?'
+  cls: '?'
+- n: 67
+  target: synth_v1
+  category: entropy:FIL-01
+  severity: medium
+  why: 'Документ формально отвечает на вопрос «Заданы ли правила фильтрации входных данных И судьба отфильтрованных записей: отбрасываются, логируются или попадают в ка'
+  verdict: '?'
+  cls: '?'
+- n: 68
+  target: doc3_mart (целевой тип)
+  category: doc:terminology
+  severity: medium
+  why: В одном месте используется термин region_code, а в другом – FIELD_REGION_NAME, что может вводить в заблуждение, так как они не явно сопоставлены.
+  verdict: '?'
+  cls: '?'
+- n: 69
+  target: synth_v3official
+  category: dev_question
+  severity: medium
+  why: Неопределённый выбор может привести к непоследовательному поведению DAG между запусками, что затруднит отладку и воспроизводимость результатов.
+  verdict: '?'
+  cls: '?'
+- n: 70
+  target: doc3_mart (целевой тип)
+  category: checklist:DED-01
+  severity: medium
+  why: Документ не содержит указания ключа дедупликации и правила выбора выжившей записи при повторной выгрузке.
+  verdict: '?'
+  cls: '?'
+- n: 71
+  target: clean_base (шум)
+  category: dev_question
+  severity: high
+  why: Неправильное трактование пустой строки может привести к неожиданному появлению строк UNKNOWN или к потере данных.
+  verdict: '?'
+  cls: '?'
+- n: 72
+  target: synth_v3official
+  category: entropy:FIL-01
+  severity: medium
+  why: 'Документ формально отвечает на вопрос «Заданы ли правила фильтрации входных данных И судьба отфильтрованных записей: отбрасываются, логируются или попадают в ка'
+  verdict: '?'
+  cls: '?'
+- n: 73
+  target: synth_v3official
+  category: dev_question
+  severity: medium
+  why: Неправильное понимание ретеншена может привести к потере исторических данных или к накоплению лишних партиций, нарушая требования к хранению и доступности.
+  verdict: '?'
+  cls: '?'
+- n: 74
+  target: synth_v3official
+  category: dev_question
+  severity: medium
+  why: Непредсказуемый выбор может приводить к различиям в агрегатах между запусками, нарушая согласованность данных.
+  verdict: '?'
+  cls: '?'
+- n: 75
+  target: synth_v3official
+  category: dev_question
+  severity: medium
+  why: Разный подход изменит распределение записей по категориям RAT и может повлиять на итоговые строки витрины и проверки качества.
+  verdict: '?'
+  cls: '?'
+- n: 76
+  target: synth_v1
+  category: dev_question
+  severity: medium
+  why: Без точного понимания этих проверок невозможно корректно реализовать контроль качества; неверные значения в журнале могут скрыть реальные отклонения или вызвать
+  verdict: '?'
+  cls: '?'
+- n: 77
+  target: synth_v1
+  category: entropy:INC-02
+  severity: medium
+  why: 'Документ формально отвечает на вопрос «Описана ли обработка данных, пришедших с опозданием (late-arriving): окно повторной обработки/перезагрузки?», но 5 незави'
+  verdict: '?'
+  cls: '?'
+- n: 78
+  target: synth_v2hard
+  category: checklist:INC-03
+  severity: medium
+  why: В документе нет описания поведения при удалении или изменении записей в источнике задним числом.
+  verdict: '?'
+  cls: '?'
+- n: 79
+  target: synth_v1
+  category: entropy:KEY-02
+  severity: medium
+  why: Документ формально отвечает на вопрос «Описано ли формирование ключа (для Kafka) или партиции (для HDFS) при записи?», но 5 независимых прочтений дали разные от
+  verdict: '?'
+  cls: '?'
+- n: 80
+  target: clean_base (шум)
+  category: doc:completeness
+  severity: medium
+  why: Поле FIELD_HOUR описано в структуре исходной таблицы, но в алгоритме обработки (Шаги 1‑6) и в формулах оно нигде не используется.
+  verdict: '?'
+  cls: '?'
+- n: 81
+  target: synth_v2hard
+  category: dev_question
+  severity: medium
+  why: Если я удалю партицию слишком рано (или не удалю вовремя), может произойти потеря исторических данных или рост хранилища выше планового, что нарушит SLA.
+  verdict: '?'
+  cls: '?'
+- n: 82
+  target: clean_base (шум)
+  category: doc:contradiction
+  severity: medium
+  why: Расчёт 85 регионов × 4 типа сети = 340, плюс две служебные категории дает 342 строки, а не ~350, как указано. Несоответствие может вводить в заблуждение при пла
+  verdict: '?'
+  cls: '?'
+- n: 83
+  target: synth_v1
+  category: checklist:INC-03
+  severity: medium
+  why: В документе нет информации о том, как обрабатываются записи, удалённые или изменённые в источнике задним числом после расчёта.
+  verdict: '?'
+  cls: '?'
+- n: 84
+  target: doc3_mart (целевой тип)
+  category: checklist:DED-01
+  severity: medium
+  why: Документ не содержит указания ключа дедупликации и правила выбора выжившей записи при повторной выгрузке.
+  verdict: '?'
+  cls: '?'
+- n: 85
+  target: clean_base (шум)
+  category: dev_question
+  severity: high
+  why: Если правило будет неверно интерпретировано, записи могут быть либо ошибочно отбрасываемы, либо ошибочно включены в агрегат, нарушая контроль качества.
+  verdict: '?'
+  cls: '?'
+- n: 86
+  target: clean_base (шум)
+  category: doc:completeness
+  severity: medium
+  why: Поле FIELD_HOUR описано в структуре исходной таблицы, но в алгоритме обработки (Шаги 1‑6) и в формулах оно нигде не используется.
+  verdict: '?'
+  cls: '?'
+- n: 87
+  target: clean_base (шум)
+  category: dev_question
+  severity: high
+  why: Подсчёт на неверном наборе данных приведёт к завышенному (или заниженному) количеству абонентов, что нарушит бизнес‑требования и контроль качества.
+  verdict: '?'
+  cls: '?'
+- n: 88
+  target: synth_v3official
+  category: dev_question
+  severity: medium
+  why: Если проверять только последнюю партицию, возможен запуск агрегации при неполных данных, что приведёт к недоучёту трафика.
+  verdict: '?'
+  cls: '?'
+- n: 89
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Неоднозначность в поведении проверки может привести к пропуску реальных ошибок в данных или к избыточным алертам, что усложнит эксплуатацию.
+  verdict: '?'
+  cls: '?'
+- n: 90
+  target: synth_v2hard
+  category: entropy:SLA-02
+  severity: medium
+  why: 'Документ формально отвечает на вопрос «Указан ли срок готовности данных (SLA/freshness): к какому времени данные за период должны быть доступны потребителям?», '
+  verdict: '?'
+  cls: '?'
+- n: 91
+  target: synth_v3official
+  category: dev_question
+  severity: medium
+  why: Неправильное понимание ретеншена может привести к потере исторических данных или к накоплению лишних партиций, нарушая требования к хранению и доступности.
+  verdict: '?'
+  cls: '?'
+- n: 92
+  target: synth_v3official
+  category: lp:INC-02
+  severity: medium
+  why: 'Логит-зонд: по вопросу «Описана ли обработка данных, пришедших с опозданием (late-arriving): окно повторной обработки/перезагрузки?» модель колеблется между про'
+  verdict: '?'
+  cls: '?'
+- n: 93
+  target: clean_base (шум)
+  category: checklist:INC-03
+  severity: high
+  why: В документе нет описания поведения при удалении или изменении записей в источнике задним числом.
+  verdict: '?'
+  cls: '?'
+- n: 94
+  target: clean_base (шум)
+  category: checklist:NUL-02
+  severity: medium
+  why: В документе описаны формулы расчёта, но нет указаний, как они ведут себя в краевых случаях (деление на ноль, пустой знаменатель, отсутствие данных для подсчёта)
+  verdict: '?'
+  cls: '?'
+- n: 95
+  target: synth_v2hard
+  category: entropy:ERR-01
+  severity: medium
+  why: 'Документ формально отвечает на вопрос «Описано ли поведение при сбое: недоступность источника, ретраи, частичная загрузка?», но 5 независимых прочтений дали раз'
+  verdict: '?'
+  cls: '?'
+- n: 96
+  target: doc3_mart (целевой тип)
+  category: dev_question
+  severity: medium
+  why: Неправильный выбор схемы партиционирования может привести к плохой производительности при запросах аналитиков и к избыточному использованию ресурсов.
+  verdict: '?'
+  cls: '?'
+- n: 97
+  target: synth_v3official
+  category: entropy:SLA-02
+  severity: medium
+  why: 'Документ формально отвечает на вопрос «Указан ли срок готовности данных (SLA/freshness): к какому времени данные за период должны быть доступны потребителям?», '
+  verdict: '?'
+  cls: '?'
+- n: 98
+  target: clean_base (шум)
+  category: checklist:INC-03
+  severity: high
+  why: Документ не описывает, как обрабатываются записи, удалённые или изменённые в источнике задним числом.
+  verdict: '?'
+  cls: '?'
+- n: 99
+  target: doc3_mart (целевой тип)
+  category: checklist:FIL-01
+  severity: medium
+  why: В документе нет описания правил фильтрации входных данных и указания, что происходит с отфильтрованными записями (отбрасываются, логируются, карантин и т.д.).
+  verdict: '?'
+  cls: '?'
+- n: 100
+  target: synth_v3official
+  category: dev_question
+  severity: medium
+  why: Неопределённый выбор может привести к непоследовательному поведению DAG между запусками, что затруднит отладку и воспроизводимость результатов.
+  verdict: '?'
+  cls: '?'
+- n: 101
+  target: synth_v3official
+  category: dev_question
+  severity: high
+  why: Неправильное понимание ретеншена может привести к потере исторических данных или к накоплению лишних партиций, нарушая требования к хранению и доступности.
+  verdict: '?'
+  cls: '?'
+- n: 102
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Неоднозначность в поведении проверки может привести к пропуску реальных ошибок в данных или к избыточным алертам, что усложнит эксплуатацию.
+  verdict: '?'
+  cls: '?'
+- n: 103
+  target: synth_v2hard
+  category: entropy:HIS-01
+  severity: medium
+  why: 'Документ формально отвечает на вопрос «Если требуется загрузка исторических данных (бэкфилл, «загрузить историю»), описан ли процесс: глубина истории, откуда бе'
+  verdict: '?'
+  cls: '?'
+- n: 104
+  target: synth_v1
+  category: checklist:ORD-01
+  severity: medium
+  why: В документе отсутствует описание выбора «последней/первой/актуальной» записи, поля времени/версии и правила при равенстве.
+  verdict: '?'
+  cls: '?'
+- n: 105
+  target: doc3_mart (целевой тип)
+  category: checklist:CAT-01
+  severity: medium
+  why: В документе отсутствуют ссылки на карточки Data Catalog для приёмника и для источников (нет ни LINK_*, ни упоминаний о Data Catalog).
+  verdict: '?'
+  cls: '?'
+- n: 106
+  target: synth_v1
+  category: checklist:INC-03
+  severity: medium
+  why: В документе нет описания поведения при удалении или изменении записей в источнике задним числом.
+  verdict: '?'
+  cls: '?'
+- n: 107
+  target: doc3_mart (целевой тип)
+  category: checklist:INC-03
+  severity: medium
+  why: Документ не содержит информации о том, как обрабатываются записи, удалённые или изменённые в источнике задним числом.
+  verdict: '?'
+  cls: '?'
+- n: 108
+  target: synth_v2hard
+  category: checklist:NUL-02
+  severity: medium
+  why: В документе описаны формулы расчёта FIELD_TRAFFIC_GB и правила обработки NULL, но нет информации о поведении при делении на ноль, пустом знаменателе или отсутст
+  verdict: '?'
+  cls: '?'
+- n: 109
+  target: synth_v1
+  category: entropy:OWN-01
+  severity: medium
+  why: Документ формально отвечает на вопрос «Названы ли владелец потока/витрины и потребители данных?», но 5 независимых прочтений дали разные ответы (Владелец витрин
+  verdict: '?'
+  cls: '?'
+- n: 110
+  target: doc3_mart (целевой тип)
+  category: checklist:SRC-02
+  severity: medium
+  why: Состав данных источника (перечень полей, их типы, описание) не приведён, ссылки на спецификации тоже нет.
+  verdict: '?'
+  cls: '?'
+- n: 111
+  target: clean_base (шум)
+  category: doc:completeness
+  severity: high
+  why: Коды CHECK_BYTES, CHECK_DROPPED и CHECK_REGIONS упоминаются в разделе «Контроль качества», но их описание отсутствует в структуре таблицы TABLE_AGG_LOAD_LOG, гд
+  verdict: '?'
+  cls: '?'
+- n: 112
+  target: synth_v2hard
+  category: dev_question
+  severity: medium
+  why: Если удалить их слишком рано, может возникнуть конфликт с текущей записью (например, если новая партиция откатывается); если удалить слишком поздно, может превы
+  verdict: '?'
+  cls: '?'
+- n: 113
+  target: synth_v2hard
+  category: dev_question
+  severity: medium
+  why: Если удалить партицию слишком рано, backfill может потерять необходимые данные; если слишком поздно – может превысить лимит хранения и нарушить ретеншн‑политику
+  verdict: '?'
+  cls: '?'
+- n: 114
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Неправильный набор записей для подсчёта уникальных абонентов изменит значение FIELD_USERS_CNT и может вызвать несоответствие проверкам качества.
+  verdict: '?'
+  cls: '?'
+- n: 115
+  target: synth_v1
+  category: dev_question
+  severity: critical
+  why: Неправильный часовой пояс может привести к запуску до появления _SUCCESS‑файла, что вызовет отмену расчёта и простои.
+  verdict: '?'
+  cls: '?'
+- n: 116
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Неправильный порядок или метод удаления может привести к потере только что записанных данных или к оставлению «мусорных» файлов, нарушая целостность витрины.
+  verdict: '?'
+  cls: '?'
+- n: 117
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Если такие строки не будут отфильтрованы, они могут попасть в агрегат как некорректный регион, нарушив контроль качества и логику отбраковки.
+  verdict: '?'
+  cls: '?'
+- n: 118
+  target: synth_v2hard
+  category: entropy:SRC-01
+  severity: medium
+  why: 'Документ формально отвечает на вопрос «Указан ли способ получения данных из источника: интерфейс/протокол, формат данных (файлы/API/БД) и способ доступа?», но 5'
+  verdict: '?'
+  cls: '?'
+- n: 119
+  target: clean_base (шум)
+  category: doc:completeness
+  severity: high
+  why: Коды CHECK_BYTES, CHECK_DROPPED и CHECK_REGIONS перечислены в журнале и используются в проверках качества, но их смысл и правила формирования не описаны в разде
+  verdict: '?'
+  cls: '?'
+- n: 120
+  target: clean_base (шум)
+  category: dev_question
+  severity: high
+  why: Разные методы расчёта могут привести к ложным срабатываниям или к пропуску реальных отклонений, вызывая либо избыточные алерты, либо отсутствие нужных предупреж
+  verdict: '?'
+  cls: '?'
+- n: 121
+  target: synth_v2hard
+  category: dev_question
+  severity: high
+  why: Неправильный путь к партиции сделает её недоступной для чтения через Hive/Impala, что приведёт к ошибкам запросов потребителей.
+  verdict: '?'
+  cls: '?'
+- n: 122
+  target: doc3_mart (целевой тип)
+  category: checklist:CAT-01
+  severity: medium
+  why: В документе отсутствуют ссылки на Data Catalog для приёмника и источников; ни LINK_*, ни URL не указаны.
+  verdict: '?'
+  cls: '?'
+- n: 123
+  target: synth_v1
+  category: dev_question
+  severity: medium
+  why: Без согласованного механизма потребители могут получить либо лишние, либо недостаточные данные, что нарушит SLA и договорные обязательства.
+  verdict: '?'
+  cls: '?'
+- n: 124
+  target: synth_v2hard
+  category: entropy:LOC-02
+  severity: medium
+  why: Документ формально отвечает на вопрос «Для каждого потокового источника/приёмника (Kafka-топика) указан кластер Kafka (заглушка KAFKA_*/CLUSTER_* считается; топ
+  verdict: '?'
+  cls: '?'
+- n: 125
+  target: synth_v3official
+  category: dev_question
+  severity: medium
+  why: Разный подход изменит распределение записей по категориям RAT и может повлиять на итоговые строки витрины и проверки качества.
+  verdict: '?'
+  cls: '?'
+- n: 126
+  target: synth_v3official
+  category: entropy:KEY-01
+  severity: medium
+  why: Документ формально отвечает на вопрос «Определены ли ключи целевых таблиц (первичный/бизнес-ключ) и гранулярность витрины?», но 5 независимых прочтений дали раз
+  verdict: '?'
+  cls: '?'
+- n: 127
+  target: doc3_mart (целевой тип)
+  category: dev_question
+  severity: critical
+  why: Если выбрать неверный столбец, будут включены данные из других периодов или исключены нужные записи, что исказит количество абонентов и все последующие расчёты.
+  verdict: '?'
+  cls: '?'
+- n: 128
+  target: doc3_mart (целевой тип)
+  category: checklist:VOL-01
+  severity: medium
+  why: Документ указывает только глубину данных (с 01.05.2023), но не содержит ожидаемых объёмов данных и периода хранения (retention).
+  verdict: '?'
+  cls: '?'
+- n: 129
+  target: doc3_mart (целевой тип)
+  category: dev_question
+  severity: critical
+  why: Если выбрать неверный столбец, будут включены данные из других периодов или исключены нужные записи, что исказит количество абонентов и все последующие расчёты.
+  verdict: '?'
+  cls: '?'
+- n: 130
+  target: synth_v3official
+  category: entropy:LOC-01
+  severity: medium
+  why: 'Документ формально отвечает на вопрос «Для каждого источника и приёмника указано расположение: кластер/схема, Kafka-топики или пути к файлам (заглушки обезличив'
+  verdict: '?'
+  cls: '?'
+- n: 131
+  target: doc3_mart (целевой тип)
+  category: checklist:INC-03
+  severity: medium
+  why: Не указано, как обрабатываются записи, удалённые или изменённые в источнике задним числом.
+  verdict: '?'
+  cls: '?'
+- n: 132
+  target: synth_v3official
+  category: dev_question
+  severity: medium
+  why: Если проверять только последнюю партицию, возможен запуск агрегации при неполных данных, что приведёт к недоучёту трафика.
+  verdict: '?'
+  cls: '?'
+- n: 133
+  target: clean_base (шум)
+  category: dev_question
+  severity: high
+  why: Неправильный выбор может привести к неверному региону или типу сети в агрегате, искажая как трафик, так и количество уникальных абонентов.
+  verdict: '?'
+  cls: '?'
+- n: 134
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Неправильный критерий может привести к преждевременному удалению данных, требуемых для исторических запросов, или к оставлению устаревших партиций, нарушая поли
+  verdict: '?'
+  cls: '?'
+- n: 135
+  target: clean_base (шум)
+  category: checklist:INC-01
+  severity: high
+  why: Документ описывает только полную перезапись партиции месяца, без указания инкрементного механизма.
+  verdict: '?'
+  cls: '?'
+- n: 136
+  target: synth_v1
+  category: checklist:INC-03
+  severity: high
+  why: В документе нет описания поведения при удалении или изменении записей в источнике задним числом.
+  verdict: '?'
+  cls: '?'
+- n: 137
+  target: synth_v2hard
+  category: entropy:SLA-02
+  severity: medium
+  why: 'Документ формально отвечает на вопрос «Указан ли срок готовности данных (SLA/freshness): к какому времени данные за период должны быть доступны потребителям?», '
+  verdict: '?'
+  cls: '?'
+- n: 138
+  target: synth_v3official
+  category: checklist:INC-03
+  severity: high
+  why: В документе отсутствует описание поведения при удалении или изменении записей в источнике задним числом.
+  verdict: '?'
+  cls: '?'
+- n: 139
+  target: doc3_mart (целевой тип)
+  category: checklist:INC-03
+  severity: medium
+  why: В документе не указано, что происходит с записями, удалёнными или изменёнными в источнике задним числом.
+  verdict: '?'
+  cls: '?'
+- n: 140
+  target: synth_v1
+  category: entropy:SRC-01
+  severity: medium
+  why: 'Документ формально отвечает на вопрос «Указан ли способ получения данных из источника: интерфейс/протокол, формат данных (файлы/API/БД) и способ доступа?», но 5'
+  verdict: '?'
+  cls: '?'
+- n: 141
+  target: synth_v1
+  category: entropy:MAP-02
+  severity: medium
+  why: Документ формально отвечает на вопрос «Указаны ли типы данных (и точность/длина, где применимо) для полей целевых таблиц?», но 5 независимых прочтений дали разн
+  verdict: '?'
+  cls: '?'
+- n: 142
+  target: synth_v1
+  category: entropy:KEY-02
+  severity: medium
+  why: Документ формально отвечает на вопрос «Описано ли формирование ключа (для Kafka) или партиции (для HDFS) при записи?», но 5 независимых прочтений дали разные от
+  verdict: '?'
+  cls: '?'
+- n: 143
+  target: clean_base (шум)
+  category: checklist:INC-03
+  severity: high
+  why: В документе нет информации о том, как обрабатываются записи, удалённые или изменённые в источнике задним числом.
+  verdict: '?'
+  cls: '?'
+- n: 144
+  target: synth_v2hard
+  category: entropy:ERR-01
+  severity: medium
+  why: 'Документ формально отвечает на вопрос «Описано ли поведение при сбое: недоступность источника, ретраи, частичная загрузка?», но 5 независимых прочтений дали раз'
+  verdict: '?'
+  cls: '?'
+- n: 145
+  target: synth_v1
+  category: entropy:MAP-01
+  severity: medium
+  why: 'Документ формально отвечает на вопрос «Для каждого поля целевой таблицы указан источник: конкретное поле источника или формула расчёта?», но 5 независимых прочт'
+  verdict: '?'
+  cls: '?'
+- n: 146
+  target: clean_base (шум)
+  category: dev_question
+  severity: high
+  why: Неправильный выбор может привести к неверному региону или типу сети в агрегате, искажая как трафик, так и количество уникальных абонентов.
+  verdict: '?'
+  cls: '?'
+- n: 147
+  target: clean_base (шум)
+  category: doc:contradiction
+  severity: high
+  why: Расчёт 85 регионов × 4 типа сети + 2 служебные категории даёт 342 строки, а не ~350, как указано. Несоответствие может вводить в заблуждение при планировании об
+  verdict: '?'
+  cls: '?'
+- n: 148
+  target: synth_v2hard
+  category: doc:terminology
+  severity: medium
+  why: Одно и то же название поля используется с разным смыслом в источнике и в витрине, что может вызвать путаницу при написании запросов и проверок.
+  verdict: '?'
+  cls: '?'
+- n: 149
+  target: clean_base (шум)
+  category: dev_question
+  severity: high
+  why: Неправильный выбор может привести к неверному региону или типу сети в агрегате, искажая как трафик, так и количество уникальных абонентов.
+  verdict: '?'
+  cls: '?'
+- n: 150
+  target: synth_v3official
+  category: entropy:REF-02
+  severity: medium
+  why: 'Документ формально отвечает на вопрос «Задано ли поведение при отсутствии соответствия в справочнике при соединении (ключ не найден — TAC, код региона, тариф): '
+  verdict: '?'
+  cls: '?'
+- n: 151
+  target: synth_v3official
+  category: checklist:INC-03
+  severity: high
+  why: В документе нет информации о том, как обрабатываются записи, удалённые или изменённые в источнике задним числом.
+  verdict: '?'
+  cls: '?'
+- n: 152
+  target: doc3_mart (целевой тип)
+  category: checklist:MAP-02
+  severity: medium
+  why: В документе указаны только типы данных (string, bigint, timestamp, date) без указания точности или длины, что требуется в вопросе.
+  verdict: '?'
+  cls: '?'
+- n: 153
+  target: doc3_mart (целевой тип)
+  category: dev_question
+  severity: critical
+  why: Если выбрать неверный столбец, в агрегат попадут данные из неправильных периодов (или будут пропущены нужные), что сделает подсчёт пользователей некорректным.
+  verdict: '?'
+  cls: '?'
+- n: 154
+  target: clean_base (шум)
+  category: dev_question
+  severity: high
+  why: Неправильный критерий может привести к преждевременному удалению данных, требуемых для исторических запросов, или к оставлению устаревших партиций, нарушая поли
+  verdict: '?'
+  cls: '?'
+- n: 155
+  target: synth_v1
+  category: entropy:CAT-01
+  severity: medium
+  why: Документ формально отвечает на вопрос «Есть ли прямая ссылка на Дата-каталог (Data Catalog) для приёмника И для источников (заглушка LINK_* считается ссылкой; о
+  verdict: '?'
+  cls: '?'
+- n: 156
+  target: synth_v1
+  category: dev_question
+  severity: medium
+  why: Неправильная реализация может либо скрыть нужные данные от потребителей, либо случайно раскрыть служебные категории без явного запроса, нарушая согласованные пр
+  verdict: '?'
+  cls: '?'
+- n: 157
+  target: clean_base (шум)
+  category: dev_question
+  severity: high
+  why: Неправильная классификация изменит количество строк в витрине и может нарушить контроль качества по доле NO_REGION/UNKNOWN.
+  verdict: '?'
+  cls: '?'
+- n: 158
+  target: clean_base (шум)
+  category: dev_question
+  severity: high
+  why: Разные функции округления дают разные результаты (например, bankers rounding), что может превысить допустимое отклонение 0.1 % в проверке суммы байтов.
+  verdict: '?'
+  cls: '?'
+- n: 159
+  target: doc3_mart (целевой тип)
+  category: dev_question
+  severity: medium
+  why: Разные правила (например, «последняя по времени» vs «приоритет LAC») дадут разные результаты, что изменит распределение пользователей по регионам.
+  verdict: '?'
+  cls: '?'
+- n: 160
+  target: synth_v1
+  category: checklist:TZ-01
+  severity: medium
+  why: Указан часовой пояс UTC для расписания и поля FIELD_TIME_STAMP, но не описано, в каком часовом поясе определяются границы агрегации и как приводится время из др
+  verdict: '?'
+  cls: '?'
+- n: 161
+  target: clean_base (шум)
+  category: dev_question
+  severity: high
+  why: Неправильный набор записей для подсчёта уникальных абонентов изменит значение FIELD_USERS_CNT и может вызвать несоответствие проверкам качества.
+  verdict: '?'
+  cls: '?'
+- n: 162
+  target: synth_v2hard
+  category: dev_question
+  severity: high
+  why: Если оставить произвольный выбор, результаты агрегации могут быть неповторяемыми между запусками, что нарушит требования к детерминированности и усложнит отладк
+  verdict: '?'
+  cls: '?'
+- n: 163
+  target: doc3_mart (целевой тип)
+  category: checklist:FIL-01
+  severity: medium
+  why: В документе нет описания правил фильтрации входных данных и указания, что происходит с отфильтрованными записями.
+  verdict: '?'
+  cls: '?'
+- n: 164
+  target: doc3_mart (целевой тип)
+  category: checklist:CAT-01
+  severity: medium
+  why: В документе нет ни ссылки вида LINK_*, ни упоминания карточек Data Catalog для приёмника и источников.
+  verdict: '?'
+  cls: '?'
+- n: 165
+  target: doc3_mart (целевой тип)
+  category: checklist:NUL-01
+  severity: medium
+  why: Отсутствуют правила обработки NULL‑значений, 0 или значений по умолчанию для полей, участвующих в расчётах.
+  verdict: '?'
+  cls: '?'
+- n: 166
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Неправильное трактование пустой строки может привести к неожиданному появлению строк UNKNOWN или к потере данных.
+  verdict: '?'
+  cls: '?'
+- n: 167
+  target: doc3_mart (целевой тип)
+  category: dev_question
+  severity: critical
+  why: Если выбрать неверный столбец, будут включены данные из других периодов или исключены нужные записи, что исказит количество абонентов и все последующие расчёты.
+  verdict: '?'
+  cls: '?'
+- n: 168
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Разные методы расчёта могут привести к ложным срабатываниям или к пропуску реальных отклонений, вызывая либо избыточные алерты, либо отсутствие нужных предупреж
+  verdict: '?'
+  cls: '?'
+- n: 169
+  target: synth_v2hard
+  category: doc:terminology
+  severity: medium
+  why: Одно и то же название поля используется с разным смыслом в источнике и в витрине, что может вызвать путаницу при написании запросов и проверок.
+  verdict: '?'
+  cls: '?'
+- n: 170
+  target: clean_base (шум)
+  category: doc:completeness
+  severity: medium
+  why: Поле FIELD_HOUR описано в структуре исходной таблицы, но в алгоритме обработки (Шаги 1‑6) и в формулах оно нигде не используется.
+  verdict: '?'
+  cls: '?'
+- n: 171
+  target: synth_v2hard
+  category: entropy:FIL-01
+  severity: medium
+  why: 'Документ формально отвечает на вопрос «Заданы ли правила фильтрации входных данных И судьба отфильтрованных записей: отбрасываются, логируются или попадают в ка'
+  verdict: '?'
+  cls: '?'
+- n: 172
+  target: synth_v1
+  category: checklist:ORD-01
+  severity: medium
+  why: В документе не описано, как выбирается «последняя/первая/актуальная» запись, по какому полю времени или версии и правило при равенстве.
+  verdict: '?'
+  cls: '?'
+- n: 173
+  target: clean_base (шум)
+  category: dev_question
+  severity: high
+  why: Неправильный порядок округления даст отклонения от допустимого порога 0.1 % в проверке суммы байтов, что приведёт к откату партиции.
+  verdict: '?'
+  cls: '?'
+- n: 174
+  target: synth_v3official
+  category: lp:INC-02
+  severity: medium
+  why: 'Логит-зонд: по вопросу «Описана ли обработка данных, пришедших с опозданием (late-arriving): окно повторной обработки/перезагрузки?» модель колеблется между про'
+  verdict: '?'
+  cls: '?'
+- n: 175
+  target: synth_v1
+  category: checklist:INC-03
+  severity: high
+  why: В документе нет описания поведения при удалении или изменении записей в источнике задним числом.
+  verdict: '?'
+  cls: '?'
+- n: 176
+  target: doc3_mart (целевой тип)
+  category: checklist:FIL-01
+  severity: high
+  why: В документе нет описания правил фильтрации входных данных и указания, что происходит с отфильтрованными записями (отбрасываются, логируются, карантин и т.д.).
+  verdict: '?'
+  cls: '?'
+- n: 177
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Если правило будет неверно интерпретировано, записи могут быть либо ошибочно отбрасываемы, либо ошибочно включены в агрегат, нарушая контроль качества.
+  verdict: '?'
+  cls: '?'
+- n: 178
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Неправильная классификация изменит количество строк в витрине и может нарушить контроль качества по доле NO_REGION/UNKNOWN.
+  verdict: '?'
+  cls: '?'
+- n: 179
+  target: synth_v3official
+  category: dev_question
+  severity: medium
+  why: Неопределённый выбор может привести к непоследовательному поведению DAG между запусками, что затруднит отладку и воспроизводимость результатов.
+  verdict: '?'
+  cls: '?'
+- n: 180
+  target: synth_v2hard
+  category: entropy:CAT-01
+  severity: medium
+  why: Документ формально отвечает на вопрос «Есть ли прямая ссылка на Дата-каталог (Data Catalog) для приёмника И для источников (заглушка LINK_* считается ссылкой; о
+  verdict: '?'
+  cls: '?'
+- n: 181
+  target: doc3_mart (целевой тип)
+  category: checklist:CAT-01
+  severity: medium
+  why: В документе нет ни ссылки вида LINK_*, ни упоминания карточек Data Catalog для приёмника и источников.
+  verdict: '?'
+  cls: '?'
+- n: 182
+  target: synth_v3official
+  category: dev_question
+  severity: medium
+  why: Неопределённый выбор может привести к непоследовательному поведению DAG между запусками, что затруднит отладку и воспроизводимость результатов.
+  verdict: '?'
+  cls: '?'
+- n: 183
+  target: doc3_mart (целевой тип)
+  category: doc:terminology
+  severity: medium
+  why: В одном месте используется название FIELD_IMEI, а в другом – imei без префикса, что создаёт терминологический дрейф.
+  verdict: '?'
+  cls: '?'
+- n: 184
+  target: doc3_mart (целевой тип)
+  category: checklist:FIL-01
+  severity: medium
+  why: В документе нет описания правил фильтрации входных данных и указания, что происходит с отфильтрованными записями (отбрасываются, логируются, карантин и т.д.).
+  verdict: '?'
+  cls: '?'
+- n: 185
+  target: synth_v3official
+  category: checklist:INC-03
+  severity: medium
+  why: В документе отсутствует описание поведения при удалении или изменении записей в источнике задним числом.
+  verdict: '?'
+  cls: '?'
+- n: 186
+  target: synth_v2hard
+  category: entropy:OWN-01
+  severity: medium
+  why: Документ формально отвечает на вопрос «Названы ли владелец потока/витрины и потребители данных?», но 5 независимых прочтений дали разные ответы (Владелец витрин
+  verdict: '?'
+  cls: '?'
+- n: 187
+  target: synth_v2hard
+  category: entropy:LOC-03
+  severity: medium
+  why: Документ формально отвечает на вопрос «Для каждого файлового хранилища указан полный путь в HDFS (hdfs://… или заглушка PATH_*) с указанием формата («в HDFS кла
+  verdict: '?'
+  cls: '?'
+- n: 188
+  target: synth_v2hard
+  category: checklist:INC-03
+  severity: medium
+  why: Отсутствует описание поведения при удалении или изменении записей в источнике после их первоначального включения в витрину.
+  verdict: '?'
+  cls: '?'
+- n: 189
+  target: clean_base (шум)
+  category: checklist:INC-03
+  severity: high
+  why: В документе нет описания поведения при удалении или изменении записей в источнике задним числом.
+  verdict: '?'
+  cls: '?'
+- n: 190
+  target: synth_v3official
+  category: checklist:INC-03
+  severity: high
+  why: В документе нет описания поведения при удалении или изменении записей в источнике задним числом.
+  verdict: '?'
+  cls: '?'
+- n: 191
+  target: clean_base (шум)
+  category: dev_question
+  severity: high
+  why: Неправильный выбор может привести к неверному региону или типу сети в агрегате, искажая как трафик, так и количество уникальных абонентов.
+  verdict: '?'
+  cls: '?'
+- n: 192
+  target: synth_v2hard
+  category: dev_question
+  severity: medium
+  why: Неправильный путь к партиции сделает её недоступной для чтения через Hive/Impala, что приведёт к ошибкам запросов потребителей.
+  verdict: '?'
+  cls: '?'
+- n: 193
+  target: synth_v3official
+  category: dev_question
+  severity: medium
+  why: Разный подход изменит распределение записей по категориям RAT и может повлиять на итоговые строки витрины и проверки качества.
+  verdict: '?'
+  cls: '?'
+- n: 194
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Если такие записи будут обработаны неверно, итоговый объём трафика может быть искажён, либо DAG завершится с исключением, нарушив SLA расчёта.
+  verdict: '?'
+  cls: '?'
+- n: 195
+  target: doc3_mart (целевой тип)
+  category: checklist:DED-01
+  severity: medium
+  why: Указано лишь, что дубли удаляются, но не указано, какой ключ используется и какое правило выбора (например, последняя запись) применяется.
+  verdict: '?'
+  cls: '?'
+- n: 196
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Неправильный путь сделает партицию недоступной для Hive/Presto, что приведёт к ошибкам чтения потребителями.
+  verdict: '?'
+  cls: '?'
+- n: 197
+  target: synth_v3official
+  category: dev_question
+  severity: high
+  why: Неправильный коэффициент приведёт к систематическому отклонению в проверке CHECK_BYTES (более 0.1 %), вызывая ложные алерты и блокировку публикации партиций.
+  verdict: '?'
+  cls: '?'
+- n: 198
+  target: synth_v3official
+  category: entropy:VOL-01
+  severity: medium
+  why: Документ формально отвечает на вопрос «Указаны ли ожидаемые объёмы данных и срок хранения (retention)?», но 5 независимых прочтений дали разные ответы (Да, указ
+  verdict: '?'
+  cls: '?'
+- n: 199
+  target: clean_base (шум)
+  category: dev_question
+  severity: high
+  why: Неправильная классификация изменит количество строк в витрине и может нарушить контроль качества по доле NO_REGION/UNKNOWN.
+  verdict: '?'
+  cls: '?'
+- n: 200
+  target: synth_v2hard
+  category: dev_question
+  severity: medium
+  why: Если удалить партицию слишком рано, backfill может потерять необходимые данные; если слишком поздно – может превысить лимит хранения и нарушить ретеншн‑политику
+  verdict: '?'
+  cls: '?'
+- n: 201
+  target: synth_v2hard
+  category: dev_question
+  severity: medium
+  why: Если удалить партицию слишком рано, backfill может потерять необходимые данные; если слишком поздно – может превысить лимит хранения и нарушить ретеншн‑политику
+  verdict: '?'
+  cls: '?'
+- n: 202
+  target: synth_v1
+  category: checklist:NUL-02
+  severity: medium
+  why: В документе нет описания поведения расчётных формул в краевых случаях (деление на ноль, пустой знаменатель, отсутствие данных за период).
+  verdict: '?'
+  cls: '?'
+- n: 203
+  target: doc3_mart (целевой тип)
+  category: checklist:CAT-01
+  severity: medium
+  why: В документе нет ни ссылки вида LINK_*, ни упоминания карточек Data Catalog для приёмника и источников.
+  verdict: '?'
+  cls: '?'
+- n: 204
+  target: synth_v2hard
+  category: entropy:NUL-03
+  severity: medium
+  why: Документ формально отвечает на вопрос «Для каждого поля витрины явно указан признак обязательности NOT NULL / NULLABLE (отдельной колонкой или пометкой; тип дан
+  verdict: '?'
+  cls: '?'
+- n: 205
+  target: synth_v3official
+  category: lp:NUL-02
+  severity: medium
+  why: 'Логит-зонд: по вопросу «Определено ли поведение расчётных формул в краевых случаях (деление на ноль, пустой знаменатель, отсутствие счётчика за период)?» модель'
+  verdict: '?'
+  cls: '?'
+- n: 206
+  target: doc3_mart (целевой тип)
+  category: checklist:INC-02
+  severity: high
+  why: Отсутствует описание обработки данных, пришедших с опозданием (late-arriving), и окна повторной обработки.
+  verdict: '?'
+  cls: '?'
+- n: 207
+  target: doc3_mart (целевой тип)
+  category: checklist:MAP-02
+  severity: medium
+  why: В документе указаны типы данных полей, но отсутствуют детали о точности или длине (например, длина string, масштаб bigint, точность timestamp), поэтому непонятн
+  verdict: '?'
+  cls: '?'
+- n: 208
+  target: clean_base (шум)
+  category: checklist:NUL-02
+  severity: medium
+  why: В документе описаны формулы расчёта, но нет указаний, как они ведут себя в краевых ситуациях (деление на ноль, отсутствие записей, пустой знаменатель).
+  verdict: '?'
+  cls: '?'
+- n: 209
+  target: doc3_mart (целевой тип)
+  category: checklist:NUL-01
+  severity: high
+  why: Нет правил обработки отсутствующих значений (NULL vs 0 vs default) для полей, участвующих в расчётах.
+  verdict: '?'
+  cls: '?'
+- n: 210
+  target: doc3_mart (целевой тип)
+  category: dev_question
+  severity: high
+  why: Если выбрать неверный столбец, будут включены данные из других периодов или исключены нужные записи, что исказит количество абонентов и все последующие расчёты.
+  verdict: '?'
+  cls: '?'
+- n: 211
+  target: synth_v2hard
+  category: checklist:NUL-02
+  severity: medium
+  why: В документе нет описания поведения расчётных формул в краевых случаях (деление на ноль, пустой знаменатель, отсутствие счётчика за период).
+  verdict: '?'
+  cls: '?'
+- n: 212
+  target: clean_base (шум)
+  category: doc:contradiction
+  severity: medium
+  why: Расчёт 85 регионов × 4 типа сети + 2 служебные категории даёт 342 строки, а не ~350, как указано. Несоответствие может вводить в заблуждение при планировании об
+  verdict: '?'
+  cls: '?'
+- n: 213
+  target: synth_v3official
+  category: dev_question
+  severity: medium
+  why: Если подсчёт будет выполнен в другом месте, итоговое значение FIELD_USERS_CNT может не соответствовать ожидаемому, что нарушит бизнес‑логика и контроль качества
+  verdict: '?'
+  cls: '?'
+- n: 214
+  target: synth_v2hard
+  category: checklist:INC-03
+  severity: high
+  why: В документе нет информации о том, как обрабатываются записи, удалённые или изменённые в источнике после их включения в агрегат.
+  verdict: '?'
+  cls: '?'
+- n: 215
+  target: doc3_mart (целевой тип)
+  category: checklist:VOL-01
+  severity: medium
+  why: Документ указывает только глубину данных (с 01.05.2023), но не содержит ожидаемых объёмов данных и периода хранения (retention).
+  verdict: '?'
+  cls: '?'
+- n: 216
+  target: clean_base (шум)
+  category: checklist:INC-01
+  severity: medium
+  why: Документ описывает только полную перезапись партиции месяца, без указания инкрементного механизма.
+  verdict: '?'
+  cls: '?'
+- n: 217
+  target: synth_v1
+  category: checklist:INC-03
+  severity: high
+  why: В документе нет описания поведения при удалении или изменении записей в источнике задним числом.
+  verdict: '?'
+  cls: '?'
+- n: 218
+  target: clean_base (шум)
+  category: dev_question
+  severity: high
+  why: Неправильный набор записей для подсчёта уникальных абонентов изменит значение FIELD_USERS_CNT и может вызвать несоответствие проверкам качества.
+  verdict: '?'
+  cls: '?'
+- n: 219
+  target: clean_base (шум)
+  category: doc:terminology
+  severity: medium
+  why: 'Одно и то же название FIELD_BIZ_DATE используется для разных смыслов: в источнике – дата сессии, в витрине – первое число месяца. Это может привести к путанице '
+  verdict: '?'
+  cls: '?'
+- n: 220
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Неправильная классификация изменит количество записей в категории UNKNOWN и может привести к отклонению проверок качества.
+  verdict: '?'
+  cls: '?'
+- n: 221
+  target: doc3_mart (целевой тип)
+  category: checklist:INC-03
+  severity: high
+  why: Документ не содержит информации о том, как обрабатываются записи, удалённые или изменённые в источнике задним числом.
+  verdict: '?'
+  cls: '?'
+- n: 222
+  target: synth_v2hard
+  category: entropy:VOL-01
+  severity: medium
+  why: Документ формально отвечает на вопрос «Указаны ли ожидаемые объёмы данных и срок хранения (retention)?», но 5 независимых прочтений дали разные ответы (Да, ожид
+  verdict: '?'
+  cls: '?'
+- n: 223
+  target: synth_v2hard
+  category: checklist:NUL-02
+  severity: medium
+  why: В документе описаны формулы расчёта FIELD_TRAFFIC_GB и правила обработки NULL, но нет информации о поведении при делении на ноль, пустом знаменателе или отсутст
+  verdict: '?'
+  cls: '?'
+- n: 224
+  target: synth_v1
+  category: dev_question
+  severity: medium
+  why: Без согласованного механизма потребители могут получить либо лишние, либо недостаточные данные, что нарушит SLA и договорные обязательства.
+  verdict: '?'
+  cls: '?'
+- n: 225
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Неправильное трактование пустой строки может привести к неожиданному появлению строк UNKNOWN или к потере данных.
+  verdict: '?'
+  cls: '?'
+- n: 226
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Неправильный выбор может привести к неверному региону или типу сети в агрегате, искажая как трафик, так и количество уникальных абонентов.
+  verdict: '?'
+  cls: '?'
+- n: 227
+  target: synth_v1
+  category: dev_question
+  severity: medium
+  why: Без точного понимания этих проверок невозможно корректно реализовать контроль качества; неверные значения в журнале могут скрыть реальные отклонения или вызвать
+  verdict: '?'
+  cls: '?'
+- n: 228
+  target: doc3_mart (целевой тип)
+  category: checklist:MAP-02
+  severity: medium
+  why: В документе указаны типы данных полей, но отсутствуют детали о точности или длине (например, длина string, масштаб bigint, точность timestamp), поэтому непонятн
+  verdict: '?'
+  cls: '?'
+- n: 229
+  target: synth_v1
+  category: entropy:LOC-01
+  severity: medium
+  why: 'Документ формально отвечает на вопрос «Для каждого источника и приёмника указано расположение: кластер/схема, Kafka-топики или пути к файлам (заглушки обезличив'
+  verdict: '?'
+  cls: '?'
+- n: 230
+  target: doc3_mart (целевой тип)
+  category: checklist:INC-03
+  severity: medium
+  why: Не указано, как обрабатываются записи, удалённые или изменённые в источнике задним числом.
+  verdict: '?'
+  cls: '?'
+- n: 231
+  target: clean_base (шум)
+  category: dev_question
+  severity: high
+  why: Неправильный выбор может привести к неверному региону или типу сети в агрегате, искажая как трафик, так и количество уникальных абонентов.
+  verdict: '?'
+  cls: '?'
+- n: 232
+  target: clean_base (шум)
+  category: dev_question
+  severity: high
+  why: Неправильный порядок округления даст отклонения от допустимого порога 0.1 % в проверке суммы байтов, что приведёт к откату партиции.
+  verdict: '?'
+  cls: '?'
+- n: 233
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Неправильный путь сделает партицию недоступной для Hive/Presto, что приведёт к ошибкам чтения потребителями.
+  verdict: '?'
+  cls: '?'
+- n: 234
+  target: doc3_mart (целевой тип)
+  category: checklist:FIL-01
+  severity: high
+  why: В документе нет описания правил фильтрации входных данных и указания, что происходит с отфильтрованными записями (отбрасываются, логируются, карантин и т.д.).
+  verdict: '?'
+  cls: '?'
+- n: 235
+  target: doc3_mart (целевой тип)
+  category: dev_question
+  severity: critical
+  why: Если выбрать неверный столбец, в агрегат попадут данные из неправильных периодов (или будут пропущены нужные), что сделает подсчёт пользователей некорректным.
+  verdict: '?'
+  cls: '?'
+- n: 236
+  target: synth_v2hard
+  category: entropy:ERR-02
+  severity: medium
+  why: 'Документ формально отвечает на вопрос «Предусмотрен ли контроль полноты загрузки (сверка количества записей/контрольные суммы/реконсиляция)?», но 5 независимых '
+  verdict: '?'
+  cls: '?'
+- n: 237
+  target: synth_v3official
+  category: dev_question
+  severity: medium
+  why: Если подсчёт будет выполнен в другом месте, итоговое значение FIELD_USERS_CNT может не соответствовать ожидаемому, что нарушит бизнес‑логика и контроль качества
+  verdict: '?'
+  cls: '?'
+- n: 238
+  target: synth_v2hard
+  category: entropy:SER-01
+  severity: medium
+  why: 'Документ формально отвечает на вопрос «Указана ли модель входного И выходного потока данных: формат хранения/сериализация и схема отдельно для каждого источника'
+  verdict: '?'
+  cls: '?'
+- n: 239
+  target: clean_base (шум)
+  category: dev_question
+  severity: high
+  why: Если такие записи будут обработаны неверно, итоговый объём трафика может быть искажён, либо DAG завершится с исключением, нарушив SLA расчёта.
+  verdict: '?'
+  cls: '?'
+- n: 240
+  target: synth_v2hard
+  category: entropy:MAP-02
+  severity: medium
+  why: Документ формально отвечает на вопрос «Указаны ли типы данных (и точность/длина, где применимо) для полей целевых таблиц?», но 5 независимых прочтений дали разн
+  verdict: '?'
+  cls: '?'
+- n: 241
+  target: synth_v2hard
+  category: dev_question
+  severity: medium
+  why: Непредсказуемый выбор может привести к разным результатам агрегирования между запусками, нарушая воспроизводимость и контроль качества.
+  verdict: '?'
+  cls: '?'
+- n: 242
+  target: clean_base (шум)
+  category: dev_question
+  severity: high
+  why: Подсчёт на неверном наборе данных приведёт к завышенному (или заниженному) количеству абонентов, что нарушит бизнес‑требования и контроль качества.
+  verdict: '?'
+  cls: '?'
+- n: 243
+  target: synth_v3official
+  category: dev_question
+  severity: medium
+  why: Если подсчёт будет выполнен в другом месте, итоговое значение FIELD_USERS_CNT может не соответствовать ожидаемому, что нарушит бизнес‑логика и контроль качества
+  verdict: '?'
+  cls: '?'
+- n: 244
+  target: synth_v1
+  category: checklist:ORD-01
+  severity: medium
+  why: В документе нет описания выбора «последней/первой/актуальной» записи, поля времени или версии, из какой таблицы берётся поле и правила при равенстве.
+  verdict: '?'
+  cls: '?'
+- n: 245
+  target: synth_v2hard
+  category: checklist:NUL-02
+  severity: medium
+  why: В документе описаны формулы расчёта FIELD_TRAFFIC_GB и правила обработки NULL, но нет информации о поведении при делении на ноль, пустом знаменателе или отсутст
+  verdict: '?'
+  cls: '?'
+- n: 246
+  target: synth_v1
+  category: entropy:LOC-03
+  severity: medium
+  why: Документ формально отвечает на вопрос «Для каждого файлового хранилища указан полный путь в HDFS (hdfs://… или заглушка PATH_*) с указанием формата («в HDFS кла
+  verdict: '?'
+  cls: '?'
+- n: 247
+  target: synth_v2hard
+  category: dev_question
+  severity: medium
+  why: Если отрицательные значения попадут в суммирование, итоговый трафик может стать отрицательным или искажённым, что нарушит проверку CHECK_BYTES.
+  verdict: '?'
+  cls: '?'
+- n: 248
+  target: doc3_mart (целевой тип)
+  category: checklist:VOL-01
+  severity: medium
+  why: Документ указывает только глубину данных (с 01.05.2023), но не содержит ожидаемых объёмов данных и периода хранения (retention).
+  verdict: '?'
+  cls: '?'
+- n: 249
+  target: doc3_mart (целевой тип)
+  category: dev_question
+  severity: critical
+  why: Если выбрать неверный столбец, в агрегат попадут данные из неправильных периодов (или будут пропущены нужные), что сделает подсчёт пользователей некорректным.
+  verdict: '?'
+  cls: '?'
+- n: 250
+  target: clean_base (шум)
+  category: doc:contradiction
+  severity: medium
+  why: Расчёт 85 регионов × 4 типа сети = 340, плюс две служебные категории дает 342 строки, а не ~350, как указано. Несоответствие может вводить в заблуждение при пла
+  verdict: '?'
+  cls: '?'
+- n: 251
+  target: doc3_mart (целевой тип)
+  category: checklist:CAT-01
+  severity: medium
+  why: В документе отсутствуют ссылки на карточки Data Catalog для приёмника и для источников (нет ни LINK_*, ни упоминаний о Data Catalog).
+  verdict: '?'
+  cls: '?'
+- n: 252
+  target: synth_v1
+  category: entropy:KEY-01
+  severity: medium
+  why: Документ формально отвечает на вопрос «Определены ли ключи целевых таблиц (первичный/бизнес-ключ) и гранулярность витрины?», но 5 независимых прочтений дали раз
+  verdict: '?'
+  cls: '?'
+- n: 253
+  target: synth_v2hard
+  category: entropy:SER-01
+  severity: medium
+  why: 'Документ формально отвечает на вопрос «Указана ли модель входного И выходного потока данных: формат хранения/сериализация и схема отдельно для каждого источника'
+  verdict: '?'
+  cls: '?'
+- n: 254
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Разные методы расчёта могут привести к ложным срабатываниям или к пропуску реальных отклонений, вызывая либо избыточные алерты, либо отсутствие нужных предупреж
+  verdict: '?'
+  cls: '?'
+- n: 255
+  target: synth_v3official
+  category: entropy:ORD-01
+  severity: medium
+  why: 'Документ формально отвечает на вопрос «Если алгоритм выбирает «последнюю/первую/актуальную» запись (последний IMEI за период, актуальный тариф), указано ли, по '
+  verdict: '?'
+  cls: '?'
+- n: 256
+  target: clean_base (шум)
+  category: dev_question
+  severity: high
+  why: Неправильный набор записей для подсчёта уникальных абонентов изменит значение FIELD_USERS_CNT и может вызвать несоответствие проверкам качества.
+  verdict: '?'
+  cls: '?'
+- n: 257
+  target: doc3_mart (целевой тип)
+  category: checklist:VOL-01
+  severity: medium
+  why: Документ указывает только глубину данных (с 01.05.2023) и периодичность, но не содержит оценок объёмов данных и сроков хранения (retention).
+  verdict: '?'
+  cls: '?'
+- n: 258
+  target: clean_base (шум)
+  category: checklist:NUL-02
+  severity: medium
+  why: В документе описаны формулы расчёта, но нет указаний, как они ведут себя в краевых ситуациях (деление на ноль, отсутствие записей, пустой знаменатель).
+  verdict: '?'
+  cls: '?'
+- n: 259
+  target: synth_v2hard
+  category: entropy:SRC-02
+  severity: medium
+  why: Документ формально отвечает на вопрос «Описан ли состав данных источника (перечень полей/счётчиков или ссылка на их спецификацию) без открытых списков вида «и т
+  verdict: '?'
+  cls: '?'
+- n: 260
+  target: clean_base (шум)
+  category: doc:completeness
+  severity: medium
+  why: Поле FIELD_HOUR описано в структуре исходной таблицы, но в алгоритме обработки (Шаги 1‑6) и в формулах оно нигде не используется.
+  verdict: '?'
+  cls: '?'
+- n: 261
+  target: synth_v2hard
+  category: entropy:ERR-02
+  severity: medium
+  why: 'Документ формально отвечает на вопрос «Предусмотрен ли контроль полноты загрузки (сверка количества записей/контрольные суммы/реконсиляция)?», но 5 независимых '
+  verdict: '?'
+  cls: '?'
+- n: 262
+  target: clean_base (шум)
+  category: checklist:NUL-02
+  severity: medium
+  why: В документе описаны формулы расчёта, но нет указаний, как они ведут себя в краевых ситуациях (деление на ноль, отсутствие записей, пустой знаменатель).
+  verdict: '?'
+  cls: '?'
+- n: 263
+  target: synth_v1
+  category: entropy:SLA-01
+  severity: medium
+  why: 'Документ формально отвечает на вопрос «Задано ли расписание загрузки: периодичность и конкретное время запуска?», но 5 независимых прочтений дали разные ответы '
+  verdict: '?'
+  cls: '?'
+- n: 264
+  target: synth_v2hard
+  category: entropy:LOC-03
+  severity: medium
+  why: Документ формально отвечает на вопрос «Для каждого файлового хранилища указан полный путь в HDFS (hdfs://… или заглушка PATH_*) с указанием формата («в HDFS кла
+  verdict: '?'
+  cls: '?'
+- n: 265
+  target: synth_v2hard
+  category: entropy:SRC-02
+  severity: medium
+  why: Документ формально отвечает на вопрос «Описан ли состав данных источника (перечень полей/счётчиков или ссылка на их спецификацию) без открытых списков вида «и т
+  verdict: '?'
+  cls: '?'
+- n: 266
+  target: synth_v3official
+  category: dev_question
+  severity: medium
+  why: Непредсказуемый выбор может приводить к различиям в агрегатах между запусками, нарушая согласованность данных.
+  verdict: '?'
+  cls: '?'
+- n: 267
+  target: synth_v2hard
+  category: dev_question
+  severity: medium
+  why: Непредсказуемый выбор может привести к разным результатам агрегирования между запусками, нарушая воспроизводимость и контроль качества.
+  verdict: '?'
+  cls: '?'
+- n: 268
+  target: doc3_mart (целевой тип)
+  category: checklist:FIL-02
+  severity: medium
+  why: Документ не содержит отдельного перечня типовых условий фильтрации; алгоритм описывает шаги, но нет списка фильтров.
+  verdict: '?'
+  cls: '?'
+- n: 269
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Если правило будет неверно интерпретировано, записи могут быть либо ошибочно отбрасываемы, либо ошибочно включены в агрегат, нарушая контроль качества.
+  verdict: '?'
+  cls: '?'
+- n: 270
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Разные методы расчёта могут привести к ложным срабатываниям или к пропуску реальных отклонений, вызывая либо избыточные алерты, либо отсутствие нужных предупреж
+  verdict: '?'
+  cls: '?'
+- n: 271
+  target: doc3_mart (целевой тип)
+  category: checklist:FIL-02
+  severity: medium
+  why: Документ не содержит отдельного перечня типовых условий фильтрации, применяемых при построении витрины и при выгрузке.
+  verdict: '?'
+  cls: '?'
+- n: 272
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Неправильная классификация изменит количество записей в категории UNKNOWN и может привести к отклонению проверок качества.
+  verdict: '?'
+  cls: '?'
+- n: 273
+  target: synth_v2hard
+  category: entropy:REF-01
+  severity: medium
+  why: Документ формально отвечает на вопрос «Приведён ли перечень справочников (НСИ), используемых витриной («не применимо» допустимо только если алгоритм не использу
+  verdict: '?'
+  cls: '?'
+- n: 274
+  target: clean_base (шум)
+  category: doc:completeness
+  severity: medium
+  why: Код CHECK_DROPPED присутствует в структуре журнала, однако в разделе контроля качества нет описания, какая метрика фиксируется этим кодом.
+  verdict: '?'
+  cls: '?'
+- n: 275
+  target: clean_base (шум)
+  category: checklist:INC-03
+  severity: medium
+  why: В документе нет описания поведения при удалении или изменении записей в источнике после их первоначального включения в витрину.
+  verdict: '?'
+  cls: '?'
+- n: 276
+  target: synth_v2hard
+  category: checklist:NUL-02
+  severity: medium
+  why: В документе описаны формулы расчёта FIELD_TRAFFIC_GB и правила обработки NULL, но нет информации о поведении при делении на ноль, пустом знаменателе или отсутст
+  verdict: '?'
+  cls: '?'
+- n: 277
+  target: synth_v3official
+  category: lp:NUL-02
+  severity: medium
+  why: 'Логит-зонд: по вопросу «Определено ли поведение расчётных формул в краевых случаях (деление на ноль, пустой знаменатель, отсутствие счётчика за период)?» модель'
+  verdict: '?'
+  cls: '?'
+- n: 278
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Неоднозначность в поведении проверки может привести к пропуску реальных ошибок в данных или к избыточным алертам, что усложнит эксплуатацию.
+  verdict: '?'
+  cls: '?'
+- n: 279
+  target: synth_v1
+  category: dev_question
+  severity: medium
+  why: Неправильная реализация может либо скрыть нужные данные от потребителей, либо случайно раскрыть служебные категории без явного запроса, нарушая согласованные пр
+  verdict: '?'
+  cls: '?'
+- n: 280
+  target: clean_base (шум)
+  category: doc:terminology
+  severity: medium
+  why: 'Одно и то же название FIELD_BIZ_DATE используется для разных смыслов: в источнике – дата сессии, в витрине – первое число месяца. Это может привести к путанице '
+  verdict: '?'
+  cls: '?'
+- n: 281
+  target: doc3_mart (целевой тип)
+  category: checklist:NUL-01
+  severity: medium
+  why: Отсутствуют правила обработки NULL‑значений, 0 или значений по умолчанию для полей, участвующих в расчётах.
+  verdict: '?'
+  cls: '?'
+- n: 282
+  target: synth_v2hard
+  category: lp:INC-02
+  severity: medium
+  why: 'Логит-зонд: по вопросу «Описана ли обработка данных, пришедших с опозданием (late-arriving): окно повторной обработки/перезагрузки?» модель колеблется между про'
+  verdict: '?'
+  cls: '?'
+- n: 283
+  target: synth_v2hard
+  category: checklist:INC-03
+  severity: critical
+  why: В документе нет информации о том, как обрабатываются записи, удалённые или изменённые в источнике после их включения в агрегат.
+  verdict: '?'
+  cls: '?'
+- n: 284
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Если такие строки не будут отфильтрованы, они могут попасть в агрегат как некорректный регион, нарушив контроль качества и логику отбраковки.
+  verdict: '?'
+  cls: '?'
+- n: 285
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Неправильная классификация изменит количество записей в категории UNKNOWN и может привести к отклонению проверок качества.
+  verdict: '?'
+  cls: '?'
+- n: 286
+  target: doc3_mart (целевой тип)
+  category: checklist:MAP-02
+  severity: medium
+  why: В документе указаны типы данных полей, но отсутствуют детали о точности или длине (например, длина string, масштаб bigint, точность timestamp), поэтому непонятн
+  verdict: '?'
+  cls: '?'
+- n: 287
+  target: doc3_mart (целевой тип)
+  category: doc:terminology
+  severity: medium
+  why: В одном месте используется название FIELD_IMEI, а в другом – imei без префикса, что создаёт терминологический дрейф.
+  verdict: '?'
+  cls: '?'
+- n: 288
+  target: doc3_mart (целевой тип)
+  category: checklist:INC-03
+  severity: medium
+  why: Документ не содержит информации о том, как обрабатываются записи, удалённые или изменённые в источнике задним числом.
+  verdict: '?'
+  cls: '?'
+- n: 289
+  target: synth_v2hard
+  category: dev_question
+  severity: high
+  why: Если удалить партицию слишком рано, backfill может потерять необходимые данные; если слишком поздно – может превысить лимит хранения и нарушить ретеншн‑политику
+  verdict: '?'
+  cls: '?'
+- n: 290
+  target: doc3_mart (целевой тип)
+  category: checklist:INC-03
+  severity: medium
+  why: Документ не содержит информации о том, как обрабатываются записи, удалённые или изменённые в источнике задним числом.
+  verdict: '?'
+  cls: '?'
+- n: 291
+  target: clean_base (шум)
+  category: doc:completeness
+  severity: high
+  why: Коды CHECK_BYTES, CHECK_DROPPED и CHECK_REGIONS упоминаются в разделе «Контроль качества», но их описание отсутствует в структуре таблицы TABLE_AGG_LOAD_LOG, гд
+  verdict: '?'
+  cls: '?'
+- n: 292
+  target: synth_v1
+  category: dev_question
+  severity: medium
+  why: Без согласованного механизма потребители могут получить либо лишние, либо недостаточные данные, что нарушит SLA и договорные обязательства.
+  verdict: '?'
+  cls: '?'
+- n: 293
+  target: synth_v2hard
+  category: dev_question
+  severity: medium
+  why: Неправильный путь к партиции сделает её недоступной для чтения через Hive/Impala, что приведёт к ошибкам запросов потребителей.
+  verdict: '?'
+  cls: '?'
+- n: 294
+  target: synth_v1
+  category: checklist:NUL-02
+  severity: medium
+  why: В документе нет описания поведения расчётных формул в краевых случаях (деление на ноль, пустой знаменатель, отсутствие данных за период).
+  verdict: '?'
+  cls: '?'
+- n: 295
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Разные методы расчёта могут привести к ложным срабатываниям или к пропуску реальных отклонений, вызывая либо избыточные алерты, либо отсутствие нужных предупреж
+  verdict: '?'
+  cls: '?'
+- n: 296
+  target: clean_base (шум)
+  category: dev_question
+  severity: critical
+  why: Неправильный порядок округления даст отклонения от допустимого порога 0.1 % в проверке суммы байтов, что приведёт к откату партиции.
+  verdict: '?'
+  cls: '?'
+- n: 297
+  target: synth_v1
+  category: checklist:NUL-02
+  severity: medium
+  why: В документе нет описания поведения расчётных формул в краевых случаях (деление на ноль, пустой знаменатель, отсутствие данных за период).
+  verdict: '?'
+  cls: '?'
+- n: 298
+  target: synth_v3official
+  category: dev_question
+  severity: medium
+  why: Неправильное понимание ретеншена может привести к потере исторических данных или к накоплению лишних партиций, нарушая требования к хранению и доступности.
+  verdict: '?'
+  cls: '?'
+- n: 299
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Неправильная классификация изменит количество записей в категории UNKNOWN и может привести к отклонению проверок качества.
+  verdict: '?'
+  cls: '?'
+- n: 300
+  target: synth_v1
+  category: entropy:LOC-02
+  severity: medium
+  why: Документ формально отвечает на вопрос «Для каждого потокового источника/приёмника (Kafka-топика) указан кластер Kafka (заглушка KAFKA_*/CLUSTER_* считается; топ
+  verdict: '?'
+  cls: '?'
+- n: 301
+  target: synth_v1
+  category: entropy:SRC-02
+  severity: medium
+  why: Документ формально отвечает на вопрос «Описан ли состав данных источника (перечень полей/счётчиков или ссылка на их спецификацию) без открытых списков вида «и т
+  verdict: '?'
+  cls: '?'
+- n: 302
+  target: synth_v2hard
+  category: checklist:NUL-02
+  severity: medium
+  why: В документе отсутствует описание поведения расчётных формул в краевых случаях (деление на ноль, пустой знаменатель, отсутствие счётчика за период).
+  verdict: '?'
+  cls: '?'
+- n: 303
+  target: synth_v3official
+  category: dev_question
+  severity: medium
+  why: Неопределённый выбор может привести к непоследовательному поведению DAG между запусками, что затруднит отладку и воспроизводимость результатов.
+  verdict: '?'
+  cls: '?'
+- n: 304
+  target: synth_v3official
+  category: dev_question
+  severity: medium
+  why: Если подсчёт будет выполнен в другом месте, итоговое значение FIELD_USERS_CNT может не соответствовать ожидаемому, что нарушит бизнес‑логика и контроль качества
+  verdict: '?'
+  cls: '?'
+- n: 305
+  target: clean_base (шум)
+  category: dev_question
+  severity: high
+  why: Если правило будет неверно интерпретировано, записи могут быть либо ошибочно отбрасываемы, либо ошибочно включены в агрегат, нарушая контроль качества.
+  verdict: '?'
+  cls: '?'
+- n: 306
+  target: synth_v2hard
+  category: entropy:FIL-01
+  severity: medium
+  why: 'Документ формально отвечает на вопрос «Заданы ли правила фильтрации входных данных И судьба отфильтрованных записей: отбрасываются, логируются или попадают в ка'
+  verdict: '?'
+  cls: '?'
+- n: 307
+  target: doc3_mart (целевой тип)
+  category: checklist:CAT-01
+  severity: medium
+  why: В документе отсутствуют ссылки на Data Catalog для приёмника и источников; ни LINK_*, ни URL не указаны.
+  verdict: '?'
+  cls: '?'
+- n: 308
+  target: doc3_mart (целевой тип)
+  category: checklist:FIL-01
+  severity: medium
+  why: В документе нет описания правил фильтрации входных данных и обработки отфильтрованных записей.
+  verdict: '?'
+  cls: '?'
+- n: 309
+  target: doc3_mart (целевой тип)
+  category: dev_question
+  severity: medium
+  why: Неправильный выбор схемы партиционирования может привести к плохой производительности при запросах аналитиков и к избыточному использованию ресурсов.
+  verdict: '?'
+  cls: '?'
+- n: 310
+  target: synth_v3official
+  category: dev_question
+  severity: medium
+  why: Неправильное понимание ретеншена может привести к потере исторических данных или к накоплению лишних партиций, нарушая требования к хранению и доступности.
+  verdict: '?'
+  cls: '?'
+- n: 311
+  target: synth_v3official
+  category: checklist:INC-03
+  severity: medium
+  why: В документе отсутствует описание поведения при удалении или изменении записей в источнике задним числом.
+  verdict: '?'
+  cls: '?'
+- n: 312
+  target: doc3_mart (целевой тип)
+  category: checklist:FIL-01
+  severity: medium
+  why: В документе нет описания правил фильтрации входных данных и обработки отфильтрованных записей.
+  verdict: '?'
+  cls: '?'
+- n: 313
+  target: clean_base (шум)
+  category: doc:terminology
+  severity: medium
+  why: 'Одно и то же название FIELD_BIZ_DATE используется для разных смыслов: в источнике – дата сессии, в витрине – первое число месяца. Это может привести к путанице '
+  verdict: '?'
+  cls: '?'
+- n: 314
+  target: synth_v2hard
+  category: checklist:INC-03
+  severity: high
+  why: Документ не содержит информации о том, как обрабатываются записи, удалённые или изменённые в источнике задним числом (например, корректировки в прошлых месяцах)
+  verdict: '?'
+  cls: '?'
+- n: 315
+  target: synth_v1
+  category: dev_question
+  severity: medium
+  why: Без точного понимания этих проверок невозможно корректно реализовать контроль качества; неверные значения в журнале могут скрыть реальные отклонения или вызвать
+  verdict: '?'
+  cls: '?'
+- n: 316
+  target: clean_base (шум)
+  category: checklist:INC-03
+  severity: high
+  why: В документе нет описания поведения при удалении или изменении записей в источнике задним числом.
+  verdict: '?'
+  cls: '?'
+- n: 317
+  target: doc3_mart (целевой тип)
+  category: checklist:VOL-01
+  severity: medium
+  why: Документ не содержит информации об ожидаемых объёмах данных и сроке хранения (retention) витрины.
+  verdict: '?'
+  cls: '?'
+- n: 318
+  target: clean_base (шум)
+  category: doc:contradiction
+  severity: medium
+  why: Расчёт 85 регионов × 4 типа сети = 340, плюс две служебные категории дает 342 строки, а не ~350, как указано. Несоответствие может вводить в заблуждение при пла
+  verdict: '?'
+  cls: '?'
+- n: 319
+  target: doc3_mart (целевой тип)
+  category: doc:terminology
+  severity: medium
+  why: В одном месте используется термин region_code, а в другом – FIELD_REGION_NAME, что может вводить в заблуждение, так как они не явно сопоставлены.
+  verdict: '?'
+  cls: '?'
+- n: 320
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Неправильный порядок или метод удаления может привести к потере только что записанных данных или к оставлению «мусорных» файлов, нарушая целостность витрины.
+  verdict: '?'
+  cls: '?'
+- n: 321
+  target: doc3_mart (целевой тип)
+  category: checklist:CAT-01
+  severity: medium
+  why: В документе нет ни ссылки вида LINK_*, ни упоминания карточек Data Catalog для приёмника и источников.
+  verdict: '?'
+  cls: '?'
+- n: 322
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Подсчёт на неверном наборе данных приведёт к завышенному (или заниженному) количеству абонентов, что нарушит бизнес‑требования и контроль качества.
+  verdict: '?'
+  cls: '?'
+- n: 323
+  target: synth_v3official
+  category: dev_question
+  severity: high
+  why: Неопределённый выбор может привести к непоследовательному поведению DAG между запусками, что затруднит отладку и воспроизводимость результатов.
+  verdict: '?'
+  cls: '?'
+- n: 324
+  target: synth_v3official
+  category: dev_question
+  severity: medium
+  why: Разный коэффициент преобразования меняет ожидаемую величину агрегата и может вызвать ложные срабатывания алертов о расхождении > 0.1 %.
+  verdict: '?'
+  cls: '?'
+- n: 325
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Неправильный критерий может привести к преждевременному удалению данных, требуемых для исторических запросов, или к оставлению устаревших партиций, нарушая поли
+  verdict: '?'
+  cls: '?'
+- n: 326
+  target: synth_v2hard
+  category: doc:completeness
+  severity: medium
+  why: Поле FIELD_HOUR упомянуто только в проверке готовности, но не используется в дальнейшей логике агрегации, что может вызвать вопросы о его необходимости.
+  verdict: '?'
+  cls: '?'
+- n: 327
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Неправильная классификация изменит количество строк в витрине и может нарушить контроль качества по доле NO_REGION/UNKNOWN.
+  verdict: '?'
+  cls: '?'
+- n: 328
+  target: doc3_mart (целевой тип)
+  category: checklist:VOL-01
+  severity: medium
+  why: Документ указывает только глубину данных (с 01.05.2023), но не содержит ожидаемых объёмов данных и периода хранения (retention).
+  verdict: '?'
+  cls: '?'
+- n: 329
+  target: synth_v3official
+  category: dev_question
+  severity: medium
+  why: Если подсчёт будет выполнен в другом месте, итоговое значение FIELD_USERS_CNT может не соответствовать ожидаемому, что нарушит бизнес‑логика и контроль качества
+  verdict: '?'
+  cls: '?'
+- n: 330
+  target: clean_base (шум)
+  category: dev_question
+  severity: high
+  why: Неправильный порядок округления даст отклонения от допустимого порога 0.1 % в проверке суммы байтов, что приведёт к откату партиции.
+  verdict: '?'
+  cls: '?'
+- n: 331
+  target: doc3_mart (целевой тип)
+  category: dev_question
+  severity: medium
+  why: Если выбрать неверный столбец, будут включены данные из других периодов или исключены нужные записи, что исказит количество абонентов и все последующие расчёты.
+  verdict: '?'
+  cls: '?'
+- n: 332
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Неправильный критерий может привести к преждевременному удалению данных, требуемых для исторических запросов, или к оставлению устаревших партиций, нарушая поли
+  verdict: '?'
+  cls: '?'
+- n: 333
+  target: synth_v2hard
+  category: entropy:MAP-02
+  severity: medium
+  why: Документ формально отвечает на вопрос «Указаны ли типы данных (и точность/длина, где применимо) для полей целевых таблиц?», но 5 независимых прочтений дали разн
+  verdict: '?'
+  cls: '?'
+- n: 334
+  target: synth_v3official
+  category: dev_question
+  severity: medium
+  why: Непредсказуемый выбор может приводить к различиям в агрегатах между запусками, нарушая согласованность данных.
+  verdict: '?'
+  cls: '?'
+- n: 335
+  target: synth_v1
+  category: checklist:NUL-02
+  severity: medium
+  why: В документе нет описания поведения формул при делении на ноль, пустом знаменателе или отсутствии счётчика за период.
+  verdict: '?'
+  cls: '?'
+- n: 336
+  target: synth_v2hard
+  category: entropy:INC-02
+  severity: medium
+  why: 'Документ формально отвечает на вопрос «Описана ли обработка данных, пришедших с опозданием (late-arriving): окно повторной обработки/перезагрузки?», но 5 незави'
+  verdict: '?'
+  cls: '?'
+- n: 337
+  target: doc3_mart (целевой тип)
+  category: checklist:MAP-02
+  severity: medium
+  why: В документе указаны типы данных полей, но отсутствуют детали о точности или длине (например, длина string, масштаб bigint, точность timestamp), поэтому непонятн
+  verdict: '?'
+  cls: '?'
+- n: 338
+  target: doc3_mart (целевой тип)
+  category: checklist:MAP-02
+  severity: medium
+  why: В документе указаны типы данных полей, но отсутствуют детали о точности или длине (например, длина string, масштаб bigint, точность timestamp), поэтому непонятн
+  verdict: '?'
+  cls: '?'
+- n: 339
+  target: doc3_mart (целевой тип)
+  category: checklist:FIL-01
+  severity: medium
+  why: В документе нет описания правил фильтрации входных данных и указания, что происходит с отфильтрованными записями (отбрасываются, логируются, карантин и т.д.).
+  verdict: '?'
+  cls: '?'
+- n: 340
+  target: clean_base (шум)
+  category: doc:contradiction
+  severity: medium
+  why: Расчёт 85 регионов × 4 типа сети = 340, плюс две служебные категории дает 342 строки, а не ~350, как указано. Несоответствие может вводить в заблуждение при пла
+  verdict: '?'
+  cls: '?'
+- n: 341
+  target: synth_v2hard
+  category: dev_question
+  severity: medium
+  why: Если я удалю партицию слишком рано (или не удалю вовремя), может произойти потеря исторических данных или рост хранилища выше планового, что нарушит SLA.
+  verdict: '?'
+  cls: '?'
+- n: 342
+  target: synth_v2hard
+  category: checklist:INC-03
+  severity: high
+  why: В документе нет информации о том, как обрабатываются записи, удалённые или изменённые в источнике после их включения в агрегат.
+  verdict: '?'
+  cls: '?'
+- n: 343
+  target: synth_v3official
+  category: entropy:ERR-01
+  severity: medium
+  why: 'Документ формально отвечает на вопрос «Описано ли поведение при сбое: недоступность источника, ретраи, частичная загрузка?», но 5 независимых прочтений дали раз'
+  verdict: '?'
+  cls: '?'
+- n: 344
+  target: doc3_mart (целевой тип)
+  category: checklist:CAT-01
+  severity: medium
+  why: В документе нет ни ссылки вида LINK_*, ни упоминания карточек Data Catalog для приёмника и источников.
+  verdict: '?'
+  cls: '?'
+- n: 345
+  target: clean_base (шум)
+  category: dev_question
+  severity: high
+  why: Неправильный набор записей для подсчёта уникальных абонентов изменит значение FIELD_USERS_CNT и может вызвать несоответствие проверкам качества.
+  verdict: '?'
+  cls: '?'
+- n: 346
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Разные методы расчёта могут привести к ложным срабатываниям или к пропуску реальных отклонений, вызывая либо избыточные алерты, либо отсутствие нужных предупреж
+  verdict: '?'
+  cls: '?'
+- n: 347
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Разные функции округления дают разные результаты (например, bankers rounding), что может превысить допустимое отклонение 0.1 % в проверке суммы байтов.
+  verdict: '?'
+  cls: '?'
+- n: 348
+  target: clean_base (шум)
+  category: dev_question
+  severity: high
+  why: Неправильное трактование пустой строки может привести к неожиданному появлению строк UNKNOWN или к потере данных.
+  verdict: '?'
+  cls: '?'
+- n: 349
+  target: clean_base (шум)
+  category: checklist:INC-03
+  severity: high
+  why: В документе нет описания поведения при удалении или изменении записей в источнике задним числом.
+  verdict: '?'
+  cls: '?'
+- n: 350
+  target: synth_v1
+  category: checklist:INC-03
+  severity: high
+  why: В документе нет информации о том, как обрабатываются записи, удалённые или изменённые в источнике после их первоначального включения в витрину.
+  verdict: '?'
+  cls: '?'
+- n: 351
+  target: synth_v2hard
+  category: doc:terminology
+  severity: medium
+  why: Одно и то же название поля используется с разным смыслом в источнике и в витрине, что может вызвать путаницу при написании запросов и проверок.
+  verdict: '?'
+  cls: '?'
+- n: 352
+  target: synth_v3official
+  category: entropy:KEY-02
+  severity: medium
+  why: Документ формально отвечает на вопрос «Описано ли формирование ключа (для Kafka) или партиции (для HDFS) при записи?», но 5 независимых прочтений дали разные от
+  verdict: '?'
+  cls: '?'
+- n: 353
+  target: synth_v3official
+  category: checklist:INC-03
+  severity: high
+  why: В документе отсутствует описание поведения при удалении или изменении записей в источнике задним числом.
+  verdict: '?'
+  cls: '?'
+- n: 354
+  target: synth_v2hard
+  category: checklist:NUL-02
+  severity: medium
+  why: В документе нет описания поведения расчётных формул в краевых случаях (деление на ноль, пустой знаменатель, отсутствие счётчика за период).
+  verdict: '?'
+  cls: '?'
+- n: 355
+  target: clean_base (шум)
+  category: doc:contradiction
+  severity: medium
+  why: Расчёт 85 регионов × 4 типа сети = 340, плюс две служебные категории дает 342 строки, а не ~350, как указано. Несоответствие может вводить в заблуждение при пла
+  verdict: '?'
+  cls: '?'
+- n: 356
+  target: doc3_mart (целевой тип)
+  category: dev_question
+  severity: critical
+  why: Если выбрать неверный столбец, будут включены данные из других периодов или исключены нужные записи, что исказит количество абонентов и все последующие расчёты.
+  verdict: '?'
+  cls: '?'
+- n: 357
+  target: synth_v1
+  category: checklist:NUL-02
+  severity: medium
+  why: В документе описаны формулы расчёта, но нет информации о поведении при делении на ноль, пустом знаменателе или отсутствии счётчика за период.
+  verdict: '?'
+  cls: '?'
+- n: 358
+  target: synth_v1
+  category: dev_question
+  severity: medium
+  why: Без согласованного механизма потребители могут получить либо лишние, либо недостаточные данные, что нарушит SLA и договорные обязательства.
+  verdict: '?'
+  cls: '?'
+- n: 359
+  target: synth_v2hard
+  category: entropy:LOC-01
+  severity: medium
+  why: 'Документ формально отвечает на вопрос «Для каждого источника и приёмника указано расположение: кластер/схема, Kafka-топики или пути к файлам (заглушки обезличив'
+  verdict: '?'
+  cls: '?'
+- n: 360
+  target: clean_base (шум)
+  category: dev_question
+  severity: high
+  why: Если такие записи будут обработаны неверно, итоговый объём трафика может быть искажён, либо DAG завершится с исключением, нарушив SLA расчёта.
+  verdict: '?'
+  cls: '?'
+- n: 361
+  target: synth_v1
+  category: entropy:ERR-01
+  severity: medium
+  why: 'Документ формально отвечает на вопрос «Описано ли поведение при сбое: недоступность источника, ретраи, частичная загрузка?», но 5 независимых прочтений дали раз'
+  verdict: '?'
+  cls: '?'
+- n: 362
+  target: clean_base (шум)
+  category: doc:terminology
+  severity: medium
+  why: 'Одно и то же название FIELD_BIZ_DATE используется для разных смыслов: в источнике – дата сессии, в витрине – первое число месяца. Это может привести к путанице '
+  verdict: '?'
+  cls: '?'
+- n: 363
+  target: synth_v3official
+  category: dev_question
+  severity: medium
+  why: Непредсказуемый выбор может приводить к различиям в агрегатах между запусками, нарушая согласованность данных.
+  verdict: '?'
+  cls: '?'
+- n: 364
+  target: synth_v3official
+  category: lp:OWN-01
+  severity: medium
+  why: 'Логит-зонд: по вопросу «Названы ли владелец потока/витрины и потребители данных?» модель колеблется между прочтениями: P(нет)=0.38, бинарная энтропия 0.95 бит.'
+  verdict: '?'
+  cls: '?'
+- n: 365
+  target: clean_base (шум)
+  category: dev_question
+  severity: high
+  why: Неправильный критерий может привести к преждевременному удалению данных, требуемых для исторических запросов, или к оставлению устаревших партиций, нарушая поли
+  verdict: '?'
+  cls: '?'
+- n: 366
+  target: synth_v2hard
+  category: entropy:SRC-01
+  severity: medium
+  why: 'Документ формально отвечает на вопрос «Указан ли способ получения данных из источника: интерфейс/протокол, формат данных (файлы/API/БД) и способ доступа?», но 5'
+  verdict: '?'
+  cls: '?'
+- n: 367
+  target: clean_base (шум)
+  category: checklist:INC-03
+  severity: medium
+  why: В документе нет описания поведения при удалении или изменении записей в источнике задним числом.
+  verdict: '?'
+  cls: '?'
+- n: 368
+  target: synth_v1
+  category: entropy:REF-01
+  severity: medium
+  why: Документ формально отвечает на вопрос «Приведён ли перечень справочников (НСИ), используемых витриной («не применимо» допустимо только если алгоритм не использу
+  verdict: '?'
+  cls: '?'
+- n: 369
+  target: synth_v2hard
+  category: dev_question
+  severity: medium
+  why: Неправильный путь к партиции сделает её недоступной для чтения через Hive/Impala, что приведёт к ошибкам запросов потребителей.
+  verdict: '?'
+  cls: '?'
+- n: 370
+  target: clean_base (шум)
+  category: dev_question
+  severity: high
+  why: Неправильная классификация изменит количество строк в витрине и может нарушить контроль качества по доле NO_REGION/UNKNOWN.
+  verdict: '?'
+  cls: '?'
+- n: 371
+  target: clean_base (шум)
+  category: dev_question
+  severity: high
+  why: Неправильное трактование пустой строки может привести к неожиданному появлению строк UNKNOWN или к потере данных.
+  verdict: '?'
+  cls: '?'
+- n: 372
+  target: synth_v2hard
+  category: entropy:CAT-01
+  severity: medium
+  why: Документ формально отвечает на вопрос «Есть ли прямая ссылка на Дата-каталог (Data Catalog) для приёмника И для источников (заглушка LINK_* считается ссылкой; о
+  verdict: '?'
+  cls: '?'
+- n: 373
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Неправильный критерий может привести к преждевременному удалению данных, требуемых для исторических запросов, или к оставлению устаревших партиций, нарушая поли
+  verdict: '?'
+  cls: '?'
+- n: 374
+  target: synth_v2hard
+  category: dev_question
+  severity: medium
+  why: Непредсказуемый выбор может привести к разным результатам агрегирования между запусками, нарушая воспроизводимость и контроль качества.
+  verdict: '?'
+  cls: '?'
+- n: 375
+  target: doc3_mart (целевой тип)
+  category: dev_question
+  severity: high
+  why: Если оставить такие записи без региона или присвоить произвольное значение, итоговая агрегация по регионам будет неполной или неверной.
+  verdict: '?'
+  cls: '?'
+- n: 376
+  target: synth_v2hard
+  category: entropy:VOL-01
+  severity: medium
+  why: Документ формально отвечает на вопрос «Указаны ли ожидаемые объёмы данных и срок хранения (retention)?», но 5 независимых прочтений дали разные ответы (Да, в до
+  verdict: '?'
+  cls: '?'
+- n: 377
+  target: synth_v3official
+  category: checklist:INC-03
+  severity: high
+  why: В документе нет описания поведения при удалении или изменении записей в источнике после их включения в витрину.
+  verdict: '?'
+  cls: '?'
+- n: 378
+  target: synth_v2hard
+  category: entropy:LOC-01
+  severity: medium
+  why: 'Документ формально отвечает на вопрос «Для каждого источника и приёмника указано расположение: кластер/схема, Kafka-топики или пути к файлам (заглушки обезличив'
+  verdict: '?'
+  cls: '?'
+- n: 379
+  target: synth_v2hard
+  category: dev_question
+  severity: medium
+  why: Неправильный выбор может привести к непредсказуемому распределению трафика по типам сети и к ошибкам в проверках контроля качества.
+  verdict: '?'
+  cls: '?'
+- n: 380
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Неправильный порядок или метод удаления может привести к потере только что записанных данных или к оставлению «мусорных» файлов, нарушая целостность витрины.
+  verdict: '?'
+  cls: '?'
+- n: 381
+  target: doc3_mart (целевой тип)
+  category: checklist:FIL-01
+  severity: medium
+  why: В документе нет описания правил фильтрации входных данных и указания, что происходит с отфильтрованными записями (отбрасываются, логируются, карантин и т.д.).
+  verdict: '?'
+  cls: '?'
+- n: 382
+  target: synth_v2hard
+  category: checklist:INC-03
+  severity: high
+  why: В документе нет информации о том, как обрабатываются записи, удалённые или изменённые в источнике после их включения в агрегат.
+  verdict: '?'
+  cls: '?'
+- n: 383
+  target: doc3_mart (целевой тип)
+  category: checklist:INC-03
+  severity: medium
+  why: Документ не содержит информации о том, как обрабатываются записи, удалённые или изменённые в источнике задним числом.
+  verdict: '?'
+  cls: '?'
+- n: 384
+  target: synth_v3official
+  category: dev_question
+  severity: medium
+  why: Разный подход изменит распределение записей по категориям RAT и может повлиять на итоговые строки витрины и проверки качества.
+  verdict: '?'
+  cls: '?'
+- n: 385
+  target: synth_v2hard
+  category: entropy:MAP-01
+  severity: medium
+  why: 'Документ формально отвечает на вопрос «Для каждого поля целевой таблицы указан источник: конкретное поле источника или формула расчёта?», но 5 независимых прочт'
+  verdict: '?'
+  cls: '?'
+- n: 386
+  target: doc3_mart (целевой тип)
+  category: checklist:FIL-02
+  severity: medium
+  why: Документ не содержит отдельного перечня типовых условий фильтрации, применяемых при построении витрины и при выгрузке.
+  verdict: '?'
+  cls: '?'
+- n: 387
+  target: synth_v3official
+  category: entropy:OWN-01
+  severity: medium
+  why: Документ формально отвечает на вопрос «Названы ли владелец потока/витрины и потребители данных?», но 5 независимых прочтений дали разные ответы (Владелец витрин
+  verdict: '?'
+  cls: '?'
+- n: 388
+  target: clean_base (шум)
+  category: doc:contradiction
+  severity: high
+  why: В описании ожидаемого количества строк учитываются все комбинации регион×тип сети, тогда как алгоритм явно исключает строки с нулевым трафиком, что может привес
+  verdict: '?'
+  cls: '?'
+- n: 389
+  target: clean_base (шум)
+  category: doc:completeness
+  severity: medium
+  why: Поле FIELD_HOUR описано в структуре исходной таблицы, но в алгоритме обработки потока и в формулах оно не используется, что может свидетельствовать о лишнем опи
+  verdict: '?'
+  cls: '?'
+- n: 390
+  target: synth_v2hard
+  category: doc:terminology
+  severity: medium
+  why: Одно и то же название поля используется с разным смыслом в источнике и в витрине, что может вызвать путаницу при написании запросов и проверок.
+  verdict: '?'
+  cls: '?'
+- n: 391
+  target: synth_v3official
+  category: checklist:NUL-02
+  severity: medium
+  why: В документе описаны формулы расчётов, но нет информации о поведении при делении на ноль, пустом знаменателе или отсутствии счётчика за период.
+  verdict: '?'
+  cls: '?'
+- n: 392
+  target: clean_base (шум)
+  category: dev_question
+  severity: high
+  why: Неправильная классификация изменит количество строк в витрине и может нарушить контроль качества по доле NO_REGION/UNKNOWN.
+  verdict: '?'
+  cls: '?'
+- n: 393
+  target: synth_v3official
+  category: entropy:NUL-02
+  severity: medium
+  why: Документ формально отвечает на вопрос «Определено ли поведение расчётных формул в краевых случаях (деление на ноль, пустой знаменатель, отсутствие счётчика за п
+  verdict: '?'
+  cls: '?'
+- n: 394
+  target: doc3_mart (целевой тип)
+  category: checklist:FIL-02
+  severity: medium
+  why: Документ не содержит отдельного перечня типовых условий фильтрации; описаны лишь шаги алгоритма без выделения списка фильтров.
+  verdict: '?'
+  cls: '?'
+- n: 395
+  target: clean_base (шум)
+  category: dev_question
+  severity: high
+  why: Если правило будет неверно интерпретировано, записи могут быть либо ошибочно отбрасываемы, либо ошибочно включены в агрегат, нарушая контроль качества.
+  verdict: '?'
+  cls: '?'
+- n: 396
+  target: clean_base (шум)
+  category: checklist:NUL-02
+  severity: medium
+  why: В документе описаны формулы расчёта, но нет указаний, как они ведут себя в краевых ситуациях (деление на ноль, отсутствие записей, пустой знаменатель).
+  verdict: '?'
+  cls: '?'
+

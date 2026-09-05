@@ -1,0 +1,2378 @@
+{
+ "1": {
+  "variant": "v2f",
+  "target": "synth_v2hard #2",
+  "idx": 15,
+  "model": "gpt-oss-120b"
+ },
+ "2": {
+  "variant": "v2e",
+  "target": "synth_v2hard #2",
+  "idx": 16,
+  "model": "gpt-oss-120b"
+ },
+ "3": {
+  "variant": "v2x",
+  "target": "doc3_mart (целевой тип) #2",
+  "idx": 4,
+  "model": "gpt-oss-120b"
+ },
+ "4": {
+  "variant": "v2s",
+  "target": "clean_base (шум) #1",
+  "idx": 7,
+  "model": "gpt-oss-120b"
+ },
+ "5": {
+  "variant": "v2s",
+  "target": "clean_base (шум) #1",
+  "idx": 11,
+  "model": "gpt-oss-120b"
+ },
+ "6": {
+  "variant": "v2x",
+  "target": "clean_base (шум) #2",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "7": {
+  "variant": "v2f",
+  "target": "synth_v2hard #2",
+  "idx": 19,
+  "model": "gpt-oss-120b"
+ },
+ "8": {
+  "variant": "v2e",
+  "target": "clean_base (шум) #1",
+  "idx": 5,
+  "model": "gpt-oss-120b"
+ },
+ "9": {
+  "variant": "v2f",
+  "target": "synth_v1 #1",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "10": {
+  "variant": "v2f",
+  "target": "synth_v2hard #2",
+  "idx": 23,
+  "model": "gpt-oss-120b"
+ },
+ "11": {
+  "variant": "v2e",
+  "target": "doc3_mart (целевой тип) #1",
+  "idx": 4,
+  "model": "gpt-oss-120b"
+ },
+ "12": {
+  "variant": "v2f",
+  "target": "synth_v1 #2",
+  "idx": 17,
+  "model": "gpt-oss-120b"
+ },
+ "13": {
+  "variant": "v2s",
+  "target": "clean_base (шум) #2",
+  "idx": 7,
+  "model": "gpt-oss-120b"
+ },
+ "14": {
+  "variant": "v2f",
+  "target": "clean_base (шум) #2",
+  "idx": 4,
+  "model": "gpt-oss-120b"
+ },
+ "15": {
+  "variant": "v2f",
+  "target": "synth_v3official #2",
+  "idx": 9,
+  "model": "gpt-oss-120b"
+ },
+ "16": {
+  "variant": "v2s",
+  "target": "doc3_mart (целевой тип) #1",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "17": {
+  "variant": "v2x",
+  "target": "clean_base (шум) #2",
+  "idx": 4,
+  "model": "gpt-oss-120b"
+ },
+ "18": {
+  "variant": "v2f",
+  "target": "synth_v1 #1",
+  "idx": 5,
+  "model": "gpt-oss-120b"
+ },
+ "19": {
+  "variant": "v2x",
+  "target": "synth_v1 #2",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "20": {
+  "variant": "v2g",
+  "target": "doc3_mart (целевой тип) #2",
+  "idx": 5,
+  "model": "gpt-oss-120b"
+ },
+ "21": {
+  "variant": "v2s",
+  "target": "synth_v2hard #2",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "22": {
+  "variant": "v2e",
+  "target": "synth_v3official #2",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "23": {
+  "variant": "v2s",
+  "target": "clean_base (шум) #2",
+  "idx": 12,
+  "model": "gpt-oss-120b"
+ },
+ "24": {
+  "variant": "v2f",
+  "target": "synth_v1 #1",
+  "idx": 4,
+  "model": "gpt-oss-120b"
+ },
+ "25": {
+  "variant": "v2s",
+  "target": "synth_v3official #2",
+  "idx": 5,
+  "model": "gpt-oss-120b"
+ },
+ "26": {
+  "variant": "v2e",
+  "target": "synth_v2hard #2",
+  "idx": 20,
+  "model": "gpt-oss-120b"
+ },
+ "27": {
+  "variant": "v2s",
+  "target": "synth_v3official #2",
+  "idx": 4,
+  "model": "gpt-oss-120b"
+ },
+ "28": {
+  "variant": "v2g",
+  "target": "synth_v2hard #1",
+  "idx": 3,
+  "model": "gpt-oss-120b"
+ },
+ "29": {
+  "variant": "v2f",
+  "target": "doc3_mart (целевой тип) #1",
+  "idx": 3,
+  "model": "gpt-oss-120b"
+ },
+ "30": {
+  "variant": "v2f",
+  "target": "synth_v3official #2",
+  "idx": 12,
+  "model": "gpt-oss-120b"
+ },
+ "31": {
+  "variant": "v2g",
+  "target": "synth_v1 #2",
+  "idx": 3,
+  "model": "gpt-oss-120b"
+ },
+ "32": {
+  "variant": "v2f",
+  "target": "synth_v1 #2",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "33": {
+  "variant": "v2s",
+  "target": "clean_base (шум) #2",
+  "idx": 10,
+  "model": "gpt-oss-120b"
+ },
+ "34": {
+  "variant": "v2g",
+  "target": "doc3_mart (целевой тип) #1",
+  "idx": 4,
+  "model": "gpt-oss-120b"
+ },
+ "35": {
+  "variant": "v2e",
+  "target": "synth_v2hard #2",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "36": {
+  "variant": "v2f",
+  "target": "synth_v1 #2",
+  "idx": 19,
+  "model": "gpt-oss-120b"
+ },
+ "37": {
+  "variant": "v2e",
+  "target": "synth_v2hard #2",
+  "idx": 21,
+  "model": "gpt-oss-120b"
+ },
+ "38": {
+  "variant": "v2e",
+  "target": "doc3_mart (целевой тип) #2",
+  "idx": 3,
+  "model": "gpt-oss-120b"
+ },
+ "39": {
+  "variant": "v2f",
+  "target": "synth_v3official #2",
+  "idx": 19,
+  "model": "gpt-oss-120b"
+ },
+ "40": {
+  "variant": "v2g",
+  "target": "synth_v1 #1",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "41": {
+  "variant": "v2f",
+  "target": "synth_v3official #2",
+  "idx": 7,
+  "model": "gpt-oss-120b"
+ },
+ "42": {
+  "variant": "v2s",
+  "target": "synth_v3official #2",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "43": {
+  "variant": "v2g",
+  "target": "synth_v1 #2",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "44": {
+  "variant": "v2g",
+  "target": "doc3_mart (целевой тип) #2",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "45": {
+  "variant": "v2e",
+  "target": "synth_v1 #2",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "46": {
+  "variant": "v2e",
+  "target": "doc3_mart (целевой тип) #1",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "47": {
+  "variant": "v2f",
+  "target": "synth_v1 #1",
+  "idx": 6,
+  "model": "gpt-oss-120b"
+ },
+ "48": {
+  "variant": "v2s",
+  "target": "clean_base (шум) #2",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "49": {
+  "variant": "v2x",
+  "target": "doc3_mart (целевой тип) #2",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "50": {
+  "variant": "v2f",
+  "target": "synth_v3official #2",
+  "idx": 18,
+  "model": "gpt-oss-120b"
+ },
+ "51": {
+  "variant": "v2s",
+  "target": "synth_v1 #2",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "52": {
+  "variant": "v2g",
+  "target": "clean_base (шум) #1",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "53": {
+  "variant": "v2f",
+  "target": "synth_v1 #2",
+  "idx": 15,
+  "model": "gpt-oss-120b"
+ },
+ "54": {
+  "variant": "v2e",
+  "target": "doc3_mart (целевой тип) #1",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "55": {
+  "variant": "v2f",
+  "target": "synth_v1 #2",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "56": {
+  "variant": "v2f",
+  "target": "synth_v1 #2",
+  "idx": 3,
+  "model": "gpt-oss-120b"
+ },
+ "57": {
+  "variant": "v2e",
+  "target": "synth_v1 #1",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "58": {
+  "variant": "v2f",
+  "target": "clean_base (шум) #2",
+  "idx": 9,
+  "model": "gpt-oss-120b"
+ },
+ "59": {
+  "variant": "v2f",
+  "target": "synth_v2hard #2",
+  "idx": 5,
+  "model": "gpt-oss-120b"
+ },
+ "60": {
+  "variant": "v2g",
+  "target": "clean_base (шум) #2",
+  "idx": 5,
+  "model": "gpt-oss-120b"
+ },
+ "61": {
+  "variant": "v2f",
+  "target": "synth_v2hard #2",
+  "idx": 18,
+  "model": "gpt-oss-120b"
+ },
+ "62": {
+  "variant": "v2s",
+  "target": "synth_v1 #2",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "63": {
+  "variant": "v2e",
+  "target": "synth_v3official #1",
+  "idx": 3,
+  "model": "gpt-oss-120b"
+ },
+ "64": {
+  "variant": "v2e",
+  "target": "clean_base (шум) #2",
+  "idx": 7,
+  "model": "gpt-oss-120b"
+ },
+ "65": {
+  "variant": "v2f",
+  "target": "synth_v3official #2",
+  "idx": 4,
+  "model": "gpt-oss-120b"
+ },
+ "66": {
+  "variant": "v2s",
+  "target": "doc3_mart (целевой тип) #2",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "67": {
+  "variant": "v2f",
+  "target": "synth_v1 #2",
+  "idx": 8,
+  "model": "gpt-oss-120b"
+ },
+ "68": {
+  "variant": "v2g",
+  "target": "doc3_mart (целевой тип) #2",
+  "idx": 8,
+  "model": "gpt-oss-120b"
+ },
+ "69": {
+  "variant": "v2e",
+  "target": "synth_v3official #1",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "70": {
+  "variant": "v2g",
+  "target": "doc3_mart (целевой тип) #1",
+  "idx": 7,
+  "model": "gpt-oss-120b"
+ },
+ "71": {
+  "variant": "v2e",
+  "target": "clean_base (шум) #2",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "72": {
+  "variant": "v2f",
+  "target": "synth_v3official #2",
+  "idx": 3,
+  "model": "gpt-oss-120b"
+ },
+ "73": {
+  "variant": "v2e",
+  "target": "synth_v3official #1",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "74": {
+  "variant": "v2x",
+  "target": "synth_v3official #1",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "75": {
+  "variant": "v2x",
+  "target": "synth_v3official #2",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "76": {
+  "variant": "v2f",
+  "target": "synth_v1 #1",
+  "idx": 3,
+  "model": "gpt-oss-120b"
+ },
+ "77": {
+  "variant": "v2f",
+  "target": "synth_v1 #2",
+  "idx": 11,
+  "model": "gpt-oss-120b"
+ },
+ "78": {
+  "variant": "v2g",
+  "target": "synth_v2hard #1",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "79": {
+  "variant": "v2f",
+  "target": "synth_v1 #2",
+  "idx": 23,
+  "model": "gpt-oss-120b"
+ },
+ "80": {
+  "variant": "v2e",
+  "target": "clean_base (шум) #1",
+  "idx": 13,
+  "model": "gpt-oss-120b"
+ },
+ "81": {
+  "variant": "v2x",
+  "target": "synth_v2hard #2",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "82": {
+  "variant": "v2s",
+  "target": "clean_base (шум) #1",
+  "idx": 12,
+  "model": "gpt-oss-120b"
+ },
+ "83": {
+  "variant": "v2g",
+  "target": "synth_v1 #1",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "84": {
+  "variant": "v2x",
+  "target": "doc3_mart (целевой тип) #1",
+  "idx": 4,
+  "model": "gpt-oss-120b"
+ },
+ "85": {
+  "variant": "v2e",
+  "target": "clean_base (шум) #1",
+  "idx": 6,
+  "model": "gpt-oss-120b"
+ },
+ "86": {
+  "variant": "v2s",
+  "target": "clean_base (шум) #2",
+  "idx": 11,
+  "model": "gpt-oss-120b"
+ },
+ "87": {
+  "variant": "v2g",
+  "target": "clean_base (шум) #2",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "88": {
+  "variant": "v2g",
+  "target": "synth_v3official #2",
+  "idx": 3,
+  "model": "gpt-oss-120b"
+ },
+ "89": {
+  "variant": "v2x",
+  "target": "clean_base (шум) #1",
+  "idx": 10,
+  "model": "gpt-oss-120b"
+ },
+ "90": {
+  "variant": "v2f",
+  "target": "synth_v2hard #2",
+  "idx": 8,
+  "model": "gpt-oss-120b"
+ },
+ "91": {
+  "variant": "v2s",
+  "target": "synth_v3official #1",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "92": {
+  "variant": "v2f",
+  "target": "synth_v3official #2",
+  "idx": 20,
+  "model": "gpt-oss-120b"
+ },
+ "93": {
+  "variant": "v2f",
+  "target": "clean_base (шум) #2",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "94": {
+  "variant": "v2x",
+  "target": "clean_base (шум) #1",
+  "idx": 11,
+  "model": "gpt-oss-120b"
+ },
+ "95": {
+  "variant": "v2f",
+  "target": "synth_v2hard #2",
+  "idx": 9,
+  "model": "gpt-oss-120b"
+ },
+ "96": {
+  "variant": "v2x",
+  "target": "doc3_mart (целевой тип) #2",
+  "idx": 9,
+  "model": "gpt-oss-120b"
+ },
+ "97": {
+  "variant": "v2f",
+  "target": "synth_v3official #2",
+  "idx": 10,
+  "model": "gpt-oss-120b"
+ },
+ "98": {
+  "variant": "v2g",
+  "target": "clean_base (шум) #2",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "99": {
+  "variant": "v2f",
+  "target": "doc3_mart (целевой тип) #1",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "100": {
+  "variant": "v2f",
+  "target": "synth_v3official #2",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "101": {
+  "variant": "v2e",
+  "target": "synth_v3official #2",
+  "idx": 3,
+  "model": "gpt-oss-120b"
+ },
+ "102": {
+  "variant": "v2g",
+  "target": "clean_base (шум) #1",
+  "idx": 8,
+  "model": "gpt-oss-120b"
+ },
+ "103": {
+  "variant": "v2f",
+  "target": "synth_v2hard #2",
+  "idx": 20,
+  "model": "gpt-oss-120b"
+ },
+ "104": {
+  "variant": "v2x",
+  "target": "synth_v1 #2",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "105": {
+  "variant": "v2x",
+  "target": "doc3_mart (целевой тип) #2",
+  "idx": 7,
+  "model": "gpt-oss-120b"
+ },
+ "106": {
+  "variant": "v2x",
+  "target": "synth_v1 #1",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "107": {
+  "variant": "v2s",
+  "target": "doc3_mart (целевой тип) #2",
+  "idx": 5,
+  "model": "gpt-oss-120b"
+ },
+ "108": {
+  "variant": "v2e",
+  "target": "synth_v2hard #1",
+  "idx": 3,
+  "model": "gpt-oss-120b"
+ },
+ "109": {
+  "variant": "v2f",
+  "target": "synth_v1 #2",
+  "idx": 16,
+  "model": "gpt-oss-120b"
+ },
+ "110": {
+  "variant": "v2g",
+  "target": "doc3_mart (целевой тип) #1",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "111": {
+  "variant": "v2x",
+  "target": "clean_base (шум) #1",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "112": {
+  "variant": "v2f",
+  "target": "synth_v2hard #1",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "113": {
+  "variant": "v2s",
+  "target": "synth_v2hard #2",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "114": {
+  "variant": "v2s",
+  "target": "clean_base (шум) #1",
+  "idx": 8,
+  "model": "gpt-oss-120b"
+ },
+ "115": {
+  "variant": "v2e",
+  "target": "synth_v1 #2",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "116": {
+  "variant": "v2x",
+  "target": "clean_base (шум) #1",
+  "idx": 9,
+  "model": "gpt-oss-120b"
+ },
+ "117": {
+  "variant": "v2x",
+  "target": "clean_base (шум) #1",
+  "idx": 7,
+  "model": "gpt-oss-120b"
+ },
+ "118": {
+  "variant": "v2e",
+  "target": "synth_v2hard #2",
+  "idx": 6,
+  "model": "gpt-oss-120b"
+ },
+ "119": {
+  "variant": "v2x",
+  "target": "clean_base (шум) #2",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "120": {
+  "variant": "v2f",
+  "target": "clean_base (шум) #2",
+  "idx": 8,
+  "model": "gpt-oss-120b"
+ },
+ "121": {
+  "variant": "v2e",
+  "target": "synth_v2hard #1",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "122": {
+  "variant": "v2x",
+  "target": "doc3_mart (целевой тип) #1",
+  "idx": 5,
+  "model": "gpt-oss-120b"
+ },
+ "123": {
+  "variant": "v2e",
+  "target": "synth_v1 #2",
+  "idx": 3,
+  "model": "gpt-oss-120b"
+ },
+ "124": {
+  "variant": "v2f",
+  "target": "synth_v2hard #2",
+  "idx": 16,
+  "model": "gpt-oss-120b"
+ },
+ "125": {
+  "variant": "v2g",
+  "target": "synth_v3official #2",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "126": {
+  "variant": "v2f",
+  "target": "synth_v3official #2",
+  "idx": 8,
+  "model": "gpt-oss-120b"
+ },
+ "127": {
+  "variant": "v2s",
+  "target": "doc3_mart (целевой тип) #2",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "128": {
+  "variant": "v2s",
+  "target": "doc3_mart (целевой тип) #1",
+  "idx": 4,
+  "model": "gpt-oss-120b"
+ },
+ "129": {
+  "variant": "v2s",
+  "target": "doc3_mart (целевой тип) #1",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "130": {
+  "variant": "v2f",
+  "target": "synth_v3official #2",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "131": {
+  "variant": "v2x",
+  "target": "doc3_mart (целевой тип) #1",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "132": {
+  "variant": "v2x",
+  "target": "synth_v3official #1",
+  "idx": 3,
+  "model": "gpt-oss-120b"
+ },
+ "133": {
+  "variant": "v2e",
+  "target": "clean_base (шум) #2",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "134": {
+  "variant": "v2s",
+  "target": "clean_base (шум) #1",
+  "idx": 9,
+  "model": "gpt-oss-120b"
+ },
+ "135": {
+  "variant": "v2e",
+  "target": "clean_base (шум) #1",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "136": {
+  "variant": "v2g",
+  "target": "synth_v1 #2",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "137": {
+  "variant": "v2e",
+  "target": "synth_v2hard #2",
+  "idx": 12,
+  "model": "gpt-oss-120b"
+ },
+ "138": {
+  "variant": "v2s",
+  "target": "synth_v3official #1",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "139": {
+  "variant": "v2x",
+  "target": "doc3_mart (целевой тип) #2",
+  "idx": 3,
+  "model": "gpt-oss-120b"
+ },
+ "140": {
+  "variant": "v2f",
+  "target": "synth_v1 #2",
+  "idx": 5,
+  "model": "gpt-oss-120b"
+ },
+ "141": {
+  "variant": "v2f",
+  "target": "synth_v1 #2",
+  "idx": 10,
+  "model": "gpt-oss-120b"
+ },
+ "142": {
+  "variant": "v2e",
+  "target": "synth_v1 #2",
+  "idx": 4,
+  "model": "gpt-oss-120b"
+ },
+ "143": {
+  "variant": "v2x",
+  "target": "clean_base (шум) #1",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "144": {
+  "variant": "v2e",
+  "target": "synth_v2hard #2",
+  "idx": 13,
+  "model": "gpt-oss-120b"
+ },
+ "145": {
+  "variant": "v2f",
+  "target": "synth_v1 #2",
+  "idx": 9,
+  "model": "gpt-oss-120b"
+ },
+ "146": {
+  "variant": "v2f",
+  "target": "clean_base (шум) #2",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "147": {
+  "variant": "v2x",
+  "target": "clean_base (шум) #1",
+  "idx": 3,
+  "model": "gpt-oss-120b"
+ },
+ "148": {
+  "variant": "v2e",
+  "target": "synth_v2hard #1",
+  "idx": 4,
+  "model": "gpt-oss-120b"
+ },
+ "149": {
+  "variant": "v2e",
+  "target": "clean_base (шум) #1",
+  "idx": 3,
+  "model": "gpt-oss-120b"
+ },
+ "150": {
+  "variant": "v2f",
+  "target": "synth_v3official #2",
+  "idx": 17,
+  "model": "gpt-oss-120b"
+ },
+ "151": {
+  "variant": "v2x",
+  "target": "synth_v3official #1",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "152": {
+  "variant": "v2x",
+  "target": "doc3_mart (целевой тип) #1",
+  "idx": 7,
+  "model": "gpt-oss-120b"
+ },
+ "153": {
+  "variant": "v2g",
+  "target": "doc3_mart (целевой тип) #2",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "154": {
+  "variant": "v2e",
+  "target": "clean_base (шум) #2",
+  "idx": 6,
+  "model": "gpt-oss-120b"
+ },
+ "155": {
+  "variant": "v2f",
+  "target": "synth_v1 #2",
+  "idx": 18,
+  "model": "gpt-oss-120b"
+ },
+ "156": {
+  "variant": "v2x",
+  "target": "synth_v1 #2",
+  "idx": 3,
+  "model": "gpt-oss-120b"
+ },
+ "157": {
+  "variant": "v2e",
+  "target": "clean_base (шум) #2",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "158": {
+  "variant": "v2x",
+  "target": "clean_base (шум) #1",
+  "idx": 5,
+  "model": "gpt-oss-120b"
+ },
+ "159": {
+  "variant": "v2g",
+  "target": "doc3_mart (целевой тип) #1",
+  "idx": 9,
+  "model": "gpt-oss-120b"
+ },
+ "160": {
+  "variant": "v2x",
+  "target": "synth_v1 #1",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "161": {
+  "variant": "v2e",
+  "target": "clean_base (шум) #2",
+  "idx": 5,
+  "model": "gpt-oss-120b"
+ },
+ "162": {
+  "variant": "v2x",
+  "target": "synth_v2hard #1",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "163": {
+  "variant": "v2g",
+  "target": "doc3_mart (целевой тип) #1",
+  "idx": 3,
+  "model": "gpt-oss-120b"
+ },
+ "164": {
+  "variant": "v2e",
+  "target": "doc3_mart (целевой тип) #1",
+  "idx": 3,
+  "model": "gpt-oss-120b"
+ },
+ "165": {
+  "variant": "v2x",
+  "target": "doc3_mart (целевой тип) #1",
+  "idx": 3,
+  "model": "gpt-oss-120b"
+ },
+ "166": {
+  "variant": "v2s",
+  "target": "clean_base (шум) #2",
+  "idx": 5,
+  "model": "gpt-oss-120b"
+ },
+ "167": {
+  "variant": "v2f",
+  "target": "doc3_mart (целевой тип) #2",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "168": {
+  "variant": "v2s",
+  "target": "clean_base (шум) #1",
+  "idx": 10,
+  "model": "gpt-oss-120b"
+ },
+ "169": {
+  "variant": "v2f",
+  "target": "synth_v2hard #1",
+  "idx": 3,
+  "model": "gpt-oss-120b"
+ },
+ "170": {
+  "variant": "v2f",
+  "target": "clean_base (шум) #1",
+  "idx": 11,
+  "model": "gpt-oss-120b"
+ },
+ "171": {
+  "variant": "v2e",
+  "target": "synth_v2hard #2",
+  "idx": 9,
+  "model": "gpt-oss-120b"
+ },
+ "172": {
+  "variant": "v2f",
+  "target": "synth_v1 #1",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "173": {
+  "variant": "v2e",
+  "target": "clean_base (шум) #1",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "174": {
+  "variant": "v2s",
+  "target": "synth_v3official #1",
+  "idx": 4,
+  "model": "gpt-oss-120b"
+ },
+ "175": {
+  "variant": "v2f",
+  "target": "synth_v1 #2",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "176": {
+  "variant": "v2e",
+  "target": "doc3_mart (целевой тип) #2",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "177": {
+  "variant": "v2s",
+  "target": "clean_base (шум) #1",
+  "idx": 6,
+  "model": "gpt-oss-120b"
+ },
+ "178": {
+  "variant": "v2s",
+  "target": "clean_base (шум) #1",
+  "idx": 4,
+  "model": "gpt-oss-120b"
+ },
+ "179": {
+  "variant": "v2f",
+  "target": "synth_v3official #1",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "180": {
+  "variant": "v2e",
+  "target": "synth_v2hard #2",
+  "idx": 18,
+  "model": "gpt-oss-120b"
+ },
+ "181": {
+  "variant": "v2s",
+  "target": "doc3_mart (целевой тип) #1",
+  "idx": 5,
+  "model": "gpt-oss-120b"
+ },
+ "182": {
+  "variant": "v2s",
+  "target": "synth_v3official #1",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "183": {
+  "variant": "v2s",
+  "target": "doc3_mart (целевой тип) #1",
+  "idx": 6,
+  "model": "gpt-oss-120b"
+ },
+ "184": {
+  "variant": "v2f",
+  "target": "doc3_mart (целевой тип) #2",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "185": {
+  "variant": "v2e",
+  "target": "synth_v3official #1",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "186": {
+  "variant": "v2f",
+  "target": "synth_v2hard #2",
+  "idx": 12,
+  "model": "gpt-oss-120b"
+ },
+ "187": {
+  "variant": "v2e",
+  "target": "synth_v2hard #2",
+  "idx": 22,
+  "model": "gpt-oss-120b"
+ },
+ "188": {
+  "variant": "v2g",
+  "target": "synth_v2hard #2",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "189": {
+  "variant": "v2f",
+  "target": "clean_base (шум) #1",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "190": {
+  "variant": "v2x",
+  "target": "synth_v3official #2",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "191": {
+  "variant": "v2f",
+  "target": "clean_base (шум) #1",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "192": {
+  "variant": "v2s",
+  "target": "synth_v2hard #2",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "193": {
+  "variant": "v2x",
+  "target": "synth_v3official #1",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "194": {
+  "variant": "v2g",
+  "target": "clean_base (шум) #2",
+  "idx": 7,
+  "model": "gpt-oss-120b"
+ },
+ "195": {
+  "variant": "v2x",
+  "target": "doc3_mart (целевой тип) #2",
+  "idx": 5,
+  "model": "gpt-oss-120b"
+ },
+ "196": {
+  "variant": "v2x",
+  "target": "clean_base (шум) #1",
+  "idx": 8,
+  "model": "gpt-oss-120b"
+ },
+ "197": {
+  "variant": "v2e",
+  "target": "synth_v3official #2",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "198": {
+  "variant": "v2f",
+  "target": "synth_v3official #2",
+  "idx": 13,
+  "model": "gpt-oss-120b"
+ },
+ "199": {
+  "variant": "v2f",
+  "target": "clean_base (шум) #2",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "200": {
+  "variant": "v2e",
+  "target": "synth_v2hard #2",
+  "idx": 3,
+  "model": "gpt-oss-120b"
+ },
+ "201": {
+  "variant": "v2s",
+  "target": "synth_v2hard #1",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "202": {
+  "variant": "v2f",
+  "target": "synth_v1 #2",
+  "idx": 4,
+  "model": "gpt-oss-120b"
+ },
+ "203": {
+  "variant": "v2s",
+  "target": "doc3_mart (целевой тип) #2",
+  "idx": 4,
+  "model": "gpt-oss-120b"
+ },
+ "204": {
+  "variant": "v2e",
+  "target": "synth_v2hard #2",
+  "idx": 19,
+  "model": "gpt-oss-120b"
+ },
+ "205": {
+  "variant": "v2s",
+  "target": "synth_v3official #1",
+  "idx": 5,
+  "model": "gpt-oss-120b"
+ },
+ "206": {
+  "variant": "v2g",
+  "target": "doc3_mart (целевой тип) #2",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "207": {
+  "variant": "v2e",
+  "target": "doc3_mart (целевой тип) #1",
+  "idx": 5,
+  "model": "gpt-oss-120b"
+ },
+ "208": {
+  "variant": "v2e",
+  "target": "clean_base (шум) #2",
+  "idx": 11,
+  "model": "gpt-oss-120b"
+ },
+ "209": {
+  "variant": "v2g",
+  "target": "doc3_mart (целевой тип) #2",
+  "idx": 3,
+  "model": "gpt-oss-120b"
+ },
+ "210": {
+  "variant": "v2e",
+  "target": "doc3_mart (целевой тип) #2",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "211": {
+  "variant": "v2x",
+  "target": "synth_v2hard #1",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "212": {
+  "variant": "v2g",
+  "target": "clean_base (шум) #1",
+  "idx": 9,
+  "model": "gpt-oss-120b"
+ },
+ "213": {
+  "variant": "v2f",
+  "target": "synth_v3official #1",
+  "idx": 3,
+  "model": "gpt-oss-120b"
+ },
+ "214": {
+  "variant": "v2e",
+  "target": "synth_v2hard #1",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "215": {
+  "variant": "v2f",
+  "target": "doc3_mart (целевой тип) #1",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "216": {
+  "variant": "v2s",
+  "target": "clean_base (шум) #1",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "217": {
+  "variant": "v2s",
+  "target": "synth_v1 #1",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "218": {
+  "variant": "v2e",
+  "target": "clean_base (шум) #1",
+  "idx": 7,
+  "model": "gpt-oss-120b"
+ },
+ "219": {
+  "variant": "v2e",
+  "target": "clean_base (шум) #1",
+  "idx": 10,
+  "model": "gpt-oss-120b"
+ },
+ "220": {
+  "variant": "v2g",
+  "target": "clean_base (шум) #1",
+  "idx": 3,
+  "model": "gpt-oss-120b"
+ },
+ "221": {
+  "variant": "v2e",
+  "target": "doc3_mart (целевой тип) #2",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "222": {
+  "variant": "v2e",
+  "target": "synth_v2hard #2",
+  "idx": 15,
+  "model": "gpt-oss-120b"
+ },
+ "223": {
+  "variant": "v2e",
+  "target": "synth_v2hard #2",
+  "idx": 4,
+  "model": "gpt-oss-120b"
+ },
+ "224": {
+  "variant": "v2s",
+  "target": "synth_v1 #2",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "225": {
+  "variant": "v2s",
+  "target": "clean_base (шум) #1",
+  "idx": 5,
+  "model": "gpt-oss-120b"
+ },
+ "226": {
+  "variant": "v2s",
+  "target": "clean_base (шум) #1",
+  "idx": 3,
+  "model": "gpt-oss-120b"
+ },
+ "227": {
+  "variant": "v2e",
+  "target": "synth_v1 #1",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "228": {
+  "variant": "v2s",
+  "target": "doc3_mart (целевой тип) #1",
+  "idx": 3,
+  "model": "gpt-oss-120b"
+ },
+ "229": {
+  "variant": "v2f",
+  "target": "synth_v1 #2",
+  "idx": 7,
+  "model": "gpt-oss-120b"
+ },
+ "230": {
+  "variant": "v2g",
+  "target": "doc3_mart (целевой тип) #1",
+  "idx": 5,
+  "model": "gpt-oss-120b"
+ },
+ "231": {
+  "variant": "v2s",
+  "target": "clean_base (шум) #2",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "232": {
+  "variant": "v2e",
+  "target": "clean_base (шум) #2",
+  "idx": 4,
+  "model": "gpt-oss-120b"
+ },
+ "233": {
+  "variant": "v2g",
+  "target": "clean_base (шум) #1",
+  "idx": 6,
+  "model": "gpt-oss-120b"
+ },
+ "234": {
+  "variant": "v2s",
+  "target": "doc3_mart (целевой тип) #2",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "235": {
+  "variant": "v2g",
+  "target": "doc3_mart (целевой тип) #1",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "236": {
+  "variant": "v2f",
+  "target": "synth_v2hard #2",
+  "idx": 10,
+  "model": "gpt-oss-120b"
+ },
+ "237": {
+  "variant": "v2f",
+  "target": "synth_v3official #2",
+  "idx": 5,
+  "model": "gpt-oss-120b"
+ },
+ "238": {
+  "variant": "v2e",
+  "target": "synth_v2hard #2",
+  "idx": 17,
+  "model": "gpt-oss-120b"
+ },
+ "239": {
+  "variant": "v2x",
+  "target": "clean_base (шум) #1",
+  "idx": 4,
+  "model": "gpt-oss-120b"
+ },
+ "240": {
+  "variant": "v2f",
+  "target": "synth_v2hard #2",
+  "idx": 6,
+  "model": "gpt-oss-120b"
+ },
+ "241": {
+  "variant": "v2s",
+  "target": "synth_v2hard #1",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "242": {
+  "variant": "v2x",
+  "target": "clean_base (шум) #1",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "243": {
+  "variant": "v2e",
+  "target": "synth_v3official #2",
+  "idx": 4,
+  "model": "gpt-oss-120b"
+ },
+ "244": {
+  "variant": "v2x",
+  "target": "synth_v1 #1",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "245": {
+  "variant": "v2f",
+  "target": "synth_v2hard #1",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "246": {
+  "variant": "v2f",
+  "target": "synth_v1 #2",
+  "idx": 21,
+  "model": "gpt-oss-120b"
+ },
+ "247": {
+  "variant": "v2g",
+  "target": "synth_v2hard #1",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "248": {
+  "variant": "v2s",
+  "target": "doc3_mart (целевой тип) #2",
+  "idx": 3,
+  "model": "gpt-oss-120b"
+ },
+ "249": {
+  "variant": "v2x",
+  "target": "doc3_mart (целевой тип) #2",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "250": {
+  "variant": "v2e",
+  "target": "clean_base (шум) #1",
+  "idx": 11,
+  "model": "gpt-oss-120b"
+ },
+ "251": {
+  "variant": "v2g",
+  "target": "doc3_mart (целевой тип) #2",
+  "idx": 7,
+  "model": "gpt-oss-120b"
+ },
+ "252": {
+  "variant": "v2f",
+  "target": "synth_v1 #2",
+  "idx": 12,
+  "model": "gpt-oss-120b"
+ },
+ "253": {
+  "variant": "v2f",
+  "target": "synth_v2hard #2",
+  "idx": 13,
+  "model": "gpt-oss-120b"
+ },
+ "254": {
+  "variant": "v2f",
+  "target": "clean_base (шум) #1",
+  "idx": 10,
+  "model": "gpt-oss-120b"
+ },
+ "255": {
+  "variant": "v2f",
+  "target": "synth_v3official #2",
+  "idx": 16,
+  "model": "gpt-oss-120b"
+ },
+ "256": {
+  "variant": "v2f",
+  "target": "clean_base (шум) #1",
+  "idx": 6,
+  "model": "gpt-oss-120b"
+ },
+ "257": {
+  "variant": "v2g",
+  "target": "doc3_mart (целевой тип) #1",
+  "idx": 10,
+  "model": "gpt-oss-120b"
+ },
+ "258": {
+  "variant": "v2e",
+  "target": "clean_base (шум) #1",
+  "idx": 8,
+  "model": "gpt-oss-120b"
+ },
+ "259": {
+  "variant": "v2e",
+  "target": "synth_v2hard #2",
+  "idx": 7,
+  "model": "gpt-oss-120b"
+ },
+ "260": {
+  "variant": "v2f",
+  "target": "clean_base (шум) #2",
+  "idx": 11,
+  "model": "gpt-oss-120b"
+ },
+ "261": {
+  "variant": "v2e",
+  "target": "synth_v2hard #2",
+  "idx": 14,
+  "model": "gpt-oss-120b"
+ },
+ "262": {
+  "variant": "v2s",
+  "target": "clean_base (шум) #1",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "263": {
+  "variant": "v2f",
+  "target": "synth_v1 #2",
+  "idx": 13,
+  "model": "gpt-oss-120b"
+ },
+ "264": {
+  "variant": "v2f",
+  "target": "synth_v2hard #2",
+  "idx": 17,
+  "model": "gpt-oss-120b"
+ },
+ "265": {
+  "variant": "v2f",
+  "target": "synth_v2hard #2",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "266": {
+  "variant": "v2x",
+  "target": "synth_v3official #2",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "267": {
+  "variant": "v2e",
+  "target": "synth_v2hard #1",
+  "idx": 5,
+  "model": "gpt-oss-120b"
+ },
+ "268": {
+  "variant": "v2x",
+  "target": "doc3_mart (целевой тип) #1",
+  "idx": 6,
+  "model": "gpt-oss-120b"
+ },
+ "269": {
+  "variant": "v2s",
+  "target": "clean_base (шум) #2",
+  "idx": 6,
+  "model": "gpt-oss-120b"
+ },
+ "270": {
+  "variant": "v2e",
+  "target": "clean_base (шум) #2",
+  "idx": 10,
+  "model": "gpt-oss-120b"
+ },
+ "271": {
+  "variant": "v2f",
+  "target": "doc3_mart (целевой тип) #1",
+  "idx": 4,
+  "model": "gpt-oss-120b"
+ },
+ "272": {
+  "variant": "v2x",
+  "target": "clean_base (шум) #2",
+  "idx": 5,
+  "model": "gpt-oss-120b"
+ },
+ "273": {
+  "variant": "v2e",
+  "target": "synth_v2hard #2",
+  "idx": 23,
+  "model": "gpt-oss-120b"
+ },
+ "274": {
+  "variant": "v2g",
+  "target": "clean_base (шум) #2",
+  "idx": 3,
+  "model": "gpt-oss-120b"
+ },
+ "275": {
+  "variant": "v2x",
+  "target": "clean_base (шум) #2",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "276": {
+  "variant": "v2s",
+  "target": "synth_v2hard #1",
+  "idx": 3,
+  "model": "gpt-oss-120b"
+ },
+ "277": {
+  "variant": "v2f",
+  "target": "synth_v3official #2",
+  "idx": 21,
+  "model": "gpt-oss-120b"
+ },
+ "278": {
+  "variant": "v2g",
+  "target": "clean_base (шум) #2",
+  "idx": 6,
+  "model": "gpt-oss-120b"
+ },
+ "279": {
+  "variant": "v2e",
+  "target": "synth_v1 #1",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "280": {
+  "variant": "v2e",
+  "target": "clean_base (шум) #2",
+  "idx": 9,
+  "model": "gpt-oss-120b"
+ },
+ "281": {
+  "variant": "v2g",
+  "target": "doc3_mart (целевой тип) #1",
+  "idx": 6,
+  "model": "gpt-oss-120b"
+ },
+ "282": {
+  "variant": "v2f",
+  "target": "synth_v2hard #2",
+  "idx": 21,
+  "model": "gpt-oss-120b"
+ },
+ "283": {
+  "variant": "v2f",
+  "target": "synth_v2hard #2",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "284": {
+  "variant": "v2g",
+  "target": "clean_base (шум) #1",
+  "idx": 4,
+  "model": "gpt-oss-120b"
+ },
+ "285": {
+  "variant": "v2g",
+  "target": "clean_base (шум) #2",
+  "idx": 4,
+  "model": "gpt-oss-120b"
+ },
+ "286": {
+  "variant": "v2f",
+  "target": "doc3_mart (целевой тип) #2",
+  "idx": 4,
+  "model": "gpt-oss-120b"
+ },
+ "287": {
+  "variant": "v2e",
+  "target": "doc3_mart (целевой тип) #2",
+  "idx": 6,
+  "model": "gpt-oss-120b"
+ },
+ "288": {
+  "variant": "v2f",
+  "target": "doc3_mart (целевой тип) #2",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "289": {
+  "variant": "v2e",
+  "target": "synth_v2hard #1",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "290": {
+  "variant": "v2f",
+  "target": "doc3_mart (целевой тип) #1",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "291": {
+  "variant": "v2g",
+  "target": "clean_base (шум) #1",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "292": {
+  "variant": "v2x",
+  "target": "synth_v1 #1",
+  "idx": 3,
+  "model": "gpt-oss-120b"
+ },
+ "293": {
+  "variant": "v2s",
+  "target": "synth_v2hard #1",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "294": {
+  "variant": "v2e",
+  "target": "synth_v1 #2",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "295": {
+  "variant": "v2s",
+  "target": "clean_base (шум) #2",
+  "idx": 9,
+  "model": "gpt-oss-120b"
+ },
+ "296": {
+  "variant": "v2f",
+  "target": "clean_base (шум) #1",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "297": {
+  "variant": "v2s",
+  "target": "synth_v1 #1",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "298": {
+  "variant": "v2f",
+  "target": "synth_v3official #1",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "299": {
+  "variant": "v2x",
+  "target": "clean_base (шум) #1",
+  "idx": 6,
+  "model": "gpt-oss-120b"
+ },
+ "300": {
+  "variant": "v2f",
+  "target": "synth_v1 #2",
+  "idx": 20,
+  "model": "gpt-oss-120b"
+ },
+ "301": {
+  "variant": "v2f",
+  "target": "synth_v1 #2",
+  "idx": 6,
+  "model": "gpt-oss-120b"
+ },
+ "302": {
+  "variant": "v2g",
+  "target": "synth_v2hard #2",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "303": {
+  "variant": "v2s",
+  "target": "synth_v3official #2",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "304": {
+  "variant": "v2s",
+  "target": "synth_v3official #2",
+  "idx": 3,
+  "model": "gpt-oss-120b"
+ },
+ "305": {
+  "variant": "v2f",
+  "target": "clean_base (шум) #1",
+  "idx": 5,
+  "model": "gpt-oss-120b"
+ },
+ "306": {
+  "variant": "v2f",
+  "target": "synth_v2hard #2",
+  "idx": 4,
+  "model": "gpt-oss-120b"
+ },
+ "307": {
+  "variant": "v2g",
+  "target": "doc3_mart (целевой тип) #1",
+  "idx": 8,
+  "model": "gpt-oss-120b"
+ },
+ "308": {
+  "variant": "v2g",
+  "target": "doc3_mart (целевой тип) #2",
+  "idx": 4,
+  "model": "gpt-oss-120b"
+ },
+ "309": {
+  "variant": "v2g",
+  "target": "doc3_mart (целевой тип) #1",
+  "idx": 11,
+  "model": "gpt-oss-120b"
+ },
+ "310": {
+  "variant": "v2s",
+  "target": "synth_v3official #2",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "311": {
+  "variant": "v2f",
+  "target": "synth_v3official #2",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "312": {
+  "variant": "v2x",
+  "target": "doc3_mart (целевой тип) #2",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "313": {
+  "variant": "v2f",
+  "target": "clean_base (шум) #1",
+  "idx": 12,
+  "model": "gpt-oss-120b"
+ },
+ "314": {
+  "variant": "v2x",
+  "target": "synth_v2hard #1",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "315": {
+  "variant": "v2x",
+  "target": "synth_v1 #2",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "316": {
+  "variant": "v2e",
+  "target": "clean_base (шум) #1",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "317": {
+  "variant": "v2x",
+  "target": "doc3_mart (целевой тип) #2",
+  "idx": 6,
+  "model": "gpt-oss-120b"
+ },
+ "318": {
+  "variant": "v2e",
+  "target": "clean_base (шум) #2",
+  "idx": 8,
+  "model": "gpt-oss-120b"
+ },
+ "319": {
+  "variant": "v2x",
+  "target": "doc3_mart (целевой тип) #2",
+  "idx": 8,
+  "model": "gpt-oss-120b"
+ },
+ "320": {
+  "variant": "v2x",
+  "target": "clean_base (шум) #2",
+  "idx": 6,
+  "model": "gpt-oss-120b"
+ },
+ "321": {
+  "variant": "v2f",
+  "target": "doc3_mart (целевой тип) #2",
+  "idx": 6,
+  "model": "gpt-oss-120b"
+ },
+ "322": {
+  "variant": "v2x",
+  "target": "clean_base (шум) #2",
+  "idx": 3,
+  "model": "gpt-oss-120b"
+ },
+ "323": {
+  "variant": "v2e",
+  "target": "synth_v3official #2",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "324": {
+  "variant": "v2g",
+  "target": "synth_v3official #2",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "325": {
+  "variant": "v2e",
+  "target": "clean_base (шум) #1",
+  "idx": 9,
+  "model": "gpt-oss-120b"
+ },
+ "326": {
+  "variant": "v2g",
+  "target": "synth_v2hard #1",
+  "idx": 4,
+  "model": "gpt-oss-120b"
+ },
+ "327": {
+  "variant": "v2s",
+  "target": "clean_base (шум) #2",
+  "idx": 4,
+  "model": "gpt-oss-120b"
+ },
+ "328": {
+  "variant": "v2f",
+  "target": "doc3_mart (целевой тип) #2",
+  "idx": 5,
+  "model": "gpt-oss-120b"
+ },
+ "329": {
+  "variant": "v2s",
+  "target": "synth_v3official #1",
+  "idx": 3,
+  "model": "gpt-oss-120b"
+ },
+ "330": {
+  "variant": "v2f",
+  "target": "clean_base (шум) #2",
+  "idx": 5,
+  "model": "gpt-oss-120b"
+ },
+ "331": {
+  "variant": "v2f",
+  "target": "doc3_mart (целевой тип) #1",
+  "idx": 5,
+  "model": "gpt-oss-120b"
+ },
+ "332": {
+  "variant": "v2s",
+  "target": "clean_base (шум) #2",
+  "idx": 8,
+  "model": "gpt-oss-120b"
+ },
+ "333": {
+  "variant": "v2e",
+  "target": "synth_v2hard #2",
+  "idx": 11,
+  "model": "gpt-oss-120b"
+ },
+ "334": {
+  "variant": "v2g",
+  "target": "synth_v3official #1",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "335": {
+  "variant": "v2g",
+  "target": "synth_v1 #2",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "336": {
+  "variant": "v2f",
+  "target": "synth_v2hard #2",
+  "idx": 7,
+  "model": "gpt-oss-120b"
+ },
+ "337": {
+  "variant": "v2e",
+  "target": "doc3_mart (целевой тип) #2",
+  "idx": 5,
+  "model": "gpt-oss-120b"
+ },
+ "338": {
+  "variant": "v2f",
+  "target": "doc3_mart (целевой тип) #1",
+  "idx": 6,
+  "model": "gpt-oss-120b"
+ },
+ "339": {
+  "variant": "v2x",
+  "target": "doc3_mart (целевой тип) #1",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "340": {
+  "variant": "v2f",
+  "target": "clean_base (шум) #2",
+  "idx": 10,
+  "model": "gpt-oss-120b"
+ },
+ "341": {
+  "variant": "v2g",
+  "target": "synth_v2hard #2",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "342": {
+  "variant": "v2f",
+  "target": "synth_v2hard #1",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "343": {
+  "variant": "v2f",
+  "target": "synth_v3official #2",
+  "idx": 11,
+  "model": "gpt-oss-120b"
+ },
+ "344": {
+  "variant": "v2e",
+  "target": "doc3_mart (целевой тип) #2",
+  "idx": 4,
+  "model": "gpt-oss-120b"
+ },
+ "345": {
+  "variant": "v2f",
+  "target": "clean_base (шум) #2",
+  "idx": 6,
+  "model": "gpt-oss-120b"
+ },
+ "346": {
+  "variant": "v2e",
+  "target": "clean_base (шум) #1",
+  "idx": 12,
+  "model": "gpt-oss-120b"
+ },
+ "347": {
+  "variant": "v2g",
+  "target": "clean_base (шум) #1",
+  "idx": 5,
+  "model": "gpt-oss-120b"
+ },
+ "348": {
+  "variant": "v2f",
+  "target": "clean_base (шум) #2",
+  "idx": 3,
+  "model": "gpt-oss-120b"
+ },
+ "349": {
+  "variant": "v2s",
+  "target": "clean_base (шум) #2",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "350": {
+  "variant": "v2f",
+  "target": "synth_v1 #1",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "351": {
+  "variant": "v2f",
+  "target": "synth_v2hard #2",
+  "idx": 22,
+  "model": "gpt-oss-120b"
+ },
+ "352": {
+  "variant": "v2f",
+  "target": "synth_v3official #2",
+  "idx": 15,
+  "model": "gpt-oss-120b"
+ },
+ "353": {
+  "variant": "v2f",
+  "target": "synth_v3official #1",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "354": {
+  "variant": "v2g",
+  "target": "synth_v2hard #1",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "355": {
+  "variant": "v2f",
+  "target": "clean_base (шум) #1",
+  "idx": 8,
+  "model": "gpt-oss-120b"
+ },
+ "356": {
+  "variant": "v2x",
+  "target": "doc3_mart (целевой тип) #1",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "357": {
+  "variant": "v2e",
+  "target": "synth_v1 #1",
+  "idx": 3,
+  "model": "gpt-oss-120b"
+ },
+ "358": {
+  "variant": "v2s",
+  "target": "synth_v1 #1",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "359": {
+  "variant": "v2f",
+  "target": "synth_v2hard #2",
+  "idx": 3,
+  "model": "gpt-oss-120b"
+ },
+ "360": {
+  "variant": "v2g",
+  "target": "clean_base (шум) #1",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "361": {
+  "variant": "v2f",
+  "target": "synth_v1 #2",
+  "idx": 14,
+  "model": "gpt-oss-120b"
+ },
+ "362": {
+  "variant": "v2s",
+  "target": "clean_base (шум) #2",
+  "idx": 3,
+  "model": "gpt-oss-120b"
+ },
+ "363": {
+  "variant": "v2g",
+  "target": "synth_v3official #2",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "364": {
+  "variant": "v2f",
+  "target": "synth_v3official #2",
+  "idx": 22,
+  "model": "gpt-oss-120b"
+ },
+ "365": {
+  "variant": "v2f",
+  "target": "clean_base (шум) #2",
+  "idx": 7,
+  "model": "gpt-oss-120b"
+ },
+ "366": {
+  "variant": "v2f",
+  "target": "synth_v2hard #2",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "367": {
+  "variant": "v2s",
+  "target": "clean_base (шум) #1",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "368": {
+  "variant": "v2f",
+  "target": "synth_v1 #2",
+  "idx": 22,
+  "model": "gpt-oss-120b"
+ },
+ "369": {
+  "variant": "v2e",
+  "target": "synth_v2hard #2",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "370": {
+  "variant": "v2e",
+  "target": "clean_base (шум) #1",
+  "idx": 4,
+  "model": "gpt-oss-120b"
+ },
+ "371": {
+  "variant": "v2f",
+  "target": "clean_base (шум) #1",
+  "idx": 4,
+  "model": "gpt-oss-120b"
+ },
+ "372": {
+  "variant": "v2f",
+  "target": "synth_v2hard #2",
+  "idx": 14,
+  "model": "gpt-oss-120b"
+ },
+ "373": {
+  "variant": "v2f",
+  "target": "clean_base (шум) #1",
+  "idx": 9,
+  "model": "gpt-oss-120b"
+ },
+ "374": {
+  "variant": "v2e",
+  "target": "synth_v2hard #2",
+  "idx": 5,
+  "model": "gpt-oss-120b"
+ },
+ "375": {
+  "variant": "v2g",
+  "target": "doc3_mart (целевой тип) #1",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "376": {
+  "variant": "v2f",
+  "target": "synth_v2hard #2",
+  "idx": 11,
+  "model": "gpt-oss-120b"
+ },
+ "377": {
+  "variant": "v2g",
+  "target": "synth_v3official #1",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "378": {
+  "variant": "v2e",
+  "target": "synth_v2hard #2",
+  "idx": 8,
+  "model": "gpt-oss-120b"
+ },
+ "379": {
+  "variant": "v2f",
+  "target": "synth_v2hard #1",
+  "idx": 4,
+  "model": "gpt-oss-120b"
+ },
+ "380": {
+  "variant": "v2g",
+  "target": "clean_base (шум) #1",
+  "idx": 7,
+  "model": "gpt-oss-120b"
+ },
+ "381": {
+  "variant": "v2e",
+  "target": "doc3_mart (целевой тип) #1",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "382": {
+  "variant": "v2e",
+  "target": "synth_v2hard #2",
+  "idx": 0,
+  "model": "gpt-oss-120b"
+ },
+ "383": {
+  "variant": "v2s",
+  "target": "doc3_mart (целевой тип) #1",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "384": {
+  "variant": "v2g",
+  "target": "synth_v3official #1",
+  "idx": 2,
+  "model": "gpt-oss-120b"
+ },
+ "385": {
+  "variant": "v2e",
+  "target": "synth_v2hard #2",
+  "idx": 10,
+  "model": "gpt-oss-120b"
+ },
+ "386": {
+  "variant": "v2f",
+  "target": "doc3_mart (целевой тип) #2",
+  "idx": 3,
+  "model": "gpt-oss-120b"
+ },
+ "387": {
+  "variant": "v2f",
+  "target": "synth_v3official #2",
+  "idx": 14,
+  "model": "gpt-oss-120b"
+ },
+ "388": {
+  "variant": "v2g",
+  "target": "clean_base (шум) #2",
+  "idx": 1,
+  "model": "gpt-oss-120b"
+ },
+ "389": {
+  "variant": "v2x",
+  "target": "clean_base (шум) #1",
+  "idx": 12,
+  "model": "gpt-oss-120b"
+ },
+ "390": {
+  "variant": "v2s",
+  "target": "synth_v2hard #1",
+  "idx": 4,
+  "model": "gpt-oss-120b"
+ },
+ "391": {
+  "variant": "v2x",
+  "target": "synth_v3official #2",
+  "idx": 3,
+  "model": "gpt-oss-120b"
+ },
+ "392": {
+  "variant": "v2f",
+  "target": "clean_base (шум) #1",
+  "idx": 3,
+  "model": "gpt-oss-120b"
+ },
+ "393": {
+  "variant": "v2f",
+  "target": "synth_v3official #2",
+  "idx": 6,
+  "model": "gpt-oss-120b"
+ },
+ "394": {
+  "variant": "v2g",
+  "target": "doc3_mart (целевой тип) #2",
+  "idx": 6,
+  "model": "gpt-oss-120b"
+ },
+ "395": {
+  "variant": "v2e",
+  "target": "clean_base (шум) #2",
+  "idx": 3,
+  "model": "gpt-oss-120b"
+ },
+ "396": {
+  "variant": "v2f",
+  "target": "clean_base (шум) #1",
+  "idx": 7,
+  "model": "gpt-oss-120b"
+ }
+}
