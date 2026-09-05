@@ -2,3 +2,6 @@ targets:
   - label: synth_v3official
     doc: synth/out/mart_traffic_v3o.md
     gold: synth/out/mart_traffic_v3o.gold.yaml
+  - label: synth_v2hard
+    doc: synth/out/mart_traffic_v2h.md
+    gold: synth/out/mart_traffic_v2h.gold.yaml
