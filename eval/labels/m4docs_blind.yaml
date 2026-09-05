@@ -5,654 +5,653 @@ labels:
   severity: medium
   why: 'Документ формально отвечает на вопрос «Для каждого источника и приёмника указано расположение: кластер/схема, Kafka-топики или пути к файлам (заглушки обезличив'
   members: 2
-  verdict: '?'
-  cls: '?'
+  verdict: FP
+  cls: entropy-lexical
 - n: 2
   target: doc2_source_cdr
   category: checklist:INC-01
   severity: critical
   why: В документе не указано, по какому полю или курсору определяется набор новых записей для инкрементальной загрузки.
   members: 1
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 3
   target: doc2_source_cdr
   category: checklist:DED-01
   severity: high
   why: Документ не содержит информации о ключе дедупликации и о правиле выбора «выжившей» записи при повторной выгрузке или дублировании.
   members: 3
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 4
   target: doc2_source_cdr
   category: checklist:INC-02
   severity: medium
   why: Указано окно в 7 дней назад и +2 часа вперёд, но неясно, считается ли это механизмом обработки late‑arriving данных (повторная загрузка) или просто фильтром тек
   members: 1
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 5
   target: doc1_stream_geo
   category: checklist:ERR-02
   severity: medium
   why: Документ не содержит информации о контроле полноты загрузки (сверка количества записей, контрольные суммы, реконсиляция).
   members: 3
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 6
   target: doc1_stream_geo
   category: checklist:REF-01
   severity: medium
   why: В документе нет перечня справочников (НСИ), а также нет явного указания, что справочники не используются.
   members: 1
-  verdict: '?'
-  cls: '?'
+  verdict: NA
+  cls: na-slot
 - n: 7
   target: doc1_stream_geo
   category: checklist:ERR-01
   severity: high
   why: В документе не описано, как система должна действовать при недоступности источника, механизмы ретраев или обработку частичной загрузки.
   members: 1
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 8
   target: doc2_source_cdr
   category: doc:terminology
   severity: medium
   why: Сокращение "sib" используется в алгоритме, тогда как в источнике регион называется "Сибирь". Неоднозначность может привести к двойному или пропущенному применен
   members: 1
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 9
   target: doc2_source_cdr
   category: checklist:VOL-01
   severity: medium
   why: Документ не содержит информации об ожидаемых объёмах данных и сроках их хранения (retention).
   members: 3
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 10
   target: doc2_source_cdr
   category: checklist:NUL-02
   severity: medium
   why: Документ не описывает поведение расчётных формул в краевых случаях (деление на ноль, пустой знаменатель, отсутствие счётчика).
   members: 1
-  verdict: '?'
-  cls: '?'
+  verdict: NA
+  cls: rule-threshold
 - n: 11
   target: doc2_source_cdr
   category: checklist:FIL-02
   severity: medium
   why: Фильтрация описана лишь в шаге алгоритма, отдельный перечень типовых условий фильтрации не приведён.
   members: 1
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 12
   target: doc1_stream_geo
   category: checklist:HIS-01
   severity: medium
   why: 'В документе нет описания процесса загрузки исторических данных: не указана глубина истории, источник исторических данных, порядок их загрузки и механизмы контро'
   members: 1
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 13
   target: doc2_source_cdr
   category: checklist:KEY-01
   severity: high
   why: Не указаны первичные или бизнес‑ключи целевых таблиц и их гранулярность.
   members: 1
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 14
   target: doc2_source_cdr
   category: checklist:NUL-02
   severity: medium
   why: В тексте нет ни одной формулы расчётов, тем более описания поведения при делении на ноль, пустом знаменателе или отсутствии счётчика.
   members: 3
-  verdict: '?'
-  cls: '?'
+  verdict: NA
+  cls: rule-threshold
 - n: 15
   target: doc2_source_cdr
   category: checklist:KEY-01
   severity: high
   why: Для целевых таблиц и витрин не указаны первичные или бизнес‑ключи, а также их гранулярность; описаны только сырые таблицы.
   members: 3
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 16
   target: doc2_source_cdr
   category: checklist:REF-01
   severity: medium
   why: Документ не содержит перечня справочников (НСИ), используемых витриной; такой раздел полностью отсутствует.
   members: 1
-  verdict: '?'
-  cls: '?'
+  verdict: NA
+  cls: na-slot
 - n: 17
   target: doc1_stream_geo
   category: dev_question
   severity: high
   why: Несоответствие названий регионов приведёт к ошибкам маршрутизации сообщений и потере данных в соответствующих партициях.
   members: 3
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 18
   target: doc2_source_cdr
   category: checklist:LOC-03
   severity: high
   why: Для SFTP‑папок в HDFS указано лишь слово «Папка», без полного пути (hdfs://… или PATH_*), поэтому путь не задан.
   members: 1
-  verdict: '?'
-  cls: '?'
+  verdict: NA
+  cls: placeholder-name
 - n: 19
   target: doc1_stream_geo
   category: checklist:OWN-01
   severity: medium
   why: Перечислены участники команды, но не указано, кто является владельцем потока/витрины и кто будет потребителями данных.
   members: 1
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 20
   target: doc2_source_cdr
   category: dev_question
   severity: high
   why: Неправильное понимание формата может привести к двойному смещению времени или к его отсутствию, искажая временные метки.
   members: 1
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 21
   target: doc1_stream_geo
   category: checklist:FIL-02
   severity: medium
   why: Документ не содержит отдельного перечня типовых условий фильтрации, применяемых при построении витрины и при выгрузке потребителям.
   members: 1
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 22
   target: doc2_source_cdr
   category: checklist:OWN-01
   severity: medium
   why: В документе указан владелец (USER_A — Product Owner), но потребители данных не перечислены, поэтому информация о потребителях отсутствует.
   members: 3
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 23
   target: doc1_stream_geo
   category: checklist:HIS-01
   severity: medium
   why: 'В документе нет описания процесса исторической загрузки: не указана глубина истории, источник исторических данных, порядок их загрузки и механизмы контроля выпо'
   members: 1
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 24
   target: doc1_stream_geo
   category: checklist:CAT-01
   severity: medium
   why: В документе нет прямой ссылки на Data Catalog ни для приёмника, ни для источников; присутствуют только ссылки на дашборд и репозиторий, которые не являются Data
   members: 3
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 25
   target: doc2_source_cdr
   category: checklist:INC-01
   severity: critical
   why: 'В документе описан лишь фильтр по времени (не ранее 7 дней назад и не позже 2 часов вперёд), но не указано, каким полем или курсором определяется, какие записи '
   members: 3
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 26
   target: doc2_source_cdr
   category: checklist:MAP-02
   severity: medium
   why: Типы данных полей указаны, однако детали о точности/длине (например, длина string, масштаб double) отсутствуют, поэтому неясно, выполнено ли требование полность
   members: 3
-  verdict: '?'
-  cls: '?'
+  verdict: FP
+  cls: rule-threshold
 - n: 27
   target: doc1_stream_geo
   category: checklist:NUL-02
   severity: high
   why: В документе нет описания поведения расчётных формул в краевых случаях (деление на ноль, пустой знаменатель, отсутствие счётчика).
   members: 2
-  verdict: '?'
-  cls: '?'
+  verdict: NA
+  cls: rule-threshold
 - n: 28
   target: doc2_source_cdr
   category: checklist:TZ-01
   severity: medium
   why: В документе указаны только сдвиги часовых поясов для отдельных регионов, но нет информации о том, в каком часовом поясе определяются границы агрегации (сутки, м
   members: 1
-  verdict: '?'
-  cls: '?'
+  verdict: NA
+  cls: na-slot
 - n: 29
   target: doc2_source_cdr
   category: dev_question
   severity: critical
   why: Отсутствие схемы приведёт к ошибкам парсинга, неверному типу данных и потере информации при загрузке в TABLE_MSCP_RAW_SFTP.
   members: 1
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 30
   target: doc2_source_cdr
   category: checklist:REF-01
   severity: medium
   why: Документ не содержит перечня справочников (НСИ), используемых витриной, и нет отметки «не применимо».
   members: 3
-  verdict: '?'
-  cls: '?'
+  verdict: NA
+  cls: na-slot
 - n: 31
   target: doc1_stream_geo
   category: checklist:SLA-02
   severity: high
   why: В документе не указано требуемое время готовности данных (freshness) для потребителей.
   members: 1
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 32
   target: doc2_source_cdr
   category: checklist:TZ-01
   severity: medium
   why: В документе отсутствует информация о том, в каком часовом поясе определяются границы периодов агрегации (сутки, месяц) и как приводится время источников из разн
   members: 1
-  verdict: '?'
-  cls: '?'
+  verdict: NA
+  cls: na-slot
 - n: 33
   target: doc1_stream_geo
   category: checklist:SLA-01
   severity: medium
   why: Указана только периодичность (по часам), но конкретное время запуска загрузки не определено – может быть запуск каждый час в начале часа или по событию.
   members: 3
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 34
   target: doc2_source_cdr
   category: checklist:KEY-02
   severity: medium
   why: Не описано, каким образом формируется ключ сообщения в Kafka или партиция при записи в HDFS; в тексте нет ни схемы ключа, ни правил партиционирования.
   members: 1
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 35
   target: doc1_stream_geo
   category: checklist:NUL-02
   severity: medium
   why: В документе отсутствует описание поведения расчётных формул в краевых случаях (деление на ноль, пустой знаменатель, отсутствие счётчика).
   members: 1
-  verdict: '?'
-  cls: '?'
+  verdict: NA
+  cls: rule-threshold
 - n: 36
   target: doc1_stream_geo
   category: checklist:SRC-01
   severity: critical
   why: В документе указано только, что данные поступают из PROVIDER_GEO в Kafka‑топики, но не описан используемый протокол/интерфейс, формат сообщений и способ доступа
   members: 3
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 37
   target: doc2_source_cdr
   category: checklist:SER-01
   severity: high
   why: Формат источника (CSV) и приёмника (ORC) указан, но схема (список полей и типы) для источника не описана, поэтому модель сериализации неполна.
   members: 3
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 38
   target: doc2_source_cdr
   category: checklist:SLA-01
   severity: medium
   why: В документе отсутствует информация о периодичности и конкретном времени запуска загрузки данных.
   members: 1
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 39
   target: doc2_source_cdr
   category: doc:consistency
   severity: medium
   why: В шаге 2 описана «Коррекция часового пояса для временных меток», но не указано, что именно используется поле FIELD_TIME_ZONE_SHIFT или как формируется FIELD_TIM
   members: 1
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 40
   target: doc2_source_cdr
   category: dev_question
   severity: high
   why: Неправильное применение сдвига исказит временные метки, что приведёт к ошибкам в аналитике, расчёте длительности вызовов и SLA.
   members: 3
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 41
   target: doc2_source_cdr
   category: checklist:ERR-02
   severity: medium
   why: Не указаны механизмы контроля полноты загрузки, такие как сверка количества записей, контрольные суммы или реконсиляция.
   members: 3
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 42
   target: doc2_source_cdr
   category: dev_question
   severity: medium
   why: Неправильная интерпретация приведёт к неверному распределению роуминговых и не‑роуминговых событий в аналитических отчетах.
   members: 1
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 43
   target: doc1_stream_geo
   category: checklist:MAP-01
   severity: critical
   why: Не указано, какие поля источника заполняют каждое поле целевых таблиц и какие расчётные формулы используются.
   members: 1
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 44
   target: doc2_source_cdr
   category: checklist:LOC-03
   severity: high
   why: Для SFTP‑папок в HDFS указано лишь слово «Папка», без полного пути вида hdfs://… или заглушки PATH_*.
   members: 3
-  verdict: '?'
-  cls: '?'
+  verdict: NA
+  cls: placeholder-name
 - n: 45
   target: doc2_source_cdr
   category: checklist:FIL-02
   severity: medium
   why: Условие фильтрации описано в шаге алгоритма, но отдельный перечень типовых условий фильтрации не зафиксирован.
   members: 3
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 46
   target: doc2_source_cdr
   category: dev_question
   severity: medium
   why: Неправильная интерпретация приведёт к неверному определению роуминга, что отразится на бизнес‑метриках и отчётах.
   members: 3
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 47
   target: doc2_source_cdr
   category: checklist:DED-01
   severity: high
   why: В тексте нет информации о ключе дедупликации и правиле выбора «живой» записи при повторной выгрузке.
   members: 1
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 48
   target: doc2_source_cdr
   category: checklist:SLA-01
   severity: medium
   why: В документе отсутствует информация о расписании загрузки, периодичности или конкретном времени её запуска.
   members: 3
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 49
   target: doc1_stream_geo
   category: checklist:REF-01
   severity: medium
   why: В документе отсутствует перечень справочников (НСИ) и нет явного указания, что они не используются.
   members: 3
-  verdict: '?'
-  cls: '?'
+  verdict: NA
+  cls: na-slot
 - n: 50
   target: doc1_stream_geo
   category: checklist:SRC-02
   severity: high
   why: Состав полей, приходящих от источника PROVIDER_GEO, не описан, только структуры таблиц после обработки.
   members: 1
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 51
   target: doc2_source_cdr
   category: entropy:SRC-02
   severity: medium
   why: Документ формально отвечает на вопрос «Описан ли состав данных источника (перечень полей/счётчиков или ссылка на их спецификацию) без открытых списков вида «и т
   members: 2
-  verdict: '?'
-  cls: '?'
+  verdict: FP
+  cls: entropy-lexical
 - n: 52
   target: doc2_source_cdr
   category: checklist:SLA-02
   severity: medium
   why: Документ не содержит данных о сроке готовности (freshness) данных для потребителей.
   members: 4
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 53
   target: doc2_source_cdr
   category: doc:consistency
   severity: high
   why: Тип поля объявлен как string, тогда как в алгоритме сдвиг используется как числовое значение (часов). Это может привести к ошибкам преобразования.
   members: 3
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 54
   target: doc1_stream_geo
   category: checklist:INC-03
   severity: high
   why: Отсутствует информация о том, что происходит с записями, удалёнными или изменёнными в источнике задним числом.
   members: 4
-  verdict: '?'
-  cls: '?'
+  verdict: NA
+  cls: na-slot
 - n: 55
   target: doc1_stream_geo
   category: dev_question
   severity: critical
   why: Без схемы целевых таблиц невозможно написать корректные Spark‑SQL/DAG‑операции, определить ключи для апдейтов и обеспечить согласованность данных между слоями.
   members: 1
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 56
   target: doc2_source_cdr
   category: template:missing_section
   severity: medium
   why: Обязательный раздел шаблона «Регламент загрузки» отсутствует в документе.
   members: 4
-  verdict: '?'
-  cls: '?'
+  verdict: FP
+  cls: rule-threshold
 - n: 57
   target: doc2_source_cdr
   category: checklist:KEY-02
   severity: medium
   why: Не описано, как формируется ключ сообщения в Kafka или как выбирается партиция при записи в HDFS.
   members: 3
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 58
   target: doc1_stream_geo
   category: checklist:ERR-01
   severity: high
   why: В документе нет описания поведения при сбое, нет упоминания ретраев или частичной загрузки.
   members: 3
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 59
   target: doc2_source_cdr
   category: checklist:LOC-02
   severity: high
   why: В документе указаны только имена Kafka‑топиков, но отсутствует указание кластера Kafka, в котором они находятся.
   members: 3
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 60
   target: doc2_source_cdr
   category: doc:terminology
   severity: medium
   why: В источнике регион задаётся русскими названиями (Центр, Дальний Восток, Сибирь и т.д.), а в алгоритме используются английские коды (east, central, sib). Это мож
   members: 3
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 61
   target: doc1_stream_geo
   category: checklist:KEY-01
   severity: high
   why: Для целевых таблиц указаны только поля, но не определены первичные/бизнес‑ключи и гранулярность витрины.
   members: 3
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 62
   target: doc2_source_cdr
   category: lp:LOC-01
   severity: medium
   why: 'Логит-зонд: по вопросу «Для каждого источника и приёмника указано расположение: кластер/схема, Kafka-топики или пути к файлам (заглушки обезличивания считаются '
   members: 2
-  verdict: '?'
-  cls: '?'
+  verdict: FP
+  cls: probe-noise
 - n: 63
   target: doc2_source_cdr
   category: checklist:INC-02
   severity: high
   why: Отсутствует описание механизма обработки данных, пришедших с опозданием, и нет указания окна повторной обработки или перезагрузки.
   members: 3
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 64
   target: doc2_source_cdr
   category: checklist:LOC-02
   severity: high
   why: В документе перечислены только имена Kafka‑топиков, но не указано, к какому кластеру они принадлежат; отсутствует placeholder KAFKA_*/CLUSTER_*.
   members: 1
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 65
   target: doc2_source_cdr
   category: checklist:ERR-02
   severity: medium
   why: Не указаны механизмы контроля полноты загрузки (сверка количества записей, контрольные суммы, реконсиляция).
   members: 1
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 66
   target: doc1_stream_geo
   category: checklist:SRC-01
   severity: critical
   why: В документе не указано, каким протоколом, форматом данных и способом доступа происходит получение данных из PROVIDER_GEO.
   members: 1
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 67
   target: doc1_stream_geo
   category: checklist:KEY-01
   severity: high
   why: Документ перечисляет целевые таблицы, но не определяет их первичные/бизнес‑ключи и гранулярность витрин.
   members: 1
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 68
   target: doc2_source_cdr
   category: checklist:VOL-01
   severity: medium
   why: Документ не содержит данных об ожидаемых объёмах данных и сроках их хранения (retention).
   members: 1
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 69
   target: doc1_stream_geo
   category: checklist:NUL-01
   severity: high
   why: В документе не описаны правила обработки NULL, 0 или значений по умолчанию для полей, участвующих в расчётах.
   members: 4
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 70
   target: doc2_source_cdr
   category: dev_question
   severity: critical
   why: Неправильный выбор поля или часового пояса приведёт к исключению нужных записей либо к загрузке будущих/старых событий, что нарушит целостность аналитики.
   members: 1
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 71
   target: doc2_source_cdr
   category: checklist:ERR-01
   severity: medium
   why: В тексте нет описания поведения при сбоях источника, механизма ретраев или частичной загрузки.
   members: 4
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 72
   target: doc2_source_cdr
   category: template:missing_section
   severity: medium
   why: Обязательный раздел шаблона «Контроль качества» отсутствует в документе.
   members: 4
-  verdict: '?'
-  cls: '?'
+  verdict: FP
+  cls: rule-threshold
 - n: 73
   target: doc1_stream_geo
   category: checklist:FIL-01
   severity: high
   why: В документе отсутствуют правила фильтрации входных данных и описание судьбы отфильтрованных записей.
   members: 1
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 74
   target: doc2_source_cdr
   category: checklist:CAT-01
   severity: medium
   why: В документе отсутствуют ссылки на Data Catalog (нет placeholder'ов LINK_* и нет явных URL).
   members: 1
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 75
   target: doc1_stream_geo
   category: checklist:CAT-01
   severity: medium
   why: В документе отсутствуют ссылки на Data Catalog для приёмника и источников; присутствуют только LINK_DASHBOARD_GEO и LINK_GITLAB_PROJECT, которые не являются ссы
   members: 1
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 76
   target: doc2_source_cdr
   category: checklist:CAT-01
   severity: medium
   why: В документе отсутствуют ссылки на Data Catalog для источников и приёмников (нет LINK_*).
   members: 3
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 77
   target: doc1_stream_geo
   category: checklist:FIL-01
   severity: high
   why: В документе нет описания правил фильтрации входных данных и того, что происходит с отфильтрованными записями (отбрасывание, логирование, карантин и т.п.).
   members: 3
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 78
   target: doc2_source_cdr
   category: dev_question
   severity: medium
   why: Дублирование или игнорирование уже существующего смещения может привести к двойному сдвигу или к неверному времени, что нарушит согласованность с другими систем
   members: 3
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 79
   target: doc2_source_cdr
   category: dev_question
   severity: medium
   why: Отсутствие этой информации сделает невозможным корректный парсинг SFTP‑данных, что приведёт к ошибкам загрузки или неверному сопоставлению столбцов.
   members: 2
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 80
   target: doc1_stream_geo
   category: checklist:ERR-02
   severity: high
   why: В документе не указаны методы контроля полноты загрузки (сверка количества записей, контрольные суммы, реконсиляция).
   members: 1
-  verdict: '?'
-  cls: '?'
+  verdict: TP
+  cls: new
 - n: 81
   target: doc2_source_cdr
   category: checklist:MAP-02
   severity: medium
   why: Типы данных указаны, но отсутствуют детали о точности/длине (например, длина string, масштаб double), поэтому непонятно, полностью ли описан маппинг.
   members: 1
-  verdict: '?'
-  cls: '?'
+  verdict: FP
+  cls: rule-threshold
 - n: 82
   target: doc2_source_cdr
   category: entropy:SRC-01
   severity: medium
   why: 'Документ формально отвечает на вопрос «Указан ли способ получения данных из источника: интерфейс/протокол, формат данных (файлы/API/БД) и способ доступа?», но 5'
   members: 2
-  verdict: '?'
-  cls: '?'
-
+  verdict: FP
+  cls: entropy-lexical
