@@ -43,6 +43,18 @@ class RubricExtraTests(unittest.TestCase):
         tail = {q["id"] for b in b1[len(b0):] for q in b}
         self.assertEqual(tail, EXTRA_IDS)
 
+    def test_na_slots_do_not_reshuffle_batches(self):
+        """NA-правила убирают слоты внутри батчей, не перекраивая соседей (EXP-22: doc3 v2g 10/16 после NA)."""
+        from tz_review.passes.checklist import make_batches
+        base = load_rubric(extra=False)["checklist"]
+        full = make_batches(base, set())
+        na = {"INC-01", "INC-03", "NUL-02", "MAP-02"}
+        with_na = make_batches(base, set(), na)
+        expected = [[q["id"] for q in b if q["id"] not in na] for b in full]
+        expected = [b for b in expected if b]
+        self.assertEqual([[q["id"] for q in b] for b in with_na], expected)
+        self.assertFalse(na & {q["id"] for b in with_na for q in b})
+
     def test_extra_slots_na_on_unrelated_text(self):
         text = "Поток принимает события из Kafka и пишет их в HDFS как есть, без преобразований."
         r = load_rubric(extra=True)

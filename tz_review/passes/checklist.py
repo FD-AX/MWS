@@ -50,13 +50,19 @@ def _ask(batch: list[dict], doc_text: str, llm: LLM) -> dict[str, ChecklistAnswe
     return answers
 
 
-def make_batches(questions: list[dict], extra_ids: set[str]) -> list[list[dict]]:
-    """Батчи по BATCH_SIZE, причём базовые и дополнительные слоты (rubric_extra) батчатся
-    раздельно: подключение extra не должно менять состав батчей базовых 27 слотов —
-    иначе ответы на официальные пункты плывут вместе с контекстом батча (EXP-19, 120b)."""
+def make_batches(questions: list[dict], extra_ids: set[str],
+                 na_ids: set[str] | None = None) -> list[list[dict]]:
+    """Батчи по BATCH_SIZE со стабильным составом.
+    1) Базовые и дополнительные слоты (rubric_extra) батчатся раздельно: подключение extra не должно
+       менять состав батчей базовых 27 слотов (EXP-19: ответы на официальные пункты плывут с контекстом батча).
+    2) Батчи режутся по ПОЛНОМУ списку слотов, и только потом из них убираются NA-слоты (правила
+       применимости): иначе каждое новое NA-правило перекраивает все батчи (EXP-22: v2g на doc3 10/16, A 3/9
+       после включения NA для INC/NUL-02/MAP-02 при том же документе). Пустые батчи выбрасываются."""
+    na = na_ids or set()
     base = [q for q in questions if q["id"] not in extra_ids]
     extra = [q for q in questions if q["id"] in extra_ids]
-    return [g[i:i + BATCH_SIZE] for g in (base, extra) for i in range(0, len(g), BATCH_SIZE)]
+    raw = [g[i:i + BATCH_SIZE] for g in (base, extra) for i in range(0, len(g), BATCH_SIZE)]
+    return [b for b in ([q for q in batch if q["id"] not in na] for batch in raw) if b]
 
 
 def run(doc_text: str, rubric: dict[str, Any], llm: LLM,
@@ -68,7 +74,8 @@ def run(doc_text: str, rubric: dict[str, Any], llm: LLM,
     findings: list[Finding] = []
     statuses: dict[str, str] = {q: "NA" for q in na_slots}
     unanswered: list[str] = []
-    batches = make_batches(questions, set(rubric.get("extra_slots") or []))
+    # Батчи — по полному списку слотов рубрики, NA убираются внутри батчей (состав стабилен).
+    batches = make_batches(rubric["checklist"], set(rubric.get("extra_slots") or []), set(na_slots))
     n_batches = len(batches)
 
     for bi, batch in enumerate(batches):
