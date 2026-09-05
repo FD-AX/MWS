@@ -1,4 +1,4 @@
-# Целевая архитектура решения (черновик 2026-09-03, ветка `arch/compose-stack`)
+# Архитектура решения (актуально на 2026-09-05; поднято в `main`, `deploy/docker-compose.yml`)
 
 Каждое решение ниже привязано к эксперименту из [experiments/](experiments/README.md):
 без строки бенча архитектурное решение не принимается (правило проекта).
@@ -19,7 +19,7 @@
 ```
             ┌──────────┐   POST /reviews (md/txt/docx/pdf)   ┌───────────┐
   аналитик ─┤  front   ├────────────────────────────────────▶│    api    │──▶ RabbitMQ review.jobs ─┐
-  (позже)   └──────────┘   GET /reviews/{id} ◀───────────────│ (FastAPI) │                          │
+  (Streamlit)└──────────┘   GET /reviews/{id} ◀───────────────│ (FastAPI) │                          │
                                                              └─────┬─────┘                          ▼
                                                                    │ normalize                ┌───────────┐
                                                              ┌─────▼─────┐                    │  worker   │──▶ results (json/md)
@@ -35,16 +35,16 @@
 
 | Сервис | Роль | Порт | Технологии | Статус |
 |---|---|---|---|---|
-| `llm` | Сервер модели, OpenAI-совместимый API, `/metrics` | 8000 (vLLM) / 11434 (ollama) | vLLM (целевой: Hopper, MXFP4 для gpt-oss-120b, logprobs, batching) / ollama (RunPod сегодня) / GPT-5.5 (референс-потолок) | RunPod-под поднят (infra/runpod.py); vLLM-образ — задача |
-| `api` | Приём документа/текста, постановка задачи в очередь, выдача отчёта | 8080 | FastAPI, pika (publisher confirms) | скаффолд |
-| `docs` | Нормализация входа в markdown с сохранением таблиц; разбор секций; хэш документа | 8081 | FastAPI, mammoth (docx), pdfplumber (pdf), `tz_review.document` | скаффолд |
-| `worker` | Конвейер `tz_review.pipeline.review`, метрики по проходам, запись результата, ack | — | python, pika (prefetch=1), prometheus_client | скаффолд |
+| `llm` | Сервер модели, OpenAI-совместимый API, `/metrics` | 8000 (vLLM) / 11434 (ollama) | vLLM (целевой: Hopper, MXFP4 для gpt-oss-120b, logprobs, batching) / ollama (RunPod сегодня) / GPT-5.5 (референс-потолок) | работает: vLLM `vllm/vllm-openai` с gpt-oss-120b на RunPod H100 (`infra/runpod.py create-vllm-oss`), стрим-транспорт |
+| `api` | Приём документа/текста, постановка задачи в очередь, выдача отчёта | 8080 | FastAPI, pika (publisher confirms) | работает (:18080, Swagger /docs, UI /) |
+| `docs` | Нормализация входа в markdown с сохранением таблиц; разбор секций; хэш документа | 8081 | FastAPI, mammoth (docx), pdfplumber (pdf), `tz_review.document` | работает (:18081) |
+| `worker` | Конвейер `tz_review.pipeline.review`, метрики по проходам, запись результата, ack | — | python, pika (prefetch=1), prometheus_client | работает (поточный консьюмер, идемпотентность, прогресс в Postgres) |
 | `rabbitmq` | Очередь `review.jobs` (durable, persistent), DLQ `review.dead`, повторы | 5672 / 15672 (UI) | RabbitMQ 3.13-management | compose |
-| `results` | Результаты ревью (json + markdown-отчёт + метаданные конфига) | — | volume (демо) → Postgres (прод) | compose |
+| `results` | Результаты ревью (json + markdown-отчёт + метаданные конфига) | — | Postgres (история проверок, метрики, фидбек) + volume | работает (:15432) |
 | `prometheus` | Сбор метрик api/worker/llm, алерты (UNKNOWN-слоты > 0, 403 региона, DLQ > 0) | 9090 | prometheus | compose |
 | `grafana` | Дашборды: поток ревью, латентность по проходам, вызовы/токены/стоимость, находки по классам, coverage чеклиста, **recall бенча по итерациям** | 3000 | grafana + provisioning | compose |
 | `bench` (профиль `eval`) | Quality-gate: `eval/bench.py` на синтетике/голдах → `raw_*.json` → метрики в Prometheus (pushgateway) | — | python | compose |
-| `front` | UI аналитика: загрузка, светофор, находки по разделам, 👍/👎 | 5173 | (юзер пришлёт) | позже |
+| `front` | UI аналитика (Streamlit, Тимофей): загрузка файла/текста, светофор, находки по разделам, история, 👍/👎 | 15173 | Streamlit, `tz_review.api_client` | работает |
 
 ## 2. Поток данных и семантика надёжности
 
