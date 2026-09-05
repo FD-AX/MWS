@@ -161,6 +161,7 @@ class LLM:
                     outs = [c.message.content or "" for c in resp.choices]
                     self.last_finish = (getattr(resp.choices[0], "finish_reason", None)
                                         if resp.choices else None)
+                self._trace(system, user, outs, kwargs)
                 if any(o.strip() for o in outs):
                     return outs
                 # Пустой ответ (reasoning съел бюджет / сбой генерации) — это не успех:
@@ -179,6 +180,26 @@ class LLM:
                 last_err = e
             time.sleep(2 * (attempt + 1) + random.uniform(0.0, 1.5))  # jitter
         raise RuntimeError(f"LLM недоступна после {ATTEMPTS} попыток: {last_err}")
+
+    def _trace(self, system: str, user: str, outs: list[str], kwargs: dict) -> None:
+        """Форензика (TZR_TRACE_DIR): каждый вызов — строка JSONL с хэшем промпта, его началом и ответом.
+        Нужна, когда одинаковые конфигурации дают разные результаты (EXP-22: чеклист v2g на doc3 → 1 находка ×2)."""
+        import hashlib
+        import os
+        d = os.environ.get("TZR_TRACE_DIR")
+        if not d:
+            return
+        try:
+            os.makedirs(d, exist_ok=True)
+            rec = {"ts": time.strftime("%H:%M:%S"), "model": self._model,
+                   "prompt_sha": hashlib.sha256((system + "\n" + user).encode("utf-8")).hexdigest()[:12],
+                   "system": system[:160], "user_head": user[:400], "user_len": len(user),
+                   "kwargs": {k: v for k, v in kwargs.items() if k != "extra_body"},
+                   "finish": self.last_finish, "out": [o[:4000] for o in outs]}
+            with open(os.path.join(d, f"trace_{os.getpid()}.jsonl"), "a", encoding="utf-8") as f:
+                f.write(json.dumps(rec, ensure_ascii=False) + "\n")
+        except Exception:  # noqa: BLE001 — трассировка не должна ронять вызов
+            pass
 
     def _chat_stream(self, messages: list[dict], kwargs: dict) -> tuple[list[str], str | None]:
         """Потоковый вариант одного ответа: байты идут непрерывно (reasoning-дельты тоже), поэтому
