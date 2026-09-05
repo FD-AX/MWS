@@ -29,7 +29,8 @@ def patch_yaml(path: Path, slot_id: str, key: str, value: str) -> None:
     block = m.group(2)
     line = f"    {key}: '{value}'\n"
     if re.search(rf"^    {key}:", block, re.M):
-        block = re.sub(rf"^    {key}:.*\n", line, block, count=1, flags=re.M)
+        # lambda: строка замены не проходит обработку escape-последовательностей (\w, \s в регулярках правил)
+        block = re.sub(rf"^    {key}:.*\n", lambda _m: line, block, count=1, flags=re.M)
     else:
         block = block + line
     text = text[:m.start(2)] + block + text[m.end(2):]
