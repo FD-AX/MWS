@@ -72,6 +72,8 @@ VARIANTS = {
     "v2x": {"llm": True, "baseline": False, "entropy": False, "graph": True, "extra": True, "canon": True},
     "v2f": {"llm": True, "baseline": False, "entropy": True, "graph": True, "lp": True, "extra": True,
             "canon": True},
+    # v2n — v2g + энтропия по узлам графа сущностей (H16 / EXP-23, отдельная строка)
+    "v2n": {"llm": True, "baseline": False, "entropy": False, "graph": True, "gentropy": True, "canon": True},
     # v2q — v2g + проход «сверка величин и сроков между разделами» (EXP-20, отдельная строка)
     "v2q": {"llm": True, "baseline": False, "entropy": False, "graph": True, "canon": True,
             "passes": ["checklist", "document_level", "developer_sim", "quantities"]},
@@ -192,6 +194,7 @@ def main() -> int:
                 result = review(text, rubric_x if spec.get("extra") else rubric, llm,
                                 llm_cheap=llm_cheap,
                                 use_lp=spec.get("lp", False), llm_lp=llm_lp,
+                                use_graph_entropy=spec.get("gentropy", False),
                                 use_baseline=spec["baseline"], use_entropy=spec["entropy"],
                                 use_graph=spec["graph"],
                                 llm_passes=frozenset(spec["passes"]) if spec.get("passes") else None,

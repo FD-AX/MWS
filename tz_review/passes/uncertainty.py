@@ -32,6 +32,7 @@ def _canon(answer: str) -> str:
     a = answer.strip().replace("ё", "е").replace("Ё", "Е").replace("‑", "-").replace(" ", " ")
     hard = [h.lower() for h in _HARD.findall(a)]
     hard = [re.sub(r"[-]?го$", "", h) for h in hard]  # «2-го» → «2»
+    hard = [h for h in hard if h not in ("да", "yes")]  # утвердительная частица — не факт («Да, ежемесячно…» = «Ежемесячно…»)
     if hard:
         return "H:" + " ".join(sorted(set(hard)))
     low = re.sub(r"[«»\"'`.,;:!()]", "", a.lower())

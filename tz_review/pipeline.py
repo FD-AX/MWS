@@ -6,7 +6,7 @@ from typing import Any
 from . import document as docmod
 from .passes import (baseline, checklist, critic, deterministic, developer_sim,
                      doc_graph, document_level, filters, spec_compile, uncertainty,
-                     uncertainty_lp, quantities)
+                     uncertainty_lp, quantities, uncertainty_graph)
 
 DEFAULT_LLM_PASSES = frozenset({"checklist", "document_level", "developer_sim"})
 from .schema import Finding
@@ -37,6 +37,7 @@ def review(text: str, rubric: dict[str, Any], llm=None, *,
            llm_cheap=None,
            use_lp: bool = False,
            llm_lp=None,
+           use_graph_entropy: bool = False,
            critic_threshold: float = critic.DEFAULT_THRESHOLD,
            progress=None) -> ReviewResult:
     """Полный конвейер: детерминированный слой -> чеклист -> документ-уровень ->
@@ -127,6 +128,12 @@ def review(text: str, rubric: dict[str, Any], llm=None, *,
             findings += uncertainty_lp.run(text, rubric, result.statuses, llm_lp)
             result.passes_run.append("uncertainty_lp")
             _p("uncertainty_lp", 0.92)
+
+        if use_graph_entropy:  # H16 / EXP-23: энтропия по узлам графа сущностей
+            _p("uncertainty_graph", 0.92)
+            findings += uncertainty_graph.run(doc, llm)
+            result.passes_run.append("uncertainty_graph")
+            _p("uncertainty_graph", 0.93)
 
     # Детерминированные фильтры до верификации: вопросы о настоящих именах заглушек — в rejected.
     findings, placeholder_qs = filters.drop_placeholder_questions(findings)
