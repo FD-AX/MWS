@@ -1,0 +1,1813 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>DocReview AI — Demo Day Pitch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0c1118;
+    --bg-elev: #141b24;
+    --ink: #f2f5f8;
+    --muted: #8b97a8;
+    --line: rgba(242, 245, 248, 0.12);
+    --accent: #e11d48;
+    --accent-soft: rgba(225, 29, 72, 0.14);
+    --good: #34d399;
+    --warn: #fbbf24;
+    --info: #38bdf8;
+    --slide-pad: clamp(2.5rem, 5vw, 4.5rem);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Manrope", system-ui, sans-serif;
+    overflow: hidden;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 10% -10%, rgba(225, 29, 72, 0.18), transparent 55%),
+      radial-gradient(ellipse 60% 40% at 100% 0%, rgba(56, 189, 248, 0.08), transparent 50%),
+      linear-gradient(180deg, #0c1118 0%, #101820 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .deck {
+    position: relative;
+    z-index: 1;
+    height: 100%;
+    width: 100%;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    padding: var(--slide-pad);
+    padding-bottom: 4.5rem;
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  .slide.active {
+    display: flex;
+    opacity: 1;
+    transform: translateY(0);
+    animation: enter 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @keyframes enter {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: clamp(1.2rem, 3vh, 2.2rem);
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .badge {
+    display: none;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.35rem 0.7rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: rgba(255,255,255,0.03);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+    text-transform: none;
+  }
+
+  .badge .dot {
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+
+  h1 {
+    font-size: clamp(2.1rem, 4.6vw, 3.6rem);
+    line-height: 1.12;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    max-width: 18ch;
+    margin-bottom: 1.1rem;
+  }
+
+  h1.wide { max-width: 22ch; }
+
+  .lede {
+    font-size: clamp(1.15rem, 2vw, 1.55rem);
+    line-height: 1.45;
+    color: var(--muted);
+    max-width: 42ch;
+    font-weight: 500;
+  }
+
+  .lede strong { color: var(--ink); font-weight: 700; }
+
+  .formula {
+    margin-top: auto;
+    padding: 1.25rem 1.4rem;
+    border-left: 3px solid var(--accent);
+    background: linear-gradient(90deg, var(--accent-soft), transparent);
+    font-size: clamp(1.05rem, 1.7vw, 1.35rem);
+    line-height: 1.5;
+    max-width: 52ch;
+  }
+
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 1.25rem;
+    margin-top: 1.2rem;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .card {
+    background: var(--bg-elev);
+    border: 1px solid var(--line);
+    border-radius: 1rem;
+    padding: 1.15rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+
+  .card .k {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.75rem;
+    color: var(--accent);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .card .t {
+    font-size: clamp(1.15rem, 1.8vw, 1.45rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+  }
+
+  .card .d {
+    font-size: clamp(0.95rem, 1.3vw, 1.1rem);
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  .metric-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.9rem;
+    margin-top: 1.4rem;
+  }
+
+  .metric {
+    background: var(--bg-elev);
+    border: 1px solid var(--line);
+    border-radius: 1rem;
+    padding: 1.1rem 1.15rem;
+  }
+
+  .metric .num {
+    font-size: clamp(1.8rem, 3.2vw, 2.6rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    margin-bottom: 0.45rem;
+  }
+
+  .metric .num.good { color: var(--good); }
+  .metric .num.info { color: var(--info); }
+  .metric .num.warn { color: var(--warn); }
+  .metric .num.acc { color: var(--accent); }
+
+  .metric .label {
+    font-size: clamp(0.9rem, 1.2vw, 1.05rem);
+    color: var(--muted);
+    line-height: 1.35;
+  }
+
+  .metric .sub {
+    margin-top: 0.35rem;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.72rem;
+    color: rgba(139, 151, 168, 0.9);
+  }
+
+  .flow {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+    margin-top: 1.3rem;
+  }
+
+  .flow-step {
+    position: relative;
+    background: var(--bg-elev);
+    border: 1px solid var(--line);
+    border-radius: 1rem;
+    padding: 1.1rem 1rem 1.15rem;
+    min-height: 9.5rem;
+  }
+
+  .flow-step::after {
+    content: "→";
+    position: absolute;
+    right: -0.55rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 1.1rem;
+    z-index: 2;
+  }
+
+  .flow-step:last-child::after { content: none; }
+
+  .flow-step .n {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.75rem;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+
+  .flow-step .t {
+    font-size: clamp(1.05rem, 1.5vw, 1.25rem);
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+    letter-spacing: -0.02em;
+  }
+
+  .flow-step .d {
+    font-size: 0.95rem;
+    color: var(--muted);
+    line-height: 1.35;
+  }
+
+  .arch {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.85rem;
+    margin-top: 1.2rem;
+  }
+
+  .arch-box {
+    background: var(--bg-elev);
+    border: 1px solid var(--line);
+    border-radius: 1rem;
+    padding: 1.1rem;
+    min-height: 10rem;
+  }
+
+  .arch-box.hl {
+    border-color: rgba(225, 29, 72, 0.45);
+    background: linear-gradient(180deg, rgba(225, 29, 72, 0.12), var(--bg-elev));
+  }
+
+  .arch-box .k {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.72rem;
+    color: var(--accent);
+    margin-bottom: 0.45rem;
+    letter-spacing: 0.05em;
+  }
+
+  .arch-box .t {
+    font-size: clamp(1.05rem, 1.5vw, 1.3rem);
+    font-weight: 700;
+    margin-bottom: 0.45rem;
+    letter-spacing: -0.02em;
+  }
+
+  .arch-box .d {
+    font-size: 0.95rem;
+    color: var(--muted);
+    line-height: 1.35;
+  }
+
+  .split-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+    margin-top: 1.3rem;
+  }
+
+  .split-list .card ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    margin-top: 0.35rem;
+  }
+
+  .split-list li {
+    font-size: clamp(0.95rem, 1.25vw, 1.1rem);
+    color: var(--muted);
+    padding-left: 1rem;
+    position: relative;
+    line-height: 1.35;
+  }
+
+  .split-list li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.55em;
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .split-list .done li::before { background: var(--good); }
+  .split-list .check li::before { background: var(--info); }
+  .split-list .next li::before { background: var(--warn); }
+
+  .final-line {
+    margin-top: auto;
+    padding: 1.35rem 1.5rem;
+    border: 1px solid rgba(225, 29, 72, 0.35);
+    border-radius: 1rem;
+    background: linear-gradient(135deg, rgba(225, 29, 72, 0.16), rgba(20, 27, 36, 0.9));
+    font-size: clamp(1.15rem, 1.9vw, 1.5rem);
+    line-height: 1.45;
+    font-weight: 600;
+    max-width: 48ch;
+  }
+
+  .final-line em {
+    font-style: normal;
+    color: #fecdd3;
+  }
+
+  .title-brand {
+    font-size: clamp(3rem, 7vw, 5.5rem);
+    font-weight: 800;
+    letter-spacing: -0.045em;
+    line-height: 0.95;
+    margin-bottom: 0.9rem;
+  }
+
+  .title-brand span { color: var(--accent); }
+
+  .team {
+    margin-top: 1.6rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem 1.2rem;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  .team b { color: var(--ink); font-weight: 600; }
+
+  .quote-ex {
+    margin-top: 1.2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .quote-ex .card .t { font-size: 1.05rem; font-weight: 600; }
+  .quote-ex .ask {
+    margin-top: 0.4rem;
+    color: var(--info);
+    font-weight: 600;
+    font-size: 1rem;
+  }
+
+  .nav {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.85rem var(--slide-pad);
+    background: rgba(12, 17, 24, 0.82);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid var(--line);
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  .progress {
+    flex: 1;
+    height: 3px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 99px;
+    overflow: hidden;
+    max-width: 280px;
+  }
+
+  .progress > i {
+    display: block;
+    height: 100%;
+    width: 0%;
+    background: var(--accent);
+    border-radius: 99px;
+    transition: width 300ms ease;
+  }
+
+  .nav-btns {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  button {
+    appearance: none;
+    border: 1px solid var(--line);
+    background: rgba(255,255,255,0.04);
+    color: var(--ink);
+    border-radius: 0.55rem;
+    padding: 0.45rem 0.75rem;
+    font: inherit;
+    cursor: pointer;
+  }
+
+  button:hover { border-color: rgba(225, 29, 72, 0.5); }
+
+  .notes {
+    position: fixed;
+    right: 1rem;
+    bottom: 4.2rem;
+    width: min(380px, calc(100vw - 2rem));
+    max-height: 42vh;
+    overflow: auto;
+    background: #0a0f15;
+    border: 1px solid var(--line);
+    border-radius: 0.9rem;
+    padding: 1rem 1.1rem;
+    z-index: 20;
+    display: none;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.45);
+  }
+
+  .notes.open { display: block; }
+
+  .notes h3 {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 0.55rem;
+  }
+
+  .notes p {
+    font-size: 0.92rem;
+    line-height: 1.45;
+    color: #c5ced9;
+  }
+
+  .help {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.72rem;
+  }
+
+  /* Visual system: editorial dark UI with MTS-red accents */
+  :root {
+    --bg: #090d13;
+    --bg-elev: rgba(17, 24, 34, 0.78);
+    --ink: #f7f8fa;
+    --muted: #9aa6b6;
+    --line: rgba(255, 255, 255, 0.10);
+    --line-strong: rgba(255, 255, 255, 0.18);
+    --accent: #ff234f;
+    --accent-soft: rgba(255, 35, 79, 0.12);
+    --good: #69e5b1;
+    --warn: #ffd166;
+    --info: #7bdcff;
+    --slide-pad: clamp(2.2rem, 4.2vw, 4.2rem);
+  }
+
+  body::before {
+    background:
+      radial-gradient(ellipse 65% 55% at -5% -15%, rgba(255, 35, 79, 0.16), transparent 62%),
+      radial-gradient(ellipse 50% 55% at 105% 110%, rgba(123, 220, 255, 0.06), transparent 68%),
+      linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px),
+      linear-gradient(145deg, #090d13, #0d141d 58%, #0b1118);
+    background-size: auto, auto, 64px 64px, 64px 64px, auto;
+  }
+
+  body::after {
+    content: "";
+    position: fixed;
+    z-index: 0;
+    top: 0;
+    left: 0;
+    width: 6px;
+    height: 100%;
+    background: var(--accent);
+    box-shadow: 0 0 38px rgba(255, 35, 79, 0.24);
+  }
+
+  .slide {
+    padding-top: clamp(2rem, 3.8vw, 3.7rem);
+    padding-bottom: 4.6rem;
+    isolation: isolate;
+  }
+
+  .slide::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    width: min(34vw, 480px);
+    aspect-ratio: 1;
+    right: -9%;
+    top: -20%;
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 50%;
+    box-shadow:
+      0 0 0 48px rgba(255,255,255,0.012),
+      0 0 0 96px rgba(255,255,255,0.008);
+    pointer-events: none;
+  }
+
+  .topbar {
+    position: relative;
+    margin-bottom: clamp(1rem, 2.5vh, 1.8rem);
+    padding-bottom: 0.8rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+  }
+
+  .topbar::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: linear-gradient(90deg, var(--line-strong), transparent 72%);
+  }
+
+  .badge {
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+    background: transparent;
+    color: #c7d0dc;
+    font-size: 0.72rem;
+  }
+
+  .badge .dot {
+    width: 0.38rem;
+    height: 0.38rem;
+    box-shadow: 0 0 0 4px rgba(255, 35, 79, 0.10);
+  }
+
+  h1 {
+    font-size: clamp(2.35rem, 4.3vw, 4rem);
+    line-height: 1.04;
+    letter-spacing: -0.045em;
+    text-wrap: balance;
+    margin-bottom: 1rem;
+  }
+
+  h1::first-line { color: var(--ink); }
+
+  .title-brand {
+    position: relative;
+    width: fit-content;
+    font-size: clamp(3.5rem, 7.5vw, 6.6rem);
+    letter-spacing: -0.065em;
+    line-height: 0.9;
+    margin: 0.25rem 0 1.35rem;
+    text-shadow: 0 16px 50px rgba(0,0,0,0.35);
+  }
+
+  .title-brand::after {
+    content: "PRE-REVIEW FOR DATA SPECS";
+    display: block;
+    margin-top: 1rem;
+    font-family: "JetBrains Mono", monospace;
+    font-size: clamp(0.62rem, 0.85vw, 0.78rem);
+    line-height: 1;
+    letter-spacing: 0.22em;
+    color: var(--muted);
+  }
+
+  .title-brand span {
+    color: var(--accent);
+    text-shadow: 0 0 34px rgba(255, 35, 79, 0.22);
+  }
+
+  .card,
+  .metric,
+  .flow-step,
+  .arch-box {
+    position: relative;
+    overflow: hidden;
+    background:
+      linear-gradient(145deg, rgba(255,255,255,0.035), transparent 58%),
+      var(--bg-elev);
+    border: 1px solid var(--line);
+    border-radius: 0.7rem;
+    box-shadow: 0 16px 34px rgba(0,0,0,0.16);
+    backdrop-filter: blur(8px);
+  }
+
+  .card::before,
+  .metric::before,
+  .arch-box::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 42px;
+    height: 2px;
+    background: var(--accent);
+  }
+
+  .card {
+    padding: 1.25rem 1.35rem;
+    gap: 0.62rem;
+  }
+
+  .card .k,
+  .arch-box .k,
+  .flow-step .n {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.11em;
+  }
+
+  .card .t,
+  .arch-box .t,
+  .flow-step .t {
+    letter-spacing: -0.025em;
+  }
+
+  .card .d,
+  .arch-box .d,
+  .flow-step .d {
+    color: #aab5c3;
+  }
+
+  .grid-3 { gap: 0.85rem; }
+
+  .slide:first-of-type .grid-3 {
+    margin-top: 0 !important;
+    flex: 1;
+    min-height: 0;
+    align-items: stretch;
+  }
+
+  .slide:first-of-type .card {
+    min-height: 0;
+    justify-content: center;
+    padding: clamp(1.25rem, 2vw, 2rem);
+  }
+
+  .slide:first-of-type .card .t {
+    font-size: clamp(1.25rem, 2vw, 1.8rem);
+  }
+
+  .slide:first-of-type .card .d {
+    font-size: clamp(1rem, 1.35vw, 1.22rem);
+  }
+
+  .slide:first-of-type .title-brand {
+    width: 100%;
+    font-size: clamp(4rem, 8.5vw, 8rem);
+    margin-top: 0.15rem;
+    margin-bottom: clamp(1rem, 2.2vh, 1.6rem);
+  }
+
+  .slide:first-of-type .title-brand::after {
+    position: absolute;
+    right: 0;
+    bottom: 0.35rem;
+    margin: 0;
+  }
+
+  .formula {
+    position: relative;
+    max-width: none;
+    margin-top: clamp(1rem, 2.2vh, 1.5rem);
+    padding: 1rem 1.25rem 1rem 1.45rem;
+    border-left: 3px solid var(--accent);
+    background: linear-gradient(90deg, rgba(255, 35, 79, 0.13), rgba(255, 35, 79, 0.02) 58%, transparent);
+    font-size: clamp(1rem, 1.45vw, 1.25rem);
+    text-wrap: balance;
+  }
+
+  .formula strong { color: #fff; }
+
+  .slide:first-of-type .formula {
+    padding: clamp(1rem, 1.8vh, 1.45rem) 1.6rem;
+    font-size: clamp(1.12rem, 1.7vw, 1.48rem);
+    line-height: 1.42;
+  }
+
+  .team {
+    margin-top: 1rem;
+    gap: 0.45rem 1.5rem;
+    font-size: 0.78rem;
+  }
+
+  .team span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .team span::before {
+    content: "•";
+    color: var(--accent);
+  }
+
+  .metric-row {
+    gap: 0;
+    border: 1px solid var(--line);
+    border-radius: 0.7rem;
+    overflow: hidden;
+    background: rgba(17, 24, 34, 0.52);
+  }
+
+  .metric {
+    border: 0;
+    border-right: 1px solid var(--line);
+    border-radius: 0;
+    box-shadow: none;
+    background: transparent;
+    min-height: 8rem;
+  }
+
+  .metric:last-child { border-right: 0; }
+
+  .metric::before {
+    width: 100%;
+    opacity: 0;
+  }
+
+  .metric:hover::before { opacity: 1; }
+
+  .metric .num,
+  .metric .num.good,
+  .metric .num.info,
+  .metric .num.warn,
+  .metric .num.acc {
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .metric:first-child .num { color: var(--good); }
+
+  .flow {
+    gap: 1.25rem;
+  }
+
+  .flow-step {
+    border-radius: 0.7rem;
+    padding: 1.2rem 1.15rem;
+  }
+
+  .flow-step::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+  }
+
+  .flow-step::after {
+    right: -1rem;
+    width: 0.75rem;
+    height: 0.75rem;
+    content: "";
+    border-top: 1px solid rgba(255,255,255,0.35);
+    border-right: 1px solid rgba(255,255,255,0.35);
+    transform: translateY(-50%) rotate(45deg);
+  }
+
+  .quote-ex .card {
+    border-left: 2px solid var(--info);
+  }
+
+  .quote-ex .card::before { display: none; }
+
+  .quote-ex .ask {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    color: #c7edff;
+  }
+
+  .quote-ex .ask::before {
+    content: "?";
+    display: inline-grid;
+    place-items: center;
+    flex: 0 0 auto;
+    width: 1.35rem;
+    height: 1.35rem;
+    border-radius: 50%;
+    color: #07121a;
+    background: var(--info);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  .arch {
+    gap: 0;
+    border: 1px solid var(--line);
+    border-radius: 0.7rem;
+    overflow: hidden;
+  }
+
+  .arch-box {
+    border: 0;
+    border-right: 1px solid var(--line);
+    border-radius: 0;
+    box-shadow: none;
+    min-height: 10.5rem;
+  }
+
+  .arch-box:last-child { border-right: 0; }
+
+  .arch-box.hl {
+    border: 0;
+    border-right: 1px solid var(--line);
+    background:
+      linear-gradient(180deg, rgba(255, 35, 79, 0.15), rgba(255, 35, 79, 0.02)),
+      var(--bg-elev);
+  }
+
+  .arch-box.hl::after {
+    content: "CORE";
+    position: absolute;
+    right: 0.8rem;
+    top: 0.7rem;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.14em;
+    color: #ff9bae;
+  }
+
+  .split-list .card {
+    min-height: 12rem;
+  }
+
+  .split-list .done::before { background: var(--good); }
+  .split-list .check::before { background: var(--info); }
+  .split-list .next::before { background: var(--warn); }
+
+  .final-line {
+    max-width: none;
+    padding: 1.2rem 1.4rem;
+    border: 1px solid rgba(255, 35, 79, 0.30);
+    border-radius: 0.7rem;
+    background:
+      linear-gradient(100deg, rgba(255, 35, 79, 0.16), rgba(255, 35, 79, 0.035) 62%, transparent),
+      rgba(17, 24, 34, 0.72);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+    text-wrap: balance;
+  }
+
+  .final-line em {
+    color: #fff;
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 3px;
+    text-underline-offset: 5px;
+  }
+
+  .nav {
+    padding-top: 0.7rem;
+    padding-bottom: 0.7rem;
+    background: rgba(7, 10, 15, 0.88);
+    border-top-color: rgba(255,255,255,0.08);
+  }
+
+  .progress {
+    height: 2px;
+    border-radius: 0;
+  }
+
+  .progress > i {
+    border-radius: 0;
+    box-shadow: 0 0 12px rgba(255, 35, 79, 0.5);
+  }
+
+  button {
+    border-radius: 0.35rem;
+    min-width: 2.25rem;
+    transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
+  }
+
+  button:hover {
+    border-color: rgba(255, 35, 79, 0.55);
+    background: rgba(255, 35, 79, 0.10);
+    transform: translateY(-1px);
+  }
+
+  .slide.active > * {
+    animation: rise 480ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .slide.active > *:nth-child(2) { animation-delay: 60ms; }
+  .slide.active > *:nth-child(3) { animation-delay: 110ms; }
+  .slide.active > *:nth-child(4) { animation-delay: 160ms; }
+  .slide.active > *:nth-child(5) { animation-delay: 210ms; }
+
+  .blank-stage {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    margin-top: 0.7rem;
+    border: 1px dashed rgba(255, 255, 255, 0.16);
+    border-radius: 0.7rem;
+    background:
+      linear-gradient(145deg, rgba(255,255,255,0.018), transparent 55%),
+      rgba(17, 24, 34, 0.26);
+  }
+
+  .blank-stage::before {
+    content: "";
+    position: absolute;
+    inset: 0.8rem;
+    border: 1px solid rgba(255,255,255,0.025);
+    border-radius: 0.35rem;
+    pointer-events: none;
+  }
+
+  .blank-stage span {
+    position: absolute;
+    left: 1.2rem;
+    bottom: 1rem;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(154, 166, 182, 0.48);
+  }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-height: 760px) and (min-width: 981px) {
+    .slide { padding-top: 1.6rem; padding-bottom: 3.9rem; }
+    .topbar { margin-bottom: 0.85rem; }
+    .title-brand { font-size: clamp(3rem, 6.3vw, 5.2rem); margin-bottom: 0.85rem; }
+    .title-brand::after { margin-top: 0.65rem; }
+    .slide:first-of-type .title-brand { font-size: clamp(3.5rem, 7vw, 5.5rem); }
+    .slide:first-of-type .card { min-height: 0; padding: 0.9rem 1.1rem; }
+    .slide:first-of-type .card .t { font-size: 1.18rem; }
+    .slide:first-of-type .card .d { font-size: 0.9rem; }
+    .slide:first-of-type .formula { padding: 0.85rem 1.2rem; font-size: 1rem; }
+    .card { padding: 0.95rem 1.1rem; }
+    .metric-row { margin-top: 0.85rem; }
+    .metric { padding: 0.9rem 1rem; min-height: 6.6rem; }
+    .flow { margin-top: 0.8rem; }
+    .flow-step { min-height: 8.2rem; padding: 0.95rem; }
+    .quote-ex { margin-top: 0.8rem; }
+    .arch { margin-top: 0.8rem; }
+    .arch-box { min-height: 8.5rem; padding: 0.95rem; }
+    .split-list { margin-top: 0.85rem; }
+    .split-list .card { min-height: 9.8rem; }
+  }
+
+  @media (max-width: 980px) {
+    .grid-3, .metric-row, .flow, .arch, .split-list, .quote-ex, .grid-2 {
+      grid-template-columns: 1fr;
+    }
+    .flow-step::after { content: none; }
+    h1 { max-width: none; }
+    .slide { overflow: auto; }
+  }
+
+  /* ================================================================
+     REDESIGN 02 — light editorial pitch deck
+     ================================================================ */
+  :root {
+    --bg: #f2f0eb;
+    --bg-elev: #f2f0eb;
+    --ink: #111111;
+    --muted: #686868;
+    --line: rgba(17, 17, 17, 0.18);
+    --line-strong: #111111;
+    --accent: #e30613;
+    --accent-soft: rgba(227, 6, 19, 0.08);
+    --good: #087f5b;
+    --warn: #9a6700;
+    --info: #0057b8;
+    --slide-pad: clamp(2.4rem, 4.8vw, 5rem);
+  }
+
+  html,
+  body {
+    background: var(--bg);
+    color: var(--ink);
+  }
+
+  body::before {
+    background:
+      linear-gradient(90deg, transparent 0 73%, rgba(17,17,17,0.035) 73% 73.08%, transparent 73.08%),
+      linear-gradient(180deg, rgba(255,255,255,0.7), rgba(242,240,235,0.94));
+    background-size: 100% 100%;
+  }
+
+  body::after {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 7px;
+    background: var(--accent);
+    box-shadow: none;
+  }
+
+  .deck { counter-reset: slide; }
+
+  .slide {
+    counter-increment: slide;
+    padding: clamp(2.5rem, 4.5vh, 4rem) var(--slide-pad) 4.6rem;
+    background:
+      linear-gradient(125deg, rgba(255,255,255,0.38), transparent 42%),
+      transparent;
+  }
+
+  .slide::before {
+    content: none;
+    display: none;
+    z-index: -1;
+    width: auto;
+    height: auto;
+    aspect-ratio: auto;
+    right: var(--slide-pad);
+    top: clamp(5.5rem, 10vh, 7.5rem);
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    color: rgba(17,17,17,0.045);
+    font-family: "Manrope", system-ui, sans-serif;
+    font-size: clamp(7rem, 14vw, 13rem);
+    font-weight: 800;
+    line-height: 0.75;
+    letter-spacing: -0.09em;
+  }
+
+  .topbar {
+    margin-bottom: clamp(1.4rem, 3vh, 2.4rem);
+    padding-bottom: 0.75rem;
+    color: #444;
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+  }
+
+  .topbar::after {
+    background: var(--ink);
+    opacity: 0.75;
+  }
+
+  h1 {
+    color: var(--ink);
+    font-size: clamp(2.9rem, 5.3vw, 5.25rem);
+    line-height: 0.98;
+    letter-spacing: -0.06em;
+    max-width: 15ch;
+    margin-bottom: clamp(1.4rem, 3vh, 2.2rem);
+  }
+
+  h1.wide { max-width: 18ch; }
+
+  .card,
+  .metric,
+  .flow-step,
+  .arch-box {
+    overflow: visible;
+    color: var(--ink);
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+
+  .card::before,
+  .metric::before,
+  .arch-box::before {
+    top: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--ink);
+  }
+
+  .card {
+    padding: 1.15rem 0.25rem 0 0;
+    gap: 0.7rem;
+  }
+
+  .card .k,
+  .arch-box .k,
+  .flow-step .n {
+    color: var(--accent);
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+  }
+
+  .card .t,
+  .arch-box .t,
+  .flow-step .t {
+    color: var(--ink);
+    font-size: clamp(1.25rem, 1.9vw, 1.72rem);
+    line-height: 1.15;
+    letter-spacing: -0.035em;
+  }
+
+  .card .d,
+  .arch-box .d,
+  .flow-step .d {
+    color: var(--muted);
+    font-size: clamp(0.95rem, 1.25vw, 1.12rem);
+    line-height: 1.42;
+  }
+
+  .card strong[style],
+  .metric strong[style] {
+    color: inherit !important;
+  }
+
+  .grid-3 {
+    gap: clamp(1.5rem, 3vw, 3.5rem);
+  }
+
+  .title-brand,
+  .slide:first-of-type .title-brand {
+    width: 100%;
+    margin: 0 0 clamp(1.3rem, 2.5vh, 2rem);
+    color: var(--ink);
+    font-size: clamp(4.8rem, 10vw, 9.5rem);
+    line-height: 0.82;
+    letter-spacing: -0.085em;
+    text-shadow: none;
+  }
+
+  .title-brand span {
+    color: var(--accent);
+    text-shadow: none;
+  }
+
+  .title-brand::after,
+  .slide:first-of-type .title-brand::after {
+    display: none;
+  }
+
+  .slide:first-of-type .grid-3 {
+    flex: 1;
+    align-items: stretch;
+    gap: clamp(1.5rem, 3vw, 3.5rem);
+  }
+
+  .slide:nth-of-type(2) h1 {
+    display: flex;
+    align-items: flex-end;
+    height: clamp(6.5rem, 12vh, 8rem);
+    min-height: clamp(6.5rem, 12vh, 8rem);
+    margin-bottom: clamp(1.3rem, 2.5vh, 2rem);
+  }
+
+  .slide:nth-of-type(2) h1 {
+    max-width: 24ch;
+    font-size: clamp(2.6rem, 4vw, 3.9rem);
+  }
+
+  .slide:first-of-type .card {
+    justify-content: flex-start;
+    padding: 1.25rem 0.35rem 0 0;
+  }
+
+  .slide:first-of-type .card .t {
+    font-size: clamp(1.35rem, 2.1vw, 1.95rem);
+  }
+
+  .slide:first-of-type .card .d {
+    color: #595959;
+    font-size: clamp(0.96rem, 1.25vw, 1.12rem);
+    max-width: 31ch;
+  }
+
+  .formula,
+  .slide:first-of-type .formula {
+    margin-top: clamp(1.3rem, 3vh, 2.2rem);
+    padding: clamp(1.1rem, 2.2vh, 1.7rem) 0 0;
+    color: var(--ink);
+    background: transparent;
+    border: 0;
+    border-top: 4px solid var(--accent);
+    font-size: clamp(1.35rem, 2.2vw, 2.05rem);
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.035em;
+  }
+
+  .formula strong {
+    color: var(--accent);
+    font-weight: 800;
+  }
+
+  .team {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    margin-top: clamp(1.2rem, 2.4vh, 1.8rem);
+    padding-top: 1rem;
+    border-top: 1px solid rgba(17,17,17,0.22);
+    color: #666;
+    font-size: clamp(0.9rem, 1.15vw, 1.08rem);
+    gap: 0.65rem 2rem;
+  }
+
+  .team b {
+    color: var(--ink);
+    font-weight: 700;
+  }
+
+  .team span {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.28rem;
+  }
+
+  .team span::before { display: none; }
+
+  .team small {
+    color: #686868;
+    font-size: 0.78em;
+    font-weight: 500;
+  }
+
+  .team a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 700;
+  }
+
+  /* Value: editorial facts above a solid evidence strip */
+  .slide:nth-of-type(2) .grid-3 {
+    flex: 1;
+    align-items: stretch;
+    margin-top: 0;
+  }
+
+  .slide:nth-of-type(2) .card {
+    align-self: stretch;
+    justify-content: flex-start;
+    padding-right: clamp(0.8rem, 2vw, 1.8rem);
+  }
+
+  .value-visual {
+    height: clamp(7.2rem, 16vh, 10rem);
+    margin: clamp(0.7rem, 1.6vh, 1.2rem) 0;
+    display: flex;
+    align-items: center;
+    color: var(--ink);
+  }
+
+  .value-visual svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .value-visual .base {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .value-visual .soft {
+    fill: none;
+    stroke: rgba(17,17,17,0.22);
+    stroke-width: 2;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .value-visual .accent {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .value-visual .accent-fill { fill: var(--accent); }
+  .value-visual .ink-fill { fill: var(--ink); }
+
+  .value-visual text {
+    fill: var(--ink);
+    font-family: "Manrope", system-ui, sans-serif;
+    font-weight: 800;
+  }
+
+  .slide:nth-of-type(2) .value-visual {
+    margin-top: clamp(0.7rem, 1.6vh, 1.2rem);
+    margin-bottom: 0;
+  }
+
+  .metric-row {
+    gap: 0;
+    margin-top: clamp(1.5rem, 3vh, 2.4rem);
+    overflow: hidden;
+    background: var(--ink);
+    border: 0;
+    border-radius: 0;
+  }
+
+  .metric {
+    min-height: 8.8rem;
+    padding: 1.15rem 1.3rem;
+    background: var(--ink);
+    border: 0;
+    border-right: 1px solid rgba(255,255,255,0.22);
+  }
+
+  .metric:last-child { border-right: 0; }
+  .metric::before { display: none; }
+
+  .metric .num,
+  .metric .num.good,
+  .metric .num.info,
+  .metric .num.warn,
+  .metric .num.acc,
+  .metric:first-child .num {
+    color: #fff;
+    font-size: clamp(2.1rem, 3.5vw, 3.2rem);
+  }
+
+  .metric:first-child .num { color: #ff4b55; }
+
+  .metric .label {
+    color: #fff;
+    font-size: clamp(0.82rem, 1.1vw, 1rem);
+  }
+
+  .metric .sub { color: rgba(255,255,255,0.55); }
+
+  /* Empty canvas slides */
+  .blank-stage {
+    margin-top: 0;
+    background:
+      linear-gradient(90deg, rgba(17,17,17,0.035) 1px, transparent 1px),
+      linear-gradient(rgba(17,17,17,0.035) 1px, transparent 1px),
+      rgba(255,255,255,0.32);
+    background-size: 48px 48px;
+    border: 1px solid rgba(17,17,17,0.28);
+    border-radius: 0;
+  }
+
+  .blank-stage::before {
+    inset: 1rem;
+    border: 1px solid rgba(17,17,17,0.07);
+    border-radius: 0;
+  }
+
+  .blank-stage span {
+    left: 1.25rem;
+    bottom: 1.15rem;
+    color: rgba(17,17,17,0.38);
+  }
+
+  /* Two-column content */
+  .grid-2 {
+    gap: 0;
+    margin-top: 0;
+  }
+
+  /* Finale: three columns + large closing statement */
+  .split-list {
+    gap: clamp(1.5rem, 3vw, 3.5rem);
+    margin-top: 0;
+  }
+
+  .split-list .card {
+    min-height: 0;
+    padding-top: 1.25rem;
+  }
+
+  .split-list .card::before { height: 4px; }
+  .split-list .done::before { background: #087f5b; }
+  .split-list .check::before { background: var(--ink); }
+  .split-list .next::before { background: var(--accent); }
+
+  .split-list li {
+    color: #555;
+    font-size: clamp(0.93rem, 1.15vw, 1.05rem);
+  }
+
+  .split-list .done li::before { background: #087f5b; }
+  .split-list .check li::before { background: var(--ink); }
+  .split-list .next li::before { background: var(--accent); }
+
+  .final-line {
+    max-width: none;
+    margin-top: auto;
+    padding: clamp(1.25rem, 2.5vh, 1.8rem) 0 0;
+    color: var(--ink);
+    background: transparent;
+    border: 0;
+    border-top: 4px solid var(--ink);
+    border-radius: 0;
+    box-shadow: none;
+    font-size: clamp(1.3rem, 2.15vw, 1.95rem);
+    line-height: 1.3;
+    letter-spacing: -0.035em;
+  }
+
+  .final-line em {
+    color: var(--accent);
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .final-line strong { font-weight: 800; }
+
+  /* Appendix */
+  .slide:nth-of-type(6) .grid-2 {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.4rem 2.6rem;
+  }
+
+  .slide:nth-of-type(6) .card {
+    padding-top: 1.1rem;
+  }
+
+  /* Navigation */
+  .nav {
+    padding: 0.6rem var(--slide-pad);
+    color: #777;
+    background: rgba(242,240,235,0.94);
+    border-top: 1px solid rgba(17,17,17,0.18);
+    backdrop-filter: blur(12px);
+  }
+
+  .progress {
+    height: 3px;
+    background: rgba(17,17,17,0.12);
+  }
+
+  .progress > i {
+    background: var(--accent);
+    box-shadow: none;
+  }
+
+  button {
+    color: var(--ink);
+    background: transparent;
+    border: 1px solid rgba(17,17,17,0.25);
+    border-radius: 0;
+  }
+
+  button:hover {
+    color: #fff;
+    background: var(--ink);
+    border-color: var(--ink);
+  }
+
+  .notes {
+    color: #fff;
+    background: #111;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .notes p { color: rgba(255,255,255,0.75); }
+
+  @media (max-height: 760px) and (min-width: 981px) {
+    .slide {
+      padding-top: 1.8rem;
+      padding-bottom: 3.8rem;
+    }
+    .topbar { margin-bottom: 1rem; }
+    .title-brand,
+    .slide:first-of-type .title-brand {
+      font-size: clamp(4rem, 8vw, 6.2rem);
+      margin-bottom: 0.9rem;
+    }
+    .slide:nth-of-type(2) h1 {
+      height: 6.8rem;
+      min-height: 6.8rem;
+      margin-bottom: 0.9rem;
+    }
+    .slide:nth-of-type(2) h1 { font-size: 2.45rem; }
+    .slide:first-of-type .card {
+      min-height: 0;
+      padding: 0.8rem 0.3rem 0 0;
+    }
+    .slide:first-of-type .card .t { font-size: 1.2rem; }
+    .slide:first-of-type .card .d { font-size: 0.86rem; }
+    .formula,
+    .slide:first-of-type .formula {
+      margin-top: 0.8rem;
+      padding: 0.75rem 0 0;
+      font-size: 1.15rem;
+    }
+    .metric { min-height: 6.8rem; padding: 0.8rem 1rem; }
+    .split-list .card { min-height: 0; }
+    .final-line { padding-top: 0.8rem; font-size: 1.15rem; }
+  }
+
+  @media (max-width: 980px) {
+    .slide::before { display: none; }
+    .title-brand,
+    .slide:first-of-type .title-brand { font-size: clamp(3.3rem, 15vw, 6rem); }
+    .team { grid-template-columns: 1fr; }
+    .slide:first-of-type .grid-3,
+    .slide:nth-of-type(2) .grid-3 { flex: none; }
+    .metric-row,
+    .slide:nth-of-type(6) .grid-2 { grid-template-columns: 1fr; }
+    .metric { border-right: 0; border-bottom: 1px solid rgba(255,255,255,0.2); }
+  }
+</style>
+</head>
+<body>
+  <div class="deck" id="deck">
+
+    <!-- 0 · TITLE -->
+    <section class="slide active" data-notes="30 с. DocReview AI — дополнительное предварительное ревью, а не замена аналитика. Боль: вопросы всплывают после передачи ТЗ и создают повторную работу.">
+      <div class="topbar">
+        <span>AI Talent Hub · Demo Day · кейс МТС NET</span>
+        <span class="badge"><span class="dot"></span>0:00–0:30 · продукт</span>
+      </div>
+      <div class="title-brand">DocReview <span>AI</span></div>
+      <div class="grid-3" style="margin-top:0.4rem">
+        <div class="card">
+          <div class="k">01 · продукт</div>
+          <div class="t">Инструмент для анализа документации</div>
+          <div class="d">Ассистент аналитика, который выявляет в технических заданиях неоднозначности, пропуски и потенциальные проблемы.</div>
+        </div>
+        <div class="card">
+          <div class="k">02 · для кого</div>
+          <div class="t">Аналитик МТС NET</div>
+          <div class="d">Получает «второго читателя» перед передачей ТЗ. Инструмент подсказывает, но не принимает решение за человека.</div>
+        </div>
+        <div class="card">
+          <div class="k">03 · проблема</div>
+          <div class="t">Чем позже найдена проблема, тем дороже исправление</div>
+          <div class="d">Часть проблем обнаруживается только в разработке или тестировании. ТЗ возвращается на уточнение, а команда повторно согласует, дорабатывает и проверяет решение.</div>
+        </div>
+      </div>
+      <div class="team">
+        <span>
+          <b>Коротков Леонид Вячеславович</b>
+          <small>AI Engineer · 1 курс · <a href="https://t.me/fDAFX">@fDAFX</a></small>
+        </span>
+        <span>
+          <b>Рыженко Виктор Алексеевич</b>
+          <small>AI Engineer · 1 курс · <a href="https://t.me/RyzhenkoViktor">@RyzhenkoViktor</a></small>
+        </span>
+        <span>
+          <b>Сокол Тимофей Александрович</b>
+          <small>AI Product · 1 курс · <a href="https://t.me/xcmgg">@xcmgg</a></small>
+        </span>
+      </div>
+    </section>
+
+    <!-- 1 · VALUE -->
+    <section class="slide" data-notes="30 с. Ценность: быстрее сфокусироваться на рисковых местах, сократить возвраты ТЗ и не доводить неточности до дорогих исправлений. Снижение затрат — гипотеза для пилота.">
+      <div class="topbar">
+        <span>Ценность</span>
+        <span class="badge"><span class="dot"></span>0:30–1:00 · ценность</span>
+      </div>
+      <h1 class="wide">Экономит время и ресурсы для разработки ТЗ</h1>
+      <div class="grid-3">
+        <div class="card">
+          <div class="k">Время</div>
+          <div class="t">Фокусирует внимание</div>
+          <div class="d">Аналитику приходится читать большой объём документации. DocReview AI выделит потенциально проблемные места и поможет их быстро исправить.</div>
+          <div class="value-visual" aria-hidden="true">
+            <svg viewBox="0 0 320 150">
+              <rect class="soft" x="34" y="18" width="170" height="114" />
+              <line class="soft" x1="56" y1="45" x2="176" y2="45" />
+              <line class="soft" x1="56" y1="66" x2="162" y2="66" />
+              <line class="accent" x1="56" y1="87" x2="145" y2="87" />
+              <line class="soft" x1="56" y1="108" x2="174" y2="108" />
+              <circle class="base" cx="214" cy="91" r="36" />
+              <line class="accent" x1="240" y1="117" x2="273" y2="144" />
+              <circle class="accent-fill" cx="145" cy="87" r="5" />
+            </svg>
+          </div>
+        </div>
+        <div class="card">
+          <div class="k">Итерации</div>
+          <div class="t">Сокращает возвраты ТЗ</div>
+          <div class="d">Неоднозначности и пропуски выявляются до передачи документа, поэтому требуется меньше повторных уточнений и согласований с разработкой.</div>
+          <div class="value-visual" aria-hidden="true">
+            <svg viewBox="0 0 320 150">
+              <path class="soft" d="M75 77a58 58 0 0 1 95-45" />
+              <path class="soft" d="M171 32l-4 22 23-4" />
+              <path class="soft" d="M191 76a58 58 0 0 1-95 45" />
+              <path class="soft" d="M95 121l5-22-23 4" />
+              <path class="accent" d="M132 77l18 18 39-47" />
+              <line class="base" x1="225" y1="40" x2="225" y2="118" />
+              <line class="soft" x1="246" y1="55" x2="290" y2="55" />
+              <line class="soft" x1="246" y1="78" x2="278" y2="78" />
+              <line class="accent" x1="246" y1="101" x2="268" y2="101" />
+            </svg>
+          </div>
+        </div>
+        <div class="card">
+          <div class="k">Деньги</div>
+          <div class="t">Снижает цену ошибки</div>
+          <div class="d">Поможет найти ошибку на раннем этапе, что сократит затраты на исправление реализации, повторное тестирование и работу всей команды.</div>
+          <div class="value-visual" aria-hidden="true">
+            <svg viewBox="0 0 320 150">
+              <line class="base" x1="35" y1="125" x2="290" y2="125" />
+              <rect class="soft" x="62" y="42" width="42" height="83" />
+              <rect class="soft" x="137" y="67" width="42" height="58" />
+              <rect class="soft" x="212" y="91" width="42" height="34" />
+              <path class="accent" d="M65 28l70 32 69 23 68 20" />
+              <path class="accent" d="M253 91l19 12-22 7" />
+              <text x="61" y="143" font-size="13">РАНЬШЕ</text>
+              <text x="211" y="143" font-size="13">ДЕШЕВЛЕ</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 · DEMO PATH -->
+    <section class="slide" data-notes="~2 мин. Слайд зарезервирован под живое демо или резервную запись.">
+      <div class="topbar">
+        <span>Демо · один сценарий</span>
+        <span class="badge"><span class="dot"></span>1:00–3:10 · демо</span>
+      </div>
+      <h1 class="wide">Демонстрация продукта</h1>
+      <div class="blank-stage"><span>место для демо</span></div>
+    </section>
+
+    <!-- 4 · TECH -->
+    <section class="slide" data-notes="1 мин. Слайд зарезервирован под архитектуру, поток данных, выбор модели и ограничения.">
+      <div class="topbar">
+        <span>Техника</span>
+        <span class="badge"><span class="dot"></span>3:10–4:10 · техника</span>
+      </div>
+      <h1 class="wide">Техническая часть</h1>
+      <div class="blank-stage"><span>место для архитектуры и технических решений</span></div>
+    </section>
+
+    <!-- 5 · FINALE -->
+    <section class="slide" data-notes="50 с. Сделано / проверено / следующий шаг. Запрос — закрытая проверка на новых ТЗ и оценка полезности аналитиками NET.">
+      <div class="topbar">
+        <span>Готовность и следующий шаг</span>
+        <span class="badge"><span class="dot"></span>4:10–5:00 · финал</span>
+      </div>
+      <h1 class="wide">MVP работает — теперь нужно доказать бизнес-эффект</h1>
+      <div class="split-list">
+        <div class="card done">
+          <div class="k">Сделано</div>
+          <ul>
+            <li>Ключевой сценарий воспроизводим end-to-end</li>
+            <li>Self-hosted модель работает в контуре</li>
+            <li>Все 4 результата из брифа в отчёте</li>
+          </ul>
+        </div>
+        <div class="card check">
+          <div class="k">Проверено</div>
+          <ul>
+            <li>15 из 16 дефектов целевого ТЗ</li>
+            <li>88% точности по слепой разметке</li>
+            <li>Замечания привязаны к фрагментам</li>
+          </ul>
+        </div>
+        <div class="card next">
+          <div class="k">Планируется · 2–4 недели</div>
+          <ul>
+            <li>Закрытый тест на 5–10 новых ТЗ</li>
+            <li>Оценка замечаний аналитиками NET</li>
+            <li>Внутренний ориентир: ≥70% полезных</li>
+          </ul>
+        </div>
+      </div>
+      <div class="final-line">
+        <strong>DocReview AI</strong> уже находит <em>15 из 16</em> размеченных проблем в целевом ТЗ и объясняет, что уточнить.
+        Следующий шаг — подтвердить полезность на <em>5–10 новых документах</em> вместе с аналитиками NET.
+      </div>
+    </section>
+
+    <!-- APPENDIX · Q&A backup -->
+    <section class="slide" data-notes="Не показывать в питче. Держать на вопросы.">
+      <div class="topbar">
+        <span>Appendix · ответы</span>
+        <span class="badge"><span class="dot"></span>Q&A</span>
+      </div>
+      <h1 style="max-width:none;font-size:clamp(1.8rem,3.2vw,2.6rem)">Короткие ответы на вопросы комиссии</h1>
+      <div class="grid-2">
+        <div class="card">
+          <div class="k">Почему не один промпт?</div>
+          <div class="d">Даже сильный промпт пропустил 6 из 6 нарушений шаблона. Конвейер проверяет их правилами и обязательным чеклистом.</div>
+        </div>
+        <div class="card">
+          <div class="k">Что с данными?</div>
+          <div class="d">На тестах — обезличенные ТЗ МТС. В прод-сценарии документы и история проверок остаются внутри контура заказчика.</div>
+        </div>
+        <div class="card">
+          <div class="k">Сколько стоит?</div>
+          <div class="d">Основная статья — GPU для self-hosted модели. Точную стоимость считаем по реальной нагрузке пилота и выбранной модели.</div>
+        </div>
+        <div class="card">
+          <div class="k">Если метрика упадёт?</div>
+          <div class="d">Любое изменение сначала проходит канарейку и фиксированный бенч. Не прошло порог — возвращаем предыдущую конфигурацию.</div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <aside class="notes" id="notes">
+    <h3>Спикер · заметки</h3>
+    <p id="notesText"></p>
+  </aside>
+
+  <div class="nav">
+    <span class="help">← → · Space · N заметки · F полноэкран</span>
+    <div class="progress"><i id="bar"></i></div>
+    <div class="nav-btns">
+      <button type="button" id="prev" aria-label="Назад">←</button>
+      <span id="counter">1 / 7</span>
+      <button type="button" id="next" aria-label="Вперёд">→</button>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const slides = [...document.querySelectorAll(".slide")];
+  const bar = document.getElementById("bar");
+  const counter = document.getElementById("counter");
+  const notes = document.getElementById("notes");
+  const notesText = document.getElementById("notesText");
+  let i = 0;
+
+  function show(n) {
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach((s, idx) => s.classList.toggle("active", idx === i));
+    bar.style.width = ((i + 1) / slides.length * 100) + "%";
+    counter.textContent = (i + 1) + " / " + slides.length;
+    notesText.textContent = slides[i].dataset.notes || "";
+  }
+
+  document.getElementById("prev").onclick = () => show(i - 1);
+  document.getElementById("next").onclick = () => show(i + 1);
+
+  document.addEventListener("keydown", (e) => {
+    if (["ArrowRight", "PageDown", " ", "Enter"].includes(e.key)) {
+      e.preventDefault(); show(i + 1);
+    } else if (["ArrowLeft", "PageUp", "Backspace"].includes(e.key)) {
+      e.preventDefault(); show(i - 1);
+    } else if (e.key === "Home") { show(0); }
+    else if (e.key === "End") { show(slides.length - 1); }
+    else if (e.key.toLowerCase() === "n") { notes.classList.toggle("open"); }
+    else if (e.key.toLowerCase() === "f") {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+      else document.exitFullscreen?.();
+    }
+  });
+
+  show(0);
+})();
+</script>
+</body>
+</html>
