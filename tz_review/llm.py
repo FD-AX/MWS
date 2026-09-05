@@ -58,6 +58,41 @@ def _extract_json(text: str) -> Any:
     raise ValueError(f"Не удалось распарсить JSON из ответа: {text[:200]!r}")
 
 
+def _quotes(obj: Any) -> list[str]:
+    """Все строковые значения под ключом quote (рекурсивно) — цитаты обязаны быть на языке документа."""
+    out: list[str] = []
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            if k == "quote" and isinstance(v, str) and v.strip():
+                out.append(v)
+            else:
+                out.extend(_quotes(v))
+    elif isinstance(obj, list):
+        for v in obj:
+            out.extend(_quotes(v))
+    return out
+
+
+def cyrillic_share(text: str) -> float:
+    letters = [c for c in text if c.isalpha()]
+    if not letters:
+        return 1.0
+    return sum(1 for c in letters if "а" <= c.lower() <= "я" or c.lower() == "ё") / len(letters)
+
+
+def quotes_off_language(obj: Any, min_share: float = 0.3) -> bool:
+    """True, если модель отдала цитаты не на русском (переводы вместо дословных фрагментов).
+    EXP-19: gpt-oss-120b в длинном процессе переключался на английский на v3official —
+    цитаты-переводы не верифицируются, заякоренность 93% → 25%, recall 12/13 → 8/13.
+    Документы кейса — русские; для других языков порог задаётся отдельно."""
+    qs = _quotes(obj)
+    return bool(qs) and cyrillic_share(" ".join(qs)) < min_share
+
+
+LANG_GUARD = ("\n\nОтвечай строго по-русски. Поле quote — дословный фрагмент документа на языке "
+              "документа; не переводи и не пересказывай цитаты.")
+
+
 def aggregate_yes_no(top_tokens: list[tuple[str, float]],
                      pos: str = "YES", neg: str = "NO") -> tuple[float, float]:
     """Суммирует вероятностную массу top-токенов в P(pos)/P(neg).
@@ -151,14 +186,23 @@ class LLM:
         """JSON-ответ с повтором: обрезанный (finish_reason=length) или битый JSON
         не роняет проход — повторяем с удвоенным бюджетом (EXP-15: gpt-oss на doc3)."""
         last_err: Exception | None = None
+        lang_retry_done = False
         for attempt in range(3):
             text = self._chat(system, user, temperature, max_tokens=max_tokens)[0]
             try:
-                return _extract_json(text)
+                obj = _extract_json(text)
             except ValueError as e:
                 last_err = e
                 if getattr(self, "last_finish", None) == "length" or attempt == 0:
                     max_tokens *= 2
+                continue
+            # Языковой предохранитель: цитаты не на языке документа → один повтор с явным требованием.
+            if not lang_retry_done and quotes_off_language(obj):
+                lang_retry_done = True
+                self.stats["lang_retries"] = self.stats.get("lang_retries", 0) + 1
+                system = system + LANG_GUARD
+                continue
+            return obj
         raise ValueError(f"JSON не получен за 3 попытки: {last_err}")
 
     def binary_probs(self, system: str, user: str,

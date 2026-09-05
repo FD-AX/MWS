@@ -198,6 +198,10 @@ def main() -> int:
                 _log(lines[-1])
                 continue
             n_findings = len(result.findings)
+            if llm is not None:  # флаги клиента: их дрейф внутри долгого процесса ронял заякоренность (EXP-19)
+                _log(f"llm: no_temperature={getattr(llm, '_no_temperature', None)} "
+                     f"completion_tokens={getattr(llm, '_use_completion_tokens', None)} "
+                     f"calls={llm.stats['calls']} dropped={len(result.dropped)}")
             if t.get("gold"):
                 gold = yaml.safe_load((ROOT / t["gold"]).read_text(encoding="utf-8"))["defects"]
                 hits, extras, by_group, by_diff = evaluate(result, gold)
