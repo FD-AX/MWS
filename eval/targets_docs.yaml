@@ -1,0 +1,8 @@
+# Документы МТС doc1/doc2 (doc3 — в targets_key.yaml): held-out проверка слотов rubric_extra (EXP-19).
+targets:
+  - label: doc1_stream_geo
+    doc: casedata/doc1_stream_geo.md
+    gold: eval/gold_doc1.yaml
+  - label: doc2_source_cdr
+    doc: casedata/doc2_source_cdr.md
+    gold: eval/gold_doc2.yaml
