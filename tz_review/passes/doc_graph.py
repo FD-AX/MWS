@@ -10,6 +10,8 @@ from ..schema import Finding
 ENT = re.compile(r"\b(?:TABLE|FIELD|TOPIC|SCHEMA|DAG)_[A-Z0-9_]+\b")
 FIELD = re.compile(r"^FIELD_[A-Z0-9_]+$")
 SEC_REF = re.compile(r"раздел[ае]?\s+(\d+)", re.IGNORECASE)
+# Ссылка на раздел по имени в кавычках: «в разделе „Оркестрация“», «см. раздел «Регламент»»
+SEC_NAME_REF = re.compile(r"раздел[ае]?\s+[«\"„]([^»\"“]{2,60})[»\"“]", re.IGNORECASE)
 
 
 def _cells(line: str) -> list[str] | None:
@@ -93,4 +95,27 @@ def run(doc: Document) -> list[Finding]:
                     ask=f"Исправь номер раздела или добавь раздел {n}.",
                     source_pass="doc_graph",
                 ))
+
+    # 3b. Ссылки на разделы по имени: «в разделе „Оркестрация“» — заголовка с таким именем нет
+    # (EXP-19: HRD-REFNAME брала только GPT; для графа это детерминированная проверка).
+    from ..document import normalize
+    titles_norm = [normalize(s.title) for s in doc.sections]
+    reported: set[str] = set()
+    for line in lines:
+        for m in SEC_NAME_REF.finditer(line):
+            name = m.group(1).strip()
+            key = normalize(name)
+            if not key or key in reported:
+                continue
+            if any(key in t or t in key for t in titles_norm):
+                continue
+            reported.add(key)
+            findings.append(Finding(
+                category="graph:broken_ref",
+                severity="high",
+                quote=line.strip()[:200],
+                why=f"Ссылка на раздел «{name}», которого нет в документе (такого заголовка нет).",
+                ask=f"Добавь раздел «{name}» или исправь ссылку на существующий раздел.",
+                source_pass="doc_graph",
+            ))
     return findings
