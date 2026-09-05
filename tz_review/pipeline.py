@@ -6,7 +6,7 @@ from typing import Any
 from . import document as docmod
 from .passes import (baseline, checklist, critic, deterministic, developer_sim,
                      doc_graph, document_level, filters, spec_compile, uncertainty,
-                     uncertainty_lp)
+                     uncertainty_lp, quantities)
 
 DEFAULT_LLM_PASSES = frozenset({"checklist", "document_level", "developer_sim"})
 from .schema import Finding
@@ -98,6 +98,11 @@ def review(text: str, rubric: dict[str, Any], llm=None, *,
             findings += document_level.run(text, llm)
             result.passes_run.append("document_level")
             _p("document_level", 0.65)
+
+        if "quantities" in lp:
+            _p("quantities", 0.655)
+            findings += quantities.run(text, llm)
+            result.passes_run.append("quantities")
 
         if "developer_sim" in lp:
             _p("developer_sim", 0.66)

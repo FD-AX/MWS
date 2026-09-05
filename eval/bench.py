@@ -72,6 +72,9 @@ VARIANTS = {
     "v2x": {"llm": True, "baseline": False, "entropy": False, "graph": True, "extra": True, "canon": True},
     "v2f": {"llm": True, "baseline": False, "entropy": True, "graph": True, "lp": True, "extra": True,
             "canon": True},
+    # v2q — v2g + проход «сверка величин и сроков между разделами» (EXP-20, отдельная строка)
+    "v2q": {"llm": True, "baseline": False, "entropy": False, "graph": True, "canon": True,
+            "passes": ["checklist", "document_level", "developer_sim", "quantities"]},
     # h5 = граф + только «компиляция ТЗ» (изолированный вклад гипотезы H5)
     "h5":  {"llm": True,  "baseline": False, "entropy": False, "graph": True,
             "passes": ["compile"]},
