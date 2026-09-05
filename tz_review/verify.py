@@ -13,6 +13,35 @@ def _loose(s: str) -> str:
     return re.sub(r"\s+", " ", s.replace("|", " ")).strip()
 
 
+FRAG_SPLIT = re.compile(r"\s+vs\.?\s+|\s+против\s+|;|…|\.\.\.|\s+[—–]\s+|\s+-\s+|\n|`|«|»|\"")
+MIN_FRAG = 25  # символов нормализованного фрагмента: короче — риск тривиального совпадения
+
+
+def reanchor(nq: str, norm_doc: str, loose_doc: str) -> str | None:
+    """Составная или пересказанная цитата («A vs B», «DDL defines X …; earlier description»)
+    → самый длинный ДОСЛОВНЫЙ фрагмент (≥ MIN_FRAG), который есть в документе.
+    EXP-19: gpt-oss-120b на DDL-плотных документах склеивает цитату из двух мест и пересказывает
+    (иногда по-английски) — 25–50 % находок уровня документа отбрасывались целиком, хотя одно из
+    мест цитировалось дословно. Фрагмент берётся из документа, поэтому точность не страдает."""
+    parts = [p.strip(" .,:;()[]") for p in FRAG_SPLIT.split(nq) if p]
+    for p in sorted({p for p in parts if len(p) >= MIN_FRAG}, key=len, reverse=True):
+        if p in norm_doc:
+            return p
+        lp = _loose(p)
+        if len(lp) >= MIN_FRAG and lp in loose_doc:
+            return lp
+    # Скользящее окно по словам: самый длинный отрезок цитаты, присутствующий дословно.
+    words = nq.split()
+    for n in range(len(words), 3, -1):
+        for i in range(0, len(words) - n + 1):
+            seg = " ".join(words[i:i + n])
+            if len(seg) < MIN_FRAG:
+                break
+            if seg in norm_doc:
+                return seg
+    return None
+
+
 def verify_findings(findings: list[Finding], doc: Document) -> tuple[list[Finding], list[Finding]]:
     """Программная верификация якорей: цитата обязана быть подстрокой документа
     (после нормализации). Не нашлась — находка отбрасывается; нашлась в другой
@@ -44,10 +73,17 @@ def verify_findings(findings: list[Finding], doc: Document) -> tuple[list[Findin
             home = next((title for title, ns in norm_sections if nq in ns), None)
         else:
             lq = _loose(nq)
-            if len(lq) < min_len or lq not in loose_doc:
-                dropped.append(f)
-                continue
-            home = next((title for title, ns in norm_sections if lq in _loose(ns)), None)
+            if len(lq) >= min_len and lq in loose_doc:
+                home = next((title for title, ns in norm_sections if lq in _loose(ns)), None)
+            else:
+                # Составная/пересказанная цитата: переанкориваем на дословный фрагмент.
+                frag = reanchor(nq, norm_doc, loose_doc) if f.source_pass != "deterministic" else None
+                if frag is None:
+                    dropped.append(f)
+                    continue
+                f.quote = frag
+                home = next((title for title, ns in norm_sections
+                             if frag in ns or frag in _loose(ns)), None)
         f.verified = True
         # Переанкоривание: секция, в которой цитата реально находится.
         if home and normalize(f.section) not in normalize(home):
