@@ -1,0 +1,1220 @@
+[
+ {
+  "variant": "v2g_gpt",
+  "target": "synth_v1",
+  "defects": {
+   "SYN-A-NUL": {
+    "code": "A3",
+    "difficulty": "medium",
+    "description": "[A3] Удалено правило NULL для FIELD_RAT",
+    "hit": true
+   },
+   "SYN-A-DED": {
+    "code": "A4",
+    "difficulty": "medium",
+    "description": "[A4] Удалён шаг дедупликации целиком",
+    "hit": true
+   },
+   "SYN-A-VOL": {
+    "code": "A8",
+    "difficulty": "medium",
+    "description": "[A8] Удалена строка ожидаемого объёма",
+    "hit": true
+   },
+   "SYN-A-BCKF": {
+    "code": "A",
+    "difficulty": "medium",
+    "description": "[A] Удалены глубина данных и бэкфилл",
+    "hit": false
+   },
+   "SYN-B-OPEN": {
+    "code": "B7",
+    "difficulty": "easy",
+    "description": "[B7] Список типов сети превращён в открытый («и т. д.»)",
+    "hit": true
+   },
+   "SYN-B-ANAPH": {
+    "code": "B3",
+    "difficulty": "medium",
+    "description": "[B3] Регион: «по полю FIELD_REGION» заменено местоимением без антецедента",
+    "hit": false
+   },
+   "SYN-B-VAGUE": {
+    "code": "B5",
+    "difficulty": "easy",
+    "description": "[B5] Срок готовности заменён на «оперативно»",
+    "hit": true
+   },
+   "SYN-C-DANGLE": {
+    "code": "C2",
+    "difficulty": "hard",
+    "description": "[C2] Партиционирование по несуществующему полю FIELD_PART_DATE",
+    "hit": true
+   },
+   "SYN-C-SECREF": {
+    "code": "C1",
+    "difficulty": "medium",
+    "description": "[C1] Ссылка на несуществующий раздел 31",
+    "hit": true
+   },
+   "SYN-D-TZ": {
+    "code": "D2",
+    "difficulty": "hard",
+    "description": "[D2] Время запуска в требованиях (МСК) противоречит регламенту (UTC)",
+    "hit": true
+   },
+   "SYN-D-NAME": {
+    "code": "D1",
+    "difficulty": "hard",
+    "description": "[D1] Журнал в контроле качества назван несуществующим именем",
+    "hit": true
+   },
+   "SYN-E-MEAS": {
+    "code": "E1",
+    "difficulty": "easy",
+    "description": "[E1] Допуск сверки 0.1% заменён неизмеримой формулировкой",
+    "hit": false
+   }
+  },
+  "extras": [
+   {
+    "category": "dev_question",
+    "severity": "medium",
+    "why": "При неверной трактовке можно удалить лишнюю месячную партицию, нужную потребителям, либо оставить партиции за пределами требуемого retention."
+   }
+  ]
+ },
+ {
+  "variant": "v2g_gpt",
+  "target": "doc3_mart (целевой тип)",
+  "defects": {
+   "G3-1": {
+    "code": "D2",
+    "difficulty": "hard",
+    "description": "«Инкремент» vs «только полная перезагрузка месяца без upsert» — противоречие",
+    "hit": true
+   },
+   "G3-2": {
+    "code": "C2",
+    "difficulty": "hard",
+    "description": "Алгоритм использует FIELD_LAC/CELL_ID/TIME_STAMP/CELL_GEN — структура источников не описана",
+    "hit": true
+   },
+   "G3-3": {
+    "code": "A3",
+    "difficulty": "hard",
+    "description": "Fallback региона не закрыт: lac=0 и cell=0 одновременно / джойн без совпадений",
+    "hit": true
+   },
+   "G3-4": {
+    "code": "B9",
+    "difficulty": "medium",
+    "description": "«Последний по времени за месяц» IMEI — по какому полю времени и из какой таблицы",
+    "hit": true
+   },
+   "G3-5": {
+    "code": "B2",
+    "difficulty": "medium",
+    "description": "FIELD_USERS_CNT=count(...) внутри списка «Группировка по» — агрегат в группировке",
+    "hit": true
+   },
+   "G3-6": {
+    "code": "A3",
+    "difficulty": "medium",
+    "description": "TAC не найден в TABLE_DEVICE_REF → vendor = ? (NULL/Unknown/отброс)",
+    "hit": true
+   },
+   "G3-7": {
+    "code": "A7",
+    "difficulty": "medium",
+    "description": "«Обязательно загрузить исторические данные» — процесс бэкфилла не описан",
+    "hit": true
+   },
+   "G3-8": {
+    "code": "D3",
+    "difficulty": "hard",
+    "description": "UTC витрины vs региональные часовые пояса источника: границы месяца",
+    "hit": true
+   },
+   "G3-9": {
+    "code": "A6",
+    "difficulty": "medium",
+    "description": "Нет SLA/времени запуска; «метка обработки DAG» — оркестрация не описана",
+    "hit": true
+   },
+   "G3-10": {
+    "code": "F1",
+    "difficulty": "easy",
+    "description": "Раздел контроля качества отсутствует",
+    "hit": true
+   },
+   "G3-11": {
+    "code": "A5",
+    "difficulty": "medium",
+    "description": "Ключ витрины явно не задан",
+    "hit": true
+   },
+   "G3-12": {
+    "code": "A1",
+    "difficulty": "medium",
+    "description": "Способ получения данных из источников IUM не указан (интерфейс/протокол/доступ)",
+    "hit": true
+   },
+   "G3-13": {
+    "code": "A7",
+    "difficulty": "medium",
+    "description": "Поведение при сбое загрузки не описано (недоступность источника, ретраи, частичный расчёт)",
+    "hit": true
+   },
+   "G3-14": {
+    "code": "F1",
+    "difficulty": "easy",
+    "description": "Отсутствуют разделы официального шаблона",
+    "hit": true
+   },
+   "G3-15": {
+    "code": "A3",
+    "difficulty": "medium",
+    "description": "NOT NULL/NULLABLE не указан ни для одного поля витрины (пункт МТС №3)",
+    "hit": true
+   },
+   "G3-16": {
+    "code": "A1",
+    "difficulty": "medium",
+    "description": "Сериализация/формат хранения витрины и источников не указаны (пункт МТС №1)",
+    "hit": true
+   }
+  },
+  "extras": [
+   {
+    "category": "dev_question",
+    "severity": "high",
+    "why": "Без правила темпоральности справочника один и тот же lac/cell может присоединиться к разным регионам в зависимости от выбранной версии TABLE_BS_REF."
+   },
+   {
+    "category": "checklist:CAT-01",
+    "severity": "medium",
+    "why": "В документе указаны приёмник и источники, но нет прямых ссылок на карточки Дата-каталога ни для TABLE_AGG_DEVICES, ни для таблиц-источников."
+   },
+   {
+    "category": "checklist:FIL-02",
+    "severity": "medium",
+    "why": "В алгоритме есть отдельные условия отбора, но нет отдельного перечня типовых условий фильтрации для построения витрины и выгрузки потребителям."
+   },
+   {
+    "category": "dev_question",
+    "severity": "medium",
+    "why": "Дедупликация без заданного порядка недетерминирована, а разное поведение для ненайденного региона меняет количество пользователей в итоговых группах."
+   }
+  ]
+ },
+ {
+  "variant": "v2g_gpt",
+  "target": "synth_v2hard",
+  "defects": {
+   "HRD-BOUND": {
+    "code": "D3",
+    "difficulty": "expert",
+    "description": "[D3] Граница месяца включает 1-е число следующего (off-by-one, двойной учёт дня)",
+    "hit": true
+   },
+   "HRD-VOID": {
+    "code": "B6",
+    "difficulty": "expert",
+    "description": "[B6] Late-arriving: содержательное правило заменено канцелярской пустышкой «в установленном порядке» (текстура МТС: «fallback-логика (см. алгоритм)»)",
+    "hit": true
+   },
+   "HRD-REFNAME": {
+    "code": "C1",
+    "difficulty": "hard",
+    "description": "[C1] Ссылка на несуществующий раздел по имени («Оркестрация») — graph ловит только номера",
+    "hit": true
+   },
+   "HRD-RET": {
+    "code": "D2",
+    "difficulty": "hard",
+    "description": "[D2] Сверка на глубину 36 месяцев при ретеншене витрины 24 месяца",
+    "hit": true
+   },
+   "HRD-OVERLOAD": {
+    "code": "D1",
+    "difficulty": "expert",
+    "description": "[D1] Категория UNKNOWN перегружена: и NULL-тип сети, и неизвестный регион",
+    "hit": true
+   },
+   "HRD-TIME": {
+    "code": "D2",
+    "difficulty": "expert",
+    "description": "[D2] Запуск 3-го числа при сроке готовности 10:00 2-го числа (готовность раньше запуска)",
+    "hit": true
+   },
+   "HRD-KEY": {
+    "code": "D3",
+    "difficulty": "hard",
+    "description": "[D3] Из ключа таблицы убран FIELD_RAT_NAME при группировке по трём полям",
+    "hit": true
+   },
+   "HRD-FILT": {
+    "code": "B9",
+    "difficulty": "hard",
+    "description": "[B9] Нулевые записи исключаются «из расчёта FIELD_TRAFFIC_GB» — а из USERS_CNT?",
+    "hit": true
+   }
+  },
+  "extras": [
+   {
+    "category": "doc:contradiction",
+    "severity": "medium",
+    "why": "В «Контроле качества» описаны сверка байтов, доли отброшенных записей и соответствие регионов справочнику, но не описаны проверки NOT NULL для всех обязательных"
+   },
+   {
+    "category": "checklist:INC-03",
+    "severity": "medium",
+    "why": "В документе описана полная перезапись партиции месяца, но не указано, как выявляются и отражаются в витрине удаления или изменения записей в источнике задним чи"
+   }
+  ]
+ },
+ {
+  "variant": "v2g_gpt",
+  "target": "synth_v3official",
+  "defects": {
+   "OFF-SER": {
+    "code": "A1",
+    "difficulty": "medium",
+    "description": "[A1] Сериализация/формат хранения витрины не указаны (п.1 МТС): в приёмнике «по умолчанию платформы», в DDL нет STORED AS",
+    "hit": true
+   },
+   "OFF-CAT": {
+    "code": "A1",
+    "difficulty": "medium",
+    "description": "[A1] Нет прямой ссылки на Data Catalog для витрины (п.2 МТС): «заводится после ввода в эксплуатацию»",
+    "hit": true
+   },
+   "OFF-NUL": {
+    "code": "A3",
+    "difficulty": "medium",
+    "description": "[A3] Признак обязательности NOT NULL/NULLABLE убран для всех полей витрины (п.3 МТС)",
+    "hit": true
+   },
+   "OFF-FIL": {
+    "code": "A",
+    "difficulty": "medium",
+    "description": "[A] Типовые фильтры при построении и выгрузке не зафиксированы (п.4 МТС): блок удалён",
+    "hit": true
+   },
+   "OFF-TPL": {
+    "code": "F1",
+    "difficulty": "easy",
+    "description": "[F1] Раздел шаблона «Схема потоков данных» удалён без пометки «не применимо» (п.5 МТС)",
+    "hit": true
+   },
+   "OFF-EMPTY": {
+    "code": "F1",
+    "difficulty": "easy",
+    "description": "[F1] Раздел «Нефункциональные требования» присутствует, но пуст (прочерк) без «не применимо» (п.5 МТС)",
+    "hit": true
+   },
+   "OFF-KAFKA": {
+    "code": "A1",
+    "difficulty": "medium",
+    "description": "[A1] Кластер Kafka потокового источника не указан (п.6 МТС): остался только топик",
+    "hit": false
+   },
+   "OFF-HDFS": {
+    "code": "A1",
+    "difficulty": "medium",
+    "description": "[A1] Полный путь витрины в HDFS не указан (п.7 МТС): «HDFS кластера CLUSTER» вместо пути",
+    "hit": true
+   },
+   "OFF-REF": {
+    "code": "A",
+    "difficulty": "hard",
+    "description": "[A] Источники обогащения помечены «не применимо», хотя алгоритм использует справочник TABLE_REGION_REF (п.8 МТС + противоречие)",
+    "hit": true
+   },
+   "OFF-DDL": {
+    "code": "D4",
+    "difficulty": "hard",
+    "description": "[D4] DDL: FIELD_TRAFFIC_GB decimal(18,2) против decimal(18,3) в структуре витрины",
+    "hit": true
+   },
+   "OFF-EXAMPLE": {
+    "code": "E2",
+    "difficulty": "expert",
+    "description": "[E2] Пример данных содержит FIELD_RAT_NAME = 5G, которого нет в домене (2G, 3G, 4G, UNKNOWN)",
+    "hit": true
+   },
+   "OFF-HIST": {
+    "code": "C2",
+    "difficulty": "medium",
+    "description": "[C2] История изменений ссылается на поле FIELD_ROAMING_FLAG, которого нет в структуре витрины",
+    "hit": true
+   },
+   "OFF-FAQ": {
+    "code": "D2",
+    "difficulty": "hard",
+    "description": "[D2] FAQ: абонент относится к одному региону с наибольшим трафиком — противоречит группировке Шага 6 (учёт в каждой строке)",
+    "hit": true
+   }
+  },
+  "extras": [
+   {
+    "category": "doc:completeness",
+    "severity": "medium",
+    "why": "Код NO_REGION описан в структуре журнала, но в алгоритме записи с отсутствующим кодом в справочнике остаются в витрине, а явный шаг записи события/счётчика NO_R"
+   },
+   {
+    "category": "dev_question",
+    "severity": "medium",
+    "why": "Фраза «старше 24 месяцев» неоднозначна на границе. Неверная догадка либо удалит на один месяц больше нужного, либо нарушит требование ретеншена и оставит лишнюю"
+   }
+  ]
+ },
+ {
+  "variant": "v2g_gpt",
+  "target": "clean_base (шум)",
+  "defects": {},
+  "noise": [
+   {
+    "category": "doc:contradiction",
+    "severity": "high",
+    "why": "В разделе «Структура данных» все поля приёмника помечены NOT NULL, но в «Контроле качества» описаны только сверка байтов, доли отброшенных/NO_REGION и соответст"
+   },
+   {
+    "category": "dev_question",
+    "severity": "high",
+    "why": "Неверная граница ретеншена приведёт либо к преждевременному удалению ещё нужных данных, либо к нарушению требования хранения 24 месяцев."
+   },
+   {
+    "category": "doc:completeness",
+    "severity": "medium",
+    "why": "Код NO_REGION описан в структуре журнала, но в алгоритме не указано, что записи/счётчик NO_REGION пишутся в TABLE_AGG_LOAD_LOG. Для ZERO_VOLUME, EMPTY_KEY и EMP"
+   },
+   {
+    "category": "dev_question",
+    "severity": "medium",
+    "why": "Разные формулы могут по-разному пройти или завалить проверку; при source_bytes = 0 возможны деление на ноль и неопределённое решение о публикации партиции."
+   },
+   {
+    "category": "checklist:INC-03",
+    "severity": "medium",
+    "why": "В документе описаны записи, появившиеся в источнике после планового расчёта, но не описаны удалённые или изменённые задним числом записи источника."
+   },
+   {
+    "category": "dev_question",
+    "severity": "medium",
+    "why": "Если выбрать произвольную строку, один и тот же запуск может давать разные FIELD_REGION_NAME/FIELD_RAT_NAME и разные суммы по строкам витрины; агрегат и проверк"
+   }
+  ]
+ },
+ {
+  "variant": "v2e_gpt",
+  "target": "synth_v1",
+  "defects": {
+   "SYN-A-NUL": {
+    "code": "A3",
+    "difficulty": "medium",
+    "description": "[A3] Удалено правило NULL для FIELD_RAT",
+    "hit": true
+   },
+   "SYN-A-DED": {
+    "code": "A4",
+    "difficulty": "medium",
+    "description": "[A4] Удалён шаг дедупликации целиком",
+    "hit": true
+   },
+   "SYN-A-VOL": {
+    "code": "A8",
+    "difficulty": "medium",
+    "description": "[A8] Удалена строка ожидаемого объёма",
+    "hit": true
+   },
+   "SYN-A-BCKF": {
+    "code": "A",
+    "difficulty": "medium",
+    "description": "[A] Удалены глубина данных и бэкфилл",
+    "hit": false
+   },
+   "SYN-B-OPEN": {
+    "code": "B7",
+    "difficulty": "easy",
+    "description": "[B7] Список типов сети превращён в открытый («и т. д.»)",
+    "hit": true
+   },
+   "SYN-B-ANAPH": {
+    "code": "B3",
+    "difficulty": "medium",
+    "description": "[B3] Регион: «по полю FIELD_REGION» заменено местоимением без антецедента",
+    "hit": false
+   },
+   "SYN-B-VAGUE": {
+    "code": "B5",
+    "difficulty": "easy",
+    "description": "[B5] Срок готовности заменён на «оперативно»",
+    "hit": true
+   },
+   "SYN-C-DANGLE": {
+    "code": "C2",
+    "difficulty": "hard",
+    "description": "[C2] Партиционирование по несуществующему полю FIELD_PART_DATE",
+    "hit": true
+   },
+   "SYN-C-SECREF": {
+    "code": "C1",
+    "difficulty": "medium",
+    "description": "[C1] Ссылка на несуществующий раздел 31",
+    "hit": true
+   },
+   "SYN-D-TZ": {
+    "code": "D2",
+    "difficulty": "hard",
+    "description": "[D2] Время запуска в требованиях (МСК) противоречит регламенту (UTC)",
+    "hit": true
+   },
+   "SYN-D-NAME": {
+    "code": "D1",
+    "difficulty": "hard",
+    "description": "[D1] Журнал в контроле качества назван несуществующим именем",
+    "hit": true
+   },
+   "SYN-E-MEAS": {
+    "code": "E1",
+    "difficulty": "easy",
+    "description": "[E1] Допуск сверки 0.1% заменён неизмеримой формулировкой",
+    "hit": true
+   }
+  },
+  "extras": [
+   {
+    "category": "checklist:INC-03",
+    "severity": "medium",
+    "why": "В документе описаны поздно появившиеся записи и ручной пересчёт месяца, но нет правила для записей, удалённых или изменённых в источнике задним числом."
+   }
+  ]
+ },
+ {
+  "variant": "v2e_gpt",
+  "target": "doc3_mart (целевой тип)",
+  "defects": {
+   "G3-1": {
+    "code": "D2",
+    "difficulty": "hard",
+    "description": "«Инкремент» vs «только полная перезагрузка месяца без upsert» — противоречие",
+    "hit": true
+   },
+   "G3-2": {
+    "code": "C2",
+    "difficulty": "hard",
+    "description": "Алгоритм использует FIELD_LAC/CELL_ID/TIME_STAMP/CELL_GEN — структура источников не описана",
+    "hit": true
+   },
+   "G3-3": {
+    "code": "A3",
+    "difficulty": "hard",
+    "description": "Fallback региона не закрыт: lac=0 и cell=0 одновременно / джойн без совпадений",
+    "hit": true
+   },
+   "G3-4": {
+    "code": "B9",
+    "difficulty": "medium",
+    "description": "«Последний по времени за месяц» IMEI — по какому полю времени и из какой таблицы",
+    "hit": true
+   },
+   "G3-5": {
+    "code": "B2",
+    "difficulty": "medium",
+    "description": "FIELD_USERS_CNT=count(...) внутри списка «Группировка по» — агрегат в группировке",
+    "hit": true
+   },
+   "G3-6": {
+    "code": "A3",
+    "difficulty": "medium",
+    "description": "TAC не найден в TABLE_DEVICE_REF → vendor = ? (NULL/Unknown/отброс)",
+    "hit": false
+   },
+   "G3-7": {
+    "code": "A7",
+    "difficulty": "medium",
+    "description": "«Обязательно загрузить исторические данные» — процесс бэкфилла не описан",
+    "hit": true
+   },
+   "G3-8": {
+    "code": "D3",
+    "difficulty": "hard",
+    "description": "UTC витрины vs региональные часовые пояса источника: границы месяца",
+    "hit": true
+   },
+   "G3-9": {
+    "code": "A6",
+    "difficulty": "medium",
+    "description": "Нет SLA/времени запуска; «метка обработки DAG» — оркестрация не описана",
+    "hit": true
+   },
+   "G3-10": {
+    "code": "F1",
+    "difficulty": "easy",
+    "description": "Раздел контроля качества отсутствует",
+    "hit": true
+   },
+   "G3-11": {
+    "code": "A5",
+    "difficulty": "medium",
+    "description": "Ключ витрины явно не задан",
+    "hit": false
+   },
+   "G3-12": {
+    "code": "A1",
+    "difficulty": "medium",
+    "description": "Способ получения данных из источников IUM не указан (интерфейс/протокол/доступ)",
+    "hit": true
+   },
+   "G3-13": {
+    "code": "A7",
+    "difficulty": "medium",
+    "description": "Поведение при сбое загрузки не описано (недоступность источника, ретраи, частичный расчёт)",
+    "hit": true
+   },
+   "G3-14": {
+    "code": "F1",
+    "difficulty": "easy",
+    "description": "Отсутствуют разделы официального шаблона",
+    "hit": true
+   },
+   "G3-15": {
+    "code": "A3",
+    "difficulty": "medium",
+    "description": "NOT NULL/NULLABLE не указан ни для одного поля витрины (пункт МТС №3)",
+    "hit": true
+   },
+   "G3-16": {
+    "code": "A1",
+    "difficulty": "medium",
+    "description": "Сериализация/формат хранения витрины и источников не указаны (пункт МТС №1)",
+    "hit": true
+   }
+  },
+  "extras": [
+   {
+    "category": "dev_question",
+    "severity": "high",
+    "why": "Если TABLE_BS_REF содержит историю или несколько записей на один lac/cell, без правила актуальности невозможно детерминированно выбрать region_code."
+   },
+   {
+    "category": "checklist:CAT-01",
+    "severity": "medium",
+    "why": "В документе перечислены приёмник и источники, но нет прямых ссылок на Data Catalog для TABLE_AGG_DEVICES и таблиц-источников."
+   },
+   {
+    "category": "checklist:FIL-02",
+    "severity": "medium",
+    "why": "В алгоритме есть отдельные условия обработки данных, но нет отдельного перечня типовых условий фильтрации для построения витрины и выгрузки потребителям."
+   },
+   {
+    "category": "checklist:FIL-01",
+    "severity": "medium",
+    "why": "В документе описаны условия выбора записей и удаления дублей, но не указано, что делать с отфильтрованными записями: отбрасывать, логировать или помещать в кара"
+   }
+  ]
+ },
+ {
+  "variant": "v2e_gpt",
+  "target": "synth_v2hard",
+  "defects": {
+   "HRD-BOUND": {
+    "code": "D3",
+    "difficulty": "expert",
+    "description": "[D3] Граница месяца включает 1-е число следующего (off-by-one, двойной учёт дня)",
+    "hit": true
+   },
+   "HRD-VOID": {
+    "code": "B6",
+    "difficulty": "expert",
+    "description": "[B6] Late-arriving: содержательное правило заменено канцелярской пустышкой «в установленном порядке» (текстура МТС: «fallback-логика (см. алгоритм)»)",
+    "hit": true
+   },
+   "HRD-REFNAME": {
+    "code": "C1",
+    "difficulty": "hard",
+    "description": "[C1] Ссылка на несуществующий раздел по имени («Оркестрация») — graph ловит только номера",
+    "hit": true
+   },
+   "HRD-RET": {
+    "code": "D2",
+    "difficulty": "hard",
+    "description": "[D2] Сверка на глубину 36 месяцев при ретеншене витрины 24 месяца",
+    "hit": true
+   },
+   "HRD-OVERLOAD": {
+    "code": "D1",
+    "difficulty": "expert",
+    "description": "[D1] Категория UNKNOWN перегружена: и NULL-тип сети, и неизвестный регион",
+    "hit": true
+   },
+   "HRD-TIME": {
+    "code": "D2",
+    "difficulty": "expert",
+    "description": "[D2] Запуск 3-го числа при сроке готовности 10:00 2-го числа (готовность раньше запуска)",
+    "hit": true
+   },
+   "HRD-KEY": {
+    "code": "D3",
+    "difficulty": "hard",
+    "description": "[D3] Из ключа таблицы убран FIELD_RAT_NAME при группировке по трём полям",
+    "hit": true
+   },
+   "HRD-FILT": {
+    "code": "B9",
+    "difficulty": "hard",
+    "description": "[B9] Нулевые записи исключаются «из расчёта FIELD_TRAFFIC_GB» — а из USERS_CNT?",
+    "hit": true
+   }
+  },
+  "extras": [
+   {
+    "category": "doc:contradiction",
+    "severity": "medium",
+    "why": "После записи партиции описана сверка суммы байтов с источником за месяц, а также ежеквартальная сверка агрегатов с источником. Это может требовать повторного чт"
+   },
+   {
+    "category": "checklist:INC-03",
+    "severity": "medium",
+    "why": "Описан механизм повторного расчёта, но не указано, что происходит именно с удалёнными или изменёнными в источнике задним числом записями: можно понять как отраж"
+   }
+  ]
+ },
+ {
+  "variant": "v2e_gpt",
+  "target": "synth_v3official",
+  "defects": {
+   "OFF-SER": {
+    "code": "A1",
+    "difficulty": "medium",
+    "description": "[A1] Сериализация/формат хранения витрины не указаны (п.1 МТС): в приёмнике «по умолчанию платформы», в DDL нет STORED AS",
+    "hit": true
+   },
+   "OFF-CAT": {
+    "code": "A1",
+    "difficulty": "medium",
+    "description": "[A1] Нет прямой ссылки на Data Catalog для витрины (п.2 МТС): «заводится после ввода в эксплуатацию»",
+    "hit": true
+   },
+   "OFF-NUL": {
+    "code": "A3",
+    "difficulty": "medium",
+    "description": "[A3] Признак обязательности NOT NULL/NULLABLE убран для всех полей витрины (п.3 МТС)",
+    "hit": true
+   },
+   "OFF-FIL": {
+    "code": "A",
+    "difficulty": "medium",
+    "description": "[A] Типовые фильтры при построении и выгрузке не зафиксированы (п.4 МТС): блок удалён",
+    "hit": true
+   },
+   "OFF-TPL": {
+    "code": "F1",
+    "difficulty": "easy",
+    "description": "[F1] Раздел шаблона «Схема потоков данных» удалён без пометки «не применимо» (п.5 МТС)",
+    "hit": true
+   },
+   "OFF-EMPTY": {
+    "code": "F1",
+    "difficulty": "easy",
+    "description": "[F1] Раздел «Нефункциональные требования» присутствует, но пуст (прочерк) без «не применимо» (п.5 МТС)",
+    "hit": true
+   },
+   "OFF-KAFKA": {
+    "code": "A1",
+    "difficulty": "medium",
+    "description": "[A1] Кластер Kafka потокового источника не указан (п.6 МТС): остался только топик",
+    "hit": true
+   },
+   "OFF-HDFS": {
+    "code": "A1",
+    "difficulty": "medium",
+    "description": "[A1] Полный путь витрины в HDFS не указан (п.7 МТС): «HDFS кластера CLUSTER» вместо пути",
+    "hit": true
+   },
+   "OFF-REF": {
+    "code": "A",
+    "difficulty": "hard",
+    "description": "[A] Источники обогащения помечены «не применимо», хотя алгоритм использует справочник TABLE_REGION_REF (п.8 МТС + противоречие)",
+    "hit": true
+   },
+   "OFF-DDL": {
+    "code": "D4",
+    "difficulty": "hard",
+    "description": "[D4] DDL: FIELD_TRAFFIC_GB decimal(18,2) против decimal(18,3) в структуре витрины",
+    "hit": true
+   },
+   "OFF-EXAMPLE": {
+    "code": "E2",
+    "difficulty": "expert",
+    "description": "[E2] Пример данных содержит FIELD_RAT_NAME = 5G, которого нет в домене (2G, 3G, 4G, UNKNOWN)",
+    "hit": true
+   },
+   "OFF-HIST": {
+    "code": "C2",
+    "difficulty": "medium",
+    "description": "[C2] История изменений ссылается на поле FIELD_ROAMING_FLAG, которого нет в структуре витрины",
+    "hit": true
+   },
+   "OFF-FAQ": {
+    "code": "D2",
+    "difficulty": "hard",
+    "description": "[D2] FAQ: абонент относится к одному региону с наибольшим трафиком — противоречит группировке Шага 6 (учёт в каждой строке)",
+    "hit": true
+   }
+  },
+  "extras": []
+ },
+ {
+  "variant": "v2e_gpt",
+  "target": "clean_base (шум)",
+  "defects": {},
+  "noise": [
+   {
+    "category": "doc:completeness",
+    "severity": "high",
+    "why": "В разделе «Структура данных» все поля приёмника помечены NOT NULL, но в разделе «Контроль качества» описаны проверки суммы байтов, доли отброшенных записей и со"
+   },
+   {
+    "category": "dev_question",
+    "severity": "medium",
+    "why": "При разных знаменателях один и тот же месяц может либо пройти, либо не пройти контроль качества; от этого зависит публикация партиции."
+   },
+   {
+    "category": "doc:completeness",
+    "severity": "medium",
+    "why": "Коды ZERO_VOLUME, EMPTY_REGION и EMPTY_KEY явно пишутся в журнал на шагах обработки, CHECK_BYTES/CHECK_DROPPED/CHECK_REGIONS — как результаты проверок. Для кода"
+   },
+   {
+    "category": "dev_question",
+    "severity": "medium",
+    "why": "Если угадать неправильно, можно удалить на один месяц больше положенного или, наоборот, хранить лишнюю партицию с нарушением retention."
+   },
+   {
+    "category": "checklist:INC-03",
+    "severity": "medium",
+    "why": "В документе описаны поздно появившиеся новые записи, но не сказано, что делать с удалениями или исправлениями в источнике задним числом."
+   }
+  ]
+ },
+ {
+  "variant": "v2l_gpt",
+  "target": "synth_v1",
+  "defects": {
+   "SYN-A-NUL": {
+    "code": "A3",
+    "difficulty": "medium",
+    "description": "[A3] Удалено правило NULL для FIELD_RAT",
+    "hit": true
+   },
+   "SYN-A-DED": {
+    "code": "A4",
+    "difficulty": "medium",
+    "description": "[A4] Удалён шаг дедупликации целиком",
+    "hit": true
+   },
+   "SYN-A-VOL": {
+    "code": "A8",
+    "difficulty": "medium",
+    "description": "[A8] Удалена строка ожидаемого объёма",
+    "hit": false
+   },
+   "SYN-A-BCKF": {
+    "code": "A",
+    "difficulty": "medium",
+    "description": "[A] Удалены глубина данных и бэкфилл",
+    "hit": false
+   },
+   "SYN-B-OPEN": {
+    "code": "B7",
+    "difficulty": "easy",
+    "description": "[B7] Список типов сети превращён в открытый («и т. д.»)",
+    "hit": true
+   },
+   "SYN-B-ANAPH": {
+    "code": "B3",
+    "difficulty": "medium",
+    "description": "[B3] Регион: «по полю FIELD_REGION» заменено местоимением без антецедента",
+    "hit": false
+   },
+   "SYN-B-VAGUE": {
+    "code": "B5",
+    "difficulty": "easy",
+    "description": "[B5] Срок готовности заменён на «оперативно»",
+    "hit": true
+   },
+   "SYN-C-DANGLE": {
+    "code": "C2",
+    "difficulty": "hard",
+    "description": "[C2] Партиционирование по несуществующему полю FIELD_PART_DATE",
+    "hit": true
+   },
+   "SYN-C-SECREF": {
+    "code": "C1",
+    "difficulty": "medium",
+    "description": "[C1] Ссылка на несуществующий раздел 31",
+    "hit": true
+   },
+   "SYN-D-TZ": {
+    "code": "D2",
+    "difficulty": "hard",
+    "description": "[D2] Время запуска в требованиях (МСК) противоречит регламенту (UTC)",
+    "hit": true
+   },
+   "SYN-D-NAME": {
+    "code": "D1",
+    "difficulty": "hard",
+    "description": "[D1] Журнал в контроле качества назван несуществующим именем",
+    "hit": true
+   },
+   "SYN-E-MEAS": {
+    "code": "E1",
+    "difficulty": "easy",
+    "description": "[E1] Допуск сверки 0.1% заменён неизмеримой формулировкой",
+    "hit": false
+   }
+  },
+  "extras": [
+   {
+    "category": "dev_question",
+    "severity": "medium",
+    "why": "Без точной границы можно удалить на один месяц больше или меньше, а при backfill старого месяца — случайно удалить актуальные партиции либо оставить лишние."
+   }
+  ]
+ },
+ {
+  "variant": "v2l_gpt",
+  "target": "doc3_mart (целевой тип)",
+  "defects": {
+   "G3-1": {
+    "code": "D2",
+    "difficulty": "hard",
+    "description": "«Инкремент» vs «только полная перезагрузка месяца без upsert» — противоречие",
+    "hit": true
+   },
+   "G3-2": {
+    "code": "C2",
+    "difficulty": "hard",
+    "description": "Алгоритм использует FIELD_LAC/CELL_ID/TIME_STAMP/CELL_GEN — структура источников не описана",
+    "hit": true
+   },
+   "G3-3": {
+    "code": "A3",
+    "difficulty": "hard",
+    "description": "Fallback региона не закрыт: lac=0 и cell=0 одновременно / джойн без совпадений",
+    "hit": true
+   },
+   "G3-4": {
+    "code": "B9",
+    "difficulty": "medium",
+    "description": "«Последний по времени за месяц» IMEI — по какому полю времени и из какой таблицы",
+    "hit": true
+   },
+   "G3-5": {
+    "code": "B2",
+    "difficulty": "medium",
+    "description": "FIELD_USERS_CNT=count(...) внутри списка «Группировка по» — агрегат в группировке",
+    "hit": true
+   },
+   "G3-6": {
+    "code": "A3",
+    "difficulty": "medium",
+    "description": "TAC не найден в TABLE_DEVICE_REF → vendor = ? (NULL/Unknown/отброс)",
+    "hit": false
+   },
+   "G3-7": {
+    "code": "A7",
+    "difficulty": "medium",
+    "description": "«Обязательно загрузить исторические данные» — процесс бэкфилла не описан",
+    "hit": true
+   },
+   "G3-8": {
+    "code": "D3",
+    "difficulty": "hard",
+    "description": "UTC витрины vs региональные часовые пояса источника: границы месяца",
+    "hit": true
+   },
+   "G3-9": {
+    "code": "A6",
+    "difficulty": "medium",
+    "description": "Нет SLA/времени запуска; «метка обработки DAG» — оркестрация не описана",
+    "hit": true
+   },
+   "G3-10": {
+    "code": "F1",
+    "difficulty": "easy",
+    "description": "Раздел контроля качества отсутствует",
+    "hit": true
+   },
+   "G3-11": {
+    "code": "A5",
+    "difficulty": "medium",
+    "description": "Ключ витрины явно не задан",
+    "hit": true
+   },
+   "G3-12": {
+    "code": "A1",
+    "difficulty": "medium",
+    "description": "Способ получения данных из источников IUM не указан (интерфейс/протокол/доступ)",
+    "hit": true
+   },
+   "G3-13": {
+    "code": "A7",
+    "difficulty": "medium",
+    "description": "Поведение при сбое загрузки не описано (недоступность источника, ретраи, частичный расчёт)",
+    "hit": true
+   },
+   "G3-14": {
+    "code": "F1",
+    "difficulty": "easy",
+    "description": "Отсутствуют разделы официального шаблона",
+    "hit": true
+   },
+   "G3-15": {
+    "code": "A3",
+    "difficulty": "medium",
+    "description": "NOT NULL/NULLABLE не указан ни для одного поля витрины (пункт МТС №3)",
+    "hit": true
+   },
+   "G3-16": {
+    "code": "A1",
+    "difficulty": "medium",
+    "description": "Сериализация/формат хранения витрины и источников не указаны (пункт МТС №1)",
+    "hit": true
+   }
+  },
+  "extras": [
+   {
+    "category": "checklist:CAT-01",
+    "severity": "medium",
+    "why": "В документе перечислены таблицы источников и приёмник, но нет прямых ссылок на Data Catalog ни для TABLE_AGG_DEVICES, ни для источников."
+   },
+   {
+    "category": "checklist:FIL-02",
+    "severity": "medium",
+    "why": "В документе есть шаги алгоритма с условиями отбора и джойнов, но нет отдельного перечня типовых условий фильтрации для построения витрины и выгрузки потребителя"
+   }
+  ]
+ },
+ {
+  "variant": "v2l_gpt",
+  "target": "synth_v2hard",
+  "defects": {
+   "HRD-BOUND": {
+    "code": "D3",
+    "difficulty": "expert",
+    "description": "[D3] Граница месяца включает 1-е число следующего (off-by-one, двойной учёт дня)",
+    "hit": true
+   },
+   "HRD-VOID": {
+    "code": "B6",
+    "difficulty": "expert",
+    "description": "[B6] Late-arriving: содержательное правило заменено канцелярской пустышкой «в установленном порядке» (текстура МТС: «fallback-логика (см. алгоритм)»)",
+    "hit": true
+   },
+   "HRD-REFNAME": {
+    "code": "C1",
+    "difficulty": "hard",
+    "description": "[C1] Ссылка на несуществующий раздел по имени («Оркестрация») — graph ловит только номера",
+    "hit": true
+   },
+   "HRD-RET": {
+    "code": "D2",
+    "difficulty": "hard",
+    "description": "[D2] Сверка на глубину 36 месяцев при ретеншене витрины 24 месяца",
+    "hit": false
+   },
+   "HRD-OVERLOAD": {
+    "code": "D1",
+    "difficulty": "expert",
+    "description": "[D1] Категория UNKNOWN перегружена: и NULL-тип сети, и неизвестный регион",
+    "hit": true
+   },
+   "HRD-TIME": {
+    "code": "D2",
+    "difficulty": "expert",
+    "description": "[D2] Запуск 3-го числа при сроке готовности 10:00 2-го числа (готовность раньше запуска)",
+    "hit": true
+   },
+   "HRD-KEY": {
+    "code": "D3",
+    "difficulty": "hard",
+    "description": "[D3] Из ключа таблицы убран FIELD_RAT_NAME при группировке по трём полям",
+    "hit": true
+   },
+   "HRD-FILT": {
+    "code": "B9",
+    "difficulty": "hard",
+    "description": "[B9] Нулевые записи исключаются «из расчёта FIELD_TRAFFIC_GB» — а из USERS_CNT?",
+    "hit": true
+   }
+  },
+  "extras": [
+   {
+    "category": "checklist:INC-03",
+    "severity": "medium",
+    "why": "В документе описаны полная перезапись и появившиеся после расчёта новые записи, но нет правила для записей, удалённых или изменённых в источнике задним числом."
+   }
+  ]
+ },
+ {
+  "variant": "v2l_gpt",
+  "target": "synth_v3official",
+  "defects": {
+   "OFF-SER": {
+    "code": "A1",
+    "difficulty": "medium",
+    "description": "[A1] Сериализация/формат хранения витрины не указаны (п.1 МТС): в приёмнике «по умолчанию платформы», в DDL нет STORED AS",
+    "hit": true
+   },
+   "OFF-CAT": {
+    "code": "A1",
+    "difficulty": "medium",
+    "description": "[A1] Нет прямой ссылки на Data Catalog для витрины (п.2 МТС): «заводится после ввода в эксплуатацию»",
+    "hit": true
+   },
+   "OFF-NUL": {
+    "code": "A3",
+    "difficulty": "medium",
+    "description": "[A3] Признак обязательности NOT NULL/NULLABLE убран для всех полей витрины (п.3 МТС)",
+    "hit": true
+   },
+   "OFF-FIL": {
+    "code": "A",
+    "difficulty": "medium",
+    "description": "[A] Типовые фильтры при построении и выгрузке не зафиксированы (п.4 МТС): блок удалён",
+    "hit": true
+   },
+   "OFF-TPL": {
+    "code": "F1",
+    "difficulty": "easy",
+    "description": "[F1] Раздел шаблона «Схема потоков данных» удалён без пометки «не применимо» (п.5 МТС)",
+    "hit": true
+   },
+   "OFF-EMPTY": {
+    "code": "F1",
+    "difficulty": "easy",
+    "description": "[F1] Раздел «Нефункциональные требования» присутствует, но пуст (прочерк) без «не применимо» (п.5 МТС)",
+    "hit": true
+   },
+   "OFF-KAFKA": {
+    "code": "A1",
+    "difficulty": "medium",
+    "description": "[A1] Кластер Kafka потокового источника не указан (п.6 МТС): остался только топик",
+    "hit": false
+   },
+   "OFF-HDFS": {
+    "code": "A1",
+    "difficulty": "medium",
+    "description": "[A1] Полный путь витрины в HDFS не указан (п.7 МТС): «HDFS кластера CLUSTER» вместо пути",
+    "hit": true
+   },
+   "OFF-REF": {
+    "code": "A",
+    "difficulty": "hard",
+    "description": "[A] Источники обогащения помечены «не применимо», хотя алгоритм использует справочник TABLE_REGION_REF (п.8 МТС + противоречие)",
+    "hit": true
+   },
+   "OFF-DDL": {
+    "code": "D4",
+    "difficulty": "hard",
+    "description": "[D4] DDL: FIELD_TRAFFIC_GB decimal(18,2) против decimal(18,3) в структуре витрины",
+    "hit": true
+   },
+   "OFF-EXAMPLE": {
+    "code": "E2",
+    "difficulty": "expert",
+    "description": "[E2] Пример данных содержит FIELD_RAT_NAME = 5G, которого нет в домене (2G, 3G, 4G, UNKNOWN)",
+    "hit": true
+   },
+   "OFF-HIST": {
+    "code": "C2",
+    "difficulty": "medium",
+    "description": "[C2] История изменений ссылается на поле FIELD_ROAMING_FLAG, которого нет в структуре витрины",
+    "hit": true
+   },
+   "OFF-FAQ": {
+    "code": "D2",
+    "difficulty": "hard",
+    "description": "[D2] FAQ: абонент относится к одному региону с наибольшим трафиком — противоречит группировке Шага 6 (учёт в каждой строке)",
+    "hit": true
+   }
+  },
+  "extras": [
+   {
+    "category": "doc:completeness",
+    "severity": "medium",
+    "why": "Для ZERO_VOLUME, EMPTY_REGION, EMPTY_KEY и CHECK_* описано, когда пишутся записи в журнал, но для кода NO_REGION отдельный момент записи и значение FIELD_LOG_VA"
+   },
+   {
+    "category": "checklist:INC-02",
+    "severity": "medium",
+    "why": "Описано, что late-arriving записи попадают только при ручном перезапуске месяца, но не указано окно, в пределах которого такой перезапуск допускается: любой мес"
+   },
+   {
+    "category": "dev_question",
+    "severity": "medium",
+    "why": "Без этого нельзя однозначно посчитать FIELD_LOG_VALUE по ZERO_VOLUME и EMPTY_KEY и долю отброшенных записей. Неверный выбор приведёт к другим результатам TABLE_"
+   },
+   {
+    "category": "dev_question",
+    "severity": "medium",
+    "why": "Фраза допускает разные трактовки границы ретеншена. Ошибка на один месяц приведёт либо к преждевременному удалению ещё нужной партиции, либо к нарушению требова"
+   }
+  ]
+ },
+ {
+  "variant": "v2l_gpt",
+  "target": "clean_base (шум)",
+  "defects": {},
+  "noise": [
+   {
+    "category": "doc:completeness",
+    "severity": "high",
+    "why": "Код NO_REGION перечислен как допустимое значение журнала, но в алгоритме явно пишутся только ZERO_VOLUME, EMPTY_KEY, EMPTY_REGION, а результаты проверок — CHECK"
+   },
+   {
+    "category": "doc:contradiction",
+    "severity": "medium",
+    "why": "В структуре приёмника все поля объявлены NOT NULL, но в разделе «Контроль качества» описаны только сверка байтов, контроль отброшенных записей и соответствие ре"
+   },
+   {
+    "category": "dev_question",
+    "severity": "medium",
+    "why": "От выбранного правила зависят счётчики ZERO_VOLUME/EMPTY_KEY/EMPTY_REGION и доля отброшенных записей для CHECK_DROPPED; при неверном предположении можно получит"
+   },
+   {
+    "category": "dev_question",
+    "severity": "medium",
+    "why": "Если угадать неверно, записи с пробелами или отличающимся регистром могут попасть в NO_REGION вместо реального региона либо наоборот; это изменит агрегаты и про"
+   },
+   {
+    "category": "dev_question",
+    "severity": "medium",
+    "why": "От этого зависит результат проверки порога 1% и значение FIELD_LOG_VALUE для кода NO_REGION; неверное правило приведёт к ложной блокировке публикации или пропус"
+   },
+   {
+    "category": "dev_question",
+    "severity": "medium",
+    "why": "Без этого нельзя однозначно реализовать запись журнала: можно либо потерять историю запусков, либо создать дубли счётчиков и результатов проверок, из-за чего ау"
+   },
+   {
+    "category": "dev_question",
+    "severity": "medium",
+    "why": "Разная трактовка оставляет 24 или 25 месячных партиций; неверная граница может преждевременно удалить доступные потребителям данные или нарушить требование рете"
+   },
+   {
+    "category": "dev_question",
+    "severity": "medium",
+    "why": "Без детерминированного tie-breaker Spark может выбрать разные строки в разных запусках; изменятся регион, тип сети, суммы и FIELD_USERS_CNT, а повторный расчёт "
+   },
+   {
+    "category": "dev_question",
+    "severity": "medium",
+    "why": "В документе описаны только NULL и нулевой суммарный объём. Если отрицательные байты встретятся, разные реализации дадут разные FIELD_TRAFFIC_GB и результат CHEC"
+   }
+  ]
+ }
+]

@@ -1,0 +1,564 @@
+[
+ {
+  "variant": "v2g_gpt",
+  "target": "doc1_stream_geo",
+  "defects": {
+   "G1-1": {
+    "code": "D2",
+    "difficulty": "hard",
+    "description": "«Задержка < 1 мин» vs «задержка ≈ 0 сек» — противоречие метрик и НФТ",
+    "hit": true
+   },
+   "G1-2": {
+    "code": "D4",
+    "difficulty": "hard",
+    "description": "Схемы RAW_3G/RAW_4G асимметричны без объяснения (LOC_ACCURACY, VENDOR vs SERVICE_TYPE)",
+    "hit": false
+   },
+   "G1-3": {
+    "code": "A1",
+    "difficulty": "medium",
+    "description": "DDS/ADDS/CDM объявлены приёмниками — структура и переходы не описаны",
+    "hit": true
+   },
+   "G1-4": {
+    "code": "B1",
+    "difficulty": "medium",
+    "description": "FIELD_RADIUS и FIELD_LOC_ACCURACY — оба «точность в метрах»: дубль?",
+    "hit": false
+   },
+   "G1-5": {
+    "code": "D4",
+    "difficulty": "hard",
+    "description": "Формат времени указан только в 4G («Unix-время»), в 3G нет",
+    "hit": false
+   },
+   "G1-6": {
+    "code": "A8",
+    "difficulty": "medium",
+    "description": "Ретеншен DDS/ADDS/CDM не задан (только Kafka 24ч и RAW 30 дней)",
+    "hit": true
+   },
+   "G1-7": {
+    "code": "C3",
+    "difficulty": "medium",
+    "description": "«Алгоритмы: хэндоверы, геоинтервалы, RNC/eNodeB» — заявлены без содержимого/ссылок",
+    "hit": true
+   },
+   "G1-8": {
+    "code": "A2",
+    "difficulty": "medium",
+    "description": "Дедупликация и late data при чтении Kafka→RAW не описаны",
+    "hit": true
+   },
+   "G1-9": {
+    "code": "F1",
+    "difficulty": "easy",
+    "description": "Отсутствуют разделы официального шаблона (Data Catalog, DDL, Пример данных, FAQ...)",
+    "hit": true
+   },
+   "G1-10": {
+    "code": "A1",
+    "difficulty": "medium",
+    "description": "Сериализация входного/выходного потока не указана (обязательный пункт МТС №1)",
+    "hit": true
+   },
+   "G1-11": {
+    "code": "A1",
+    "difficulty": "medium",
+    "description": "Kafka-кластер не указан — только топики (обязательный пункт МТС №6)",
+    "hit": true
+   },
+   "G1-12": {
+    "code": "A3",
+    "difficulty": "medium",
+    "description": "NOT NULL/NULLABLE не указан ни для одного поля (обязательный пункт МТС №3)",
+    "hit": true
+   }
+  },
+  "extras": [
+   {
+    "category": "checklist:INC-01",
+    "severity": "high",
+    "why": "Неясно, по какому именно полю или курсору вычисляется инкремент: только по FIELD_HOUR, по комбинации FIELD_DATE_EVENT и FIELD_HOUR, по времени события FIELD_TIM"
+   },
+   {
+    "category": "checklist:KEY-01",
+    "severity": "high",
+    "why": "Целевые таблицы перечислены, но для них не заданы первичные/бизнес-ключи и однозначная гранулярность витрин."
+   },
+   {
+    "category": "doc:completeness",
+    "severity": "high",
+    "why": "MDT заявлен как часть источника, но в таблице топиков перечислены только 3G и 4G, а структуры данных описаны только для TABLE_GEO_RAW_3G и TABLE_GEO_RAW_4G. Неп"
+   },
+   {
+    "category": "checklist:FIL-01",
+    "severity": "medium",
+    "why": "В документе описана потоковая обработка входных геособытий, но нет правил фильтрации и не указано, что делать с записями, которые фильтр не прошли."
+   },
+   {
+    "category": "checklist:ERR-01",
+    "severity": "medium",
+    "why": "В документе описаны поток, мониторинг и слои, но не указано, что делать при недоступности PROVIDER_GEO/Kafka/Flink и как обрабатывать ретраи или частичную загру"
+   },
+   {
+    "category": "checklist:ERR-02",
+    "severity": "medium",
+    "why": "Для инкрементной потоковой загрузки по часовым партициям в документе не описан контроль, что все события за партицию/период загружены полностью."
+   },
+   {
+    "category": "checklist:FIL-02",
+    "severity": "medium",
+    "why": "В документе нет отдельного перечня типовых условий фильтрации для построения витрины и выгрузки потребителям."
+   },
+   {
+    "category": "checklist:REF-01",
+    "severity": "medium",
+    "why": "В документе нет перечня справочников НСИ и нет явного указания, что справочники не применяются."
+   },
+   {
+    "category": "doc:terminology",
+    "severity": "medium",
+    "why": "В TABLE_GEO_RAW_3G одновременно описаны FIELD_RADIUS как «Радиус точности» и FIELD_LOC_ACCURACY как «Точность локации», оба в метрах. Неясно, это разные показат"
+   }
+  ]
+ },
+ {
+  "variant": "v2g_gpt",
+  "target": "doc2_source_cdr",
+  "defects": {
+   "G2-1": {
+    "code": "B3",
+    "difficulty": "medium",
+    "description": "«Из этих полей удаляются лидирующие нули» — антецедент «этих» отсутствует",
+    "hit": true
+   },
+   "G2-2": {
+    "code": "C2",
+    "difficulty": "hard",
+    "description": "FAQ ссылается на radioAccessTechnology/CELL_ID/LAC — их нет в структуре",
+    "hit": true
+   },
+   "G2-3": {
+    "code": "A1",
+    "difficulty": "medium",
+    "description": "TABLE_MSCP_RAW_SFTP объявлена, структура не описана",
+    "hit": false
+   },
+   "G2-4": {
+    "code": "A7",
+    "difficulty": "medium",
+    "description": "Судьба событий вне окна фильтрации [-7д, +2ч] не определена",
+    "hit": true
+   },
+   "G2-5": {
+    "code": "D4",
+    "difficulty": "hard",
+    "description": "Сдвиги в часах vs поле «в минутах»; связь TIME_ZONE_SHIFT/TIMEZONE_CALC с шагом 2 не задана",
+    "hit": false
+   },
+   "G2-7": {
+    "code": "E2",
+    "difficulty": "medium",
+    "description": "FIELD_IS_ROAMING string со значениями true/false — тип vs значения",
+    "hit": false
+   },
+   "G2-8": {
+    "code": "F1",
+    "difficulty": "easy",
+    "description": "Отсутствуют разделы официального шаблона",
+    "hit": true
+   },
+   "G2-9": {
+    "code": "A3",
+    "difficulty": "medium",
+    "description": "NOT NULL/NULLABLE не указан ни для одного поля (пункт МТС №3)",
+    "hit": true
+   }
+  },
+  "extras": [
+   {
+    "category": "checklist:INC-01",
+    "severity": "high",
+    "why": "В документе описаны источники и фильтрация событий, но не указано, по какому полю или курсору определяется инкремент новых данных при загрузке."
+   },
+   {
+    "category": "dev_question",
+    "severity": "high",
+    "why": "От этого зависит код чтения Kafka и декодирования payload; если ошибиться, поток вообще не распарсится либо будет обрабатываться не тот уровень данных — байты а"
+   },
+   {
+    "category": "dev_question",
+    "severity": "high",
+    "why": "Разные варианты дадут разные наборы записей; при неверном выборе будут потеряны валидные CDR или загружены лишние, особенно на границах окна и при региональных "
+   },
+   {
+    "category": "dev_question",
+    "severity": "high",
+    "why": "Неверная интерпретация сдвига сдвинет события на часы, сломает партиционирование по дате/часу, фильтр 7 дней/2 часа и downstream-аналитику."
+   },
+   {
+    "category": "checklist:LOC-01",
+    "severity": "high",
+    "why": "Для приёмников указаны только имена таблиц TABLE_MSCP_RAW_KFK и TABLE_MSCP_RAW_SFTP, но не указаны их кластер/схема."
+   },
+   {
+    "category": "checklist:LOC-02",
+    "severity": "high",
+    "why": "В документе перечислены Kafka-топики по регионам, но рядом с ними не указан кластер Kafka."
+   },
+   {
+    "category": "dev_question",
+    "severity": "high",
+    "why": "Без этого нельзя однозначно выбрать режим записи append/overwrite/merge и стратегию checkpoint; ошибка приведёт либо к дублям CDR в raw-таблицах, либо к потере "
+   },
+   {
+    "category": "checklist:SER-01",
+    "severity": "high",
+    "why": "В документе не указаны формат хранения/сериализация и схема отдельно для каждого источника и для каждого приёмника; описана структура только TABLE_MSCP_RAW_KFK,"
+   },
+   {
+    "category": "checklist:CAT-01",
+    "severity": "medium",
+    "why": "В документе нет прямых ссылок на Data Catalog для источников и приёмников."
+   },
+   {
+    "category": "checklist:FIL-02",
+    "severity": "medium",
+    "why": "В документе есть шаг алгоритма с фильтрацией, но нет отдельного перечня типовых условий фильтрации для построения витрины и выгрузки потребителям."
+   },
+   {
+    "category": "checklist:KEY-02",
+    "severity": "medium",
+    "why": "Фразу можно понять как физическую HDFS-партицию при записи или как обычное поле с часом события; для Kafka-ключа и для партиционирования приёмников явно не опис"
+   },
+   {
+    "category": "doc:terminology",
+    "severity": "medium",
+    "why": "В разных разделах регионы заданы разными терминами: в таблице источников — русские названия регионов, в Kafka-топиках — суффиксы CENTRAL/EAST/SIB/NW/VOLGA/SOUTH"
+   },
+   {
+    "category": "dev_question",
+    "severity": "medium",
+    "why": "От источника региона зависит заполнение FIELD_REGION и выбор часового сдвига; при неверном правиле часть записей получит неправильный регион/сдвиг или будет нек"
+   },
+   {
+    "category": "checklist:KEY-01",
+    "severity": "medium",
+    "why": "В документе приведена структура TABLE_MSCP_RAW_KFK и перечислены приёмники, но не определены первичный или бизнес-ключ и гранулярность целевых таблиц."
+   },
+   {
+    "category": "checklist:SLA-01",
+    "severity": "medium",
+    "why": "В документе описаны источники, приёмники и обработка CDR, но не указано, с какой периодичностью и в какое конкретное время запускается загрузка."
+   },
+   {
+    "category": "checklist:SLA-02",
+    "severity": "medium",
+    "why": "В документе есть правила фильтрации по времени события, но нет срока, к которому данные за период должны быть доступны потребителям."
+   },
+   {
+    "category": "checklist:ERR-01",
+    "severity": "medium",
+    "why": "В документе описан алгоритм обработки потока, но не описано поведение при недоступности источников, ошибках загрузки, ретраях или частичной загрузке."
+   },
+   {
+    "category": "checklist:ERR-02",
+    "severity": "medium",
+    "why": "В документе перечислены источники и целевые таблицы, но нет механизма проверки, что все записи из источников попали в приёмники полностью."
+   },
+   {
+    "category": "checklist:VOL-01",
+    "severity": "medium",
+    "why": "В документе описаны формат, топики, папки и структура таблицы, но не указаны ожидаемые объёмы данных и срок хранения данных в приёмниках."
+   },
+   {
+    "category": "template:missing_section",
+    "severity": "medium",
+    "why": "Обязательный раздел шаблона «Регламент загрузки» отсутствует в документе."
+   },
+   {
+    "category": "template:missing_section",
+    "severity": "medium",
+    "why": "Обязательный раздел шаблона «Контроль качества» отсутствует в документе."
+   }
+  ]
+ },
+ {
+  "variant": "v2g_gpt_x",
+  "target": "doc1_stream_geo",
+  "defects": {
+   "G1-1": {
+    "code": "D2",
+    "difficulty": "hard",
+    "description": "«Задержка < 1 мин» vs «задержка ≈ 0 сек» — противоречие метрик и НФТ",
+    "hit": true
+   },
+   "G1-2": {
+    "code": "D4",
+    "difficulty": "hard",
+    "description": "Схемы RAW_3G/RAW_4G асимметричны без объяснения (LOC_ACCURACY, VENDOR vs SERVICE_TYPE)",
+    "hit": true
+   },
+   "G1-3": {
+    "code": "A1",
+    "difficulty": "medium",
+    "description": "DDS/ADDS/CDM объявлены приёмниками — структура и переходы не описаны",
+    "hit": true
+   },
+   "G1-4": {
+    "code": "B1",
+    "difficulty": "medium",
+    "description": "FIELD_RADIUS и FIELD_LOC_ACCURACY — оба «точность в метрах»: дубль?",
+    "hit": false
+   },
+   "G1-5": {
+    "code": "D4",
+    "difficulty": "hard",
+    "description": "Формат времени указан только в 4G («Unix-время»), в 3G нет",
+    "hit": false
+   },
+   "G1-6": {
+    "code": "A8",
+    "difficulty": "medium",
+    "description": "Ретеншен DDS/ADDS/CDM не задан (только Kafka 24ч и RAW 30 дней)",
+    "hit": true
+   },
+   "G1-7": {
+    "code": "C3",
+    "difficulty": "medium",
+    "description": "«Алгоритмы: хэндоверы, геоинтервалы, RNC/eNodeB» — заявлены без содержимого/ссылок",
+    "hit": true
+   },
+   "G1-8": {
+    "code": "A2",
+    "difficulty": "medium",
+    "description": "Дедупликация и late data при чтении Kafka→RAW не описаны",
+    "hit": true
+   },
+   "G1-9": {
+    "code": "F1",
+    "difficulty": "easy",
+    "description": "Отсутствуют разделы официального шаблона (Data Catalog, DDL, Пример данных, FAQ...)",
+    "hit": true
+   },
+   "G1-10": {
+    "code": "A1",
+    "difficulty": "medium",
+    "description": "Сериализация входного/выходного потока не указана (обязательный пункт МТС №1)",
+    "hit": true
+   },
+   "G1-11": {
+    "code": "A1",
+    "difficulty": "medium",
+    "description": "Kafka-кластер не указан — только топики (обязательный пункт МТС №6)",
+    "hit": true
+   },
+   "G1-12": {
+    "code": "A3",
+    "difficulty": "medium",
+    "description": "NOT NULL/NULLABLE не указан ни для одного поля (обязательный пункт МТС №3)",
+    "hit": true
+   }
+  },
+  "extras": [
+   {
+    "category": "checklist:KEY-01",
+    "severity": "high",
+    "why": "Целевые таблицы перечислены, но для них не указаны первичные или бизнес-ключи и точная гранулярность записи."
+   },
+   {
+    "category": "checklist:INC-01",
+    "severity": "high",
+    "why": "Фраза указывает на часовую партиционность, но не определяет однозначно курсор инкремента: это может быть FIELD_HOUR, сочетание даты и часа события или Kafka-off"
+   },
+   {
+    "category": "checklist:KEY-02",
+    "severity": "medium",
+    "why": "В документе указаны часовые партиции и географическое разбиение, но не ясно, является ли партиция при записи только часовой, региональной или составной; также д"
+   },
+   {
+    "category": "checklist:FIL-01",
+    "severity": "medium",
+    "why": "В документе нет правил фильтрации входных геособытий и не описано, что делать с записями, которые фильтр не прошли."
+   },
+   {
+    "category": "checklist:ERR-01",
+    "severity": "medium",
+    "why": "В документе описаны поток, мониторинг и инкрементная загрузка, но не описано, что делать при недоступности PROVIDER_GEO/Kafka/Flink, ретраях или частично загруж"
+   },
+   {
+    "category": "checklist:INC-03",
+    "severity": "medium",
+    "why": "В документе описан поток событий из PROVIDER_GEO через Kafka в слои DWH, но не указано, как отражать исправления или удаления исходных событий после их первично"
+   }
+  ]
+ },
+ {
+  "variant": "v2g_gpt_x",
+  "target": "doc2_source_cdr",
+  "defects": {
+   "G2-1": {
+    "code": "B3",
+    "difficulty": "medium",
+    "description": "«Из этих полей удаляются лидирующие нули» — антецедент «этих» отсутствует",
+    "hit": true
+   },
+   "G2-2": {
+    "code": "C2",
+    "difficulty": "hard",
+    "description": "FAQ ссылается на radioAccessTechnology/CELL_ID/LAC — их нет в структуре",
+    "hit": true
+   },
+   "G2-3": {
+    "code": "A1",
+    "difficulty": "medium",
+    "description": "TABLE_MSCP_RAW_SFTP объявлена, структура не описана",
+    "hit": false
+   },
+   "G2-4": {
+    "code": "A7",
+    "difficulty": "medium",
+    "description": "Судьба событий вне окна фильтрации [-7д, +2ч] не определена",
+    "hit": false
+   },
+   "G2-5": {
+    "code": "D4",
+    "difficulty": "hard",
+    "description": "Сдвиги в часах vs поле «в минутах»; связь TIME_ZONE_SHIFT/TIMEZONE_CALC с шагом 2 не задана",
+    "hit": true
+   },
+   "G2-7": {
+    "code": "E2",
+    "difficulty": "medium",
+    "description": "FIELD_IS_ROAMING string со значениями true/false — тип vs значения",
+    "hit": false
+   },
+   "G2-8": {
+    "code": "F1",
+    "difficulty": "easy",
+    "description": "Отсутствуют разделы официального шаблона",
+    "hit": true
+   },
+   "G2-9": {
+    "code": "A3",
+    "difficulty": "medium",
+    "description": "NOT NULL/NULLABLE не указан ни для одного поля (пункт МТС №3)",
+    "hit": true
+   }
+  },
+  "extras": [
+   {
+    "category": "checklist:INC-01",
+    "severity": "critical",
+    "why": "В документе описаны источники и фильтрация событий, но не указано поле или курсор, по которому определяется инкремент загрузки новых данных."
+   },
+   {
+    "category": "dev_question",
+    "severity": "critical",
+    "why": "Без этого нельзя однозначно написать парсер: поля могут сдвинуться, даты не распарсятся или null будут загружены как строки, что приведёт к некорректным данным "
+   },
+   {
+    "category": "dev_question",
+    "severity": "critical",
+    "why": "Неверное направление или набор полей сдвинет время событий на несколько часов, из-за чего сломаются фильтрация, бизнес-дата, часовые партиции и аналитика по вре"
+   },
+   {
+    "category": "checklist:MAP-02",
+    "severity": "high",
+    "why": "Типы данных приведены для TABLE_MSCP_RAW_KFK, но приёмник TABLE_MSCP_RAW_SFTP перечислен без структуры полей и типов."
+   },
+   {
+    "category": "checklist:LOC-02",
+    "severity": "high",
+    "why": "В документе перечислены Kafka-топики по регионам, но для них не указан Kafka-кластер."
+   },
+   {
+    "category": "dev_question",
+    "severity": "high",
+    "why": "Если фильтровать по неверному полю, часть CDR будет ошибочно отброшена или принята, особенно для длинных вызовов и записей с отличающимися датой события и време"
+   },
+   {
+    "category": "dev_question",
+    "severity": "high",
+    "why": "Неверный расчёт приведёт к записи данных не в те партиции и к расхождению отчётов по датам/часам."
+   },
+   {
+    "category": "checklist:DED-01",
+    "severity": "high",
+    "why": "Для потоков из Kafka и SFTP описаны целевые raw-таблицы, но не указан ключ дедупликации и правило выбора записи при дублях или повторной выгрузке."
+   },
+   {
+    "category": "checklist:LOC-01",
+    "severity": "medium",
+    "why": "Для источников указаны Kafka-топики и HDFS/SFTP-папки, но для приёмников TABLE_MSCP_RAW_KFK и TABLE_MSCP_RAW_SFTP не указаны кластер/схема размещения."
+   },
+   {
+    "category": "checklist:KEY-01",
+    "severity": "medium",
+    "why": "Структура целевых таблиц перечисляет поля, но не определяет первичный или бизнес-ключ и явную гранулярность витрины/таблицы."
+   },
+   {
+    "category": "checklist:CAT-01",
+    "severity": "medium",
+    "why": "В документе нет прямых ссылок на Data Catalog ни для источников, ни для приёмников."
+   },
+   {
+    "category": "checklist:FIL-02",
+    "severity": "medium",
+    "why": "В документе есть шаг алгоритма с фильтрацией, но нет отдельного перечня типовых условий фильтрации для построения витрины и выгрузки потребителям."
+   },
+   {
+    "category": "checklist:KEY-02",
+    "severity": "medium",
+    "why": "Фразу можно понять как указание HDFS-партиции, но не описано, является ли FIELD_HOUR фактической партицией при записи или просто полем таблицы, и не описано пра"
+   },
+   {
+    "category": "checklist:SLA-01",
+    "severity": "medium",
+    "why": "В документе описаны источники и обработка данных, но не указаны периодичность загрузки и конкретное время запуска."
+   },
+   {
+    "category": "checklist:ERR-01",
+    "severity": "medium",
+    "why": "В документе не описано, что делать при недоступности источника, ошибках обработки, ретраях или частичной загрузке."
+   },
+   {
+    "category": "checklist:ERR-02",
+    "severity": "medium",
+    "why": "В документе нет описания контроля полноты загрузки для данных из Kafka/SFTP в приёмные таблицы."
+   },
+   {
+    "category": "checklist:VOL-01",
+    "severity": "medium",
+    "why": "В документе не указаны ожидаемые объёмы данных и срок хранения данных в приёмных таблицах."
+   },
+   {
+    "category": "dev_question",
+    "severity": "medium",
+    "why": "От региона зависят timezone-сдвиг и партиционирование/фильтрация; при неверном источнике региона время и данные будут обработаны неправильно."
+   },
+   {
+    "category": "checklist:INC-02",
+    "severity": "medium",
+    "why": "Эту фразу можно прочитать как окно допустимого времени события для фильтрации либо как правило обработки late-arriving данных; при этом явно не сказано, выполня"
+   },
+   {
+    "category": "checklist:SLA-02",
+    "severity": "medium",
+    "why": "В документе нет срока, к которому данные за период должны быть доступны потребителям."
+   },
+   {
+    "category": "template:missing_section",
+    "severity": "medium",
+    "why": "Обязательный раздел шаблона «Регламент загрузки» отсутствует в документе."
+   },
+   {
+    "category": "template:missing_section",
+    "severity": "medium",
+    "why": "Обязательный раздел шаблона «Контроль качества» отсутствует в документе."
+   }
+  ]
+ }
+]
