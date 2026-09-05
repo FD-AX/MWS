@@ -1,0 +1,9 @@
+rubric.yaml: INC-01.not_if = полн(ая|ой|ую|ый|ое)\s+(перезапис|перезагруз|пересч[её]т|перегруз)
+rubric.yaml: INC-03.not_if = полн(ая|ой|ую|ый|ое)\s+(перезапис|перезагруз|пересч[её]т|перегруз)
+rubric_extra.yaml: ORD-01.applies_if = последн\w*\s+(по времени|запис|верси|значен|состоян|актуальн)|актуальн\w+\s+(запис|верси|значен)|latest record|last record|max\(|min\(
+rubric.yaml: NUL-02.applies_if = \)\s*/\s*[A-Za-zА-Яа-я_(]|[A-Za-zА-Яа-я_)]\s*/\s*\(|/\s*(?:nullif|sum|count|avg)\b|\bделени[еяю]\s+на\b|знаменател
+rubric.yaml: MAP-02.applies_if = decimal\s*\(|numeric\s*\(|varchar\s*\(|char\s*\(|точност[ьи]\s+(?:типа|данных|поля)
+  doc3   NA: ['INC-01', 'INC-03', 'MAP-02', 'NUL-02']
+  clean  NA: ['INC-01', 'INC-03', 'NUL-02', 'ORD-01']
+  doc1   NA: ['MAP-02', 'NUL-02', 'ORD-01']
+  doc2   NA: ['INC-03', 'MAP-02', 'NUL-02', 'ORD-01']
