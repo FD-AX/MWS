@@ -54,6 +54,16 @@ VARIANTS = {
     # Полный набор сигналов на поде: энтропия (n>1 нативно в vLLM) + логит-зонд
     "v2el": {"llm": True, "baseline": False, "entropy": True, "graph": True,
              "lp": True, "lp_backend": "pod"},
+    # _x = те же варианты с общими слотами rubric_extra.yaml (EXP-19: ORD/REF-02/HIS/TZ)
+    "v2g_x": {"llm": True, "baseline": False, "entropy": False, "graph": True, "extra": True},
+    "v2l_x": {"llm": True, "baseline": False, "entropy": False, "graph": True,
+              "lp": True, "lp_backend": "pod", "extra": True},
+    "v2el_x": {"llm": True, "baseline": False, "entropy": True, "graph": True,
+               "lp": True, "lp_backend": "pod", "extra": True},
+    "v2g_gpt_x": {"llm": True, "baseline": False, "entropy": False, "graph": True,
+                  "backend": "openai", "extra": True},
+    "v2l_gpt_x": {"llm": True, "baseline": False, "entropy": False, "graph": True,
+                  "backend": "openai", "lp": True, "extra": True},
     # h5 = граф + только «компиляция ТЗ» (изолированный вклад гипотезы H5)
     "h5":  {"llm": True,  "baseline": False, "entropy": False, "graph": True,
             "passes": ["compile"]},
@@ -103,7 +113,8 @@ def main() -> int:
         raise SystemExit(f"Неизвестные варианты: {unknown}. Доступны: {list(VARIANTS)}")
 
     targets = yaml.safe_load((ROOT / args.targets).read_text(encoding="utf-8"))["targets"]
-    rubric = load_rubric()
+    rubric = load_rubric(extra=False)
+    rubric_x = load_rubric(extra=True)  # варианты *_x: + общие слоты rubric_extra.yaml
 
     llms: dict[str, object] = {}
 
@@ -156,7 +167,8 @@ def main() -> int:
             llm_lp = (get_llm(spec.get("lp_backend", "openai_lp"))
                       if spec["llm"] and spec.get("lp") else None)
             try:
-                result = review(text, rubric, llm, llm_cheap=llm_cheap,
+                result = review(text, rubric_x if spec.get("extra") else rubric, llm,
+                                llm_cheap=llm_cheap,
                                 use_lp=spec.get("lp", False), llm_lp=llm_lp,
                                 use_baseline=spec["baseline"], use_entropy=spec["entropy"],
                                 use_graph=spec["graph"],
