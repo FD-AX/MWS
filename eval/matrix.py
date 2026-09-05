@@ -38,7 +38,14 @@ def main() -> int:
         i = args.index("--out"); out = args[i + 1]; args = args[:i] + args[i + 2:]
     recs: list[dict] = []
     for p in args:
-        recs.extend(json.loads(Path(p).read_text(encoding="utf-8")))
+        # Легаси-JSON без поля model: «путь=метка» подставляет модель (например raw_exp19_gpt.json=gpt-5.5)
+        label = None
+        if "=" in p:
+            p, label = p.split("=", 1)
+        for r in json.loads(Path(p).read_text(encoding="utf-8")):
+            if label and not r.get("model"):
+                r["model"] = label
+            recs.append(r)
     # (target, variant, model) -> list of recall / noise / extras per run
     recall: dict = defaultdict(list); noise: dict = defaultdict(list); extras: dict = defaultdict(list)
     gold_n: dict[str, int] = {}
