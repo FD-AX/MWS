@@ -33,8 +33,10 @@ class Settings:
     max_tokens_floor: int = 0
     # Уровень размышлений (low/medium/high) — extra_body.reasoning_effort; None = не слать.
     reasoning_effort: str | None = None
-    # Режим логит-зонда: "chat" (первый токен chat-ответа = ответ: gpt-4.1, обычные модели)
-    # или "harmony" (gpt-oss через vLLM: канал final открываем сами в raw-промпте).
+    # Режим зонда неоднозначности (uncertainty_lp): "chat" — logprobs первого токена chat-ответа
+    # (gpt-4.1 и другие не-reasoning модели); "harmony" — то же для gpt-oss через raw-промпт с открытым
+    # каналом final (EXP-19: смещён, зависит от раскладки — не для прода); "sample" — Монте-Карло
+    # по n коротким ответам при t=1 (reasoning-модели на vLLM: n батчится в одном вызове).
     probe_mode: str = "chat"
 
 

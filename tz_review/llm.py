@@ -169,6 +169,8 @@ class LLM:
 
         if self._probe_mode == "harmony":
             return self._binary_probs_harmony(system, user, pos, neg)
+        if self._probe_mode == "sample":
+            return self._binary_probs_sample(system, user, pos, neg)
         resp = self._client.chat.completions.create(
             model=self._model,
             messages=[{"role": "system", "content": system},
@@ -205,6 +207,22 @@ class LLM:
                 last_err = e
                 time.sleep(2 * (attempt + 1) + random.uniform(0.0, 1.5))
         raise RuntimeError(f"logprob-зонд недоступен после {ATTEMPTS} попыток: {last_err}")
+
+    PROBE_SAMPLES = 8
+    _RU = {"ДА": "YES", "НЕТ": "NO"}
+
+    def _binary_probs_sample(self, system: str, user: str,
+                             pos: str, neg: str) -> tuple[float, float]:
+        """Reasoning-модели (gpt-oss): первый токен ДО размышления смещён и зависит от раскладки
+        промпта (EXP-19: «есть ли Kafka» → YES 0.97 при документе в конце), а ПОСЛЕ размышления
+        вырожден (1.0 при t=0). Поэтому P(pos)/P(neg) оцениваем Монте-Карло: n коротких ответов
+        при t=1 одним вызовом (vLLM батчит n), доля YES/NO среди первых слов."""
+        outs = self._chat(system, user, temperature=1.0, n=self.PROBE_SAMPLES, max_tokens=400)
+        votes: list[tuple[str, float]] = []
+        for o in outs:
+            first = (o.strip().split() or [""])[0].strip(".,!:;«»\"'*").upper()
+            votes.append((self._RU.get(first, first), 1.0 / max(len(outs), 1)))
+        return aggregate_yes_no(votes, pos, neg)
 
     def sample(self, system: str, user: str, n: int = 5, temperature: float = 0.9) -> list[str]:
         """n независимых сэмплов (для semantic entropy). Некоторые локальные бэкенды
