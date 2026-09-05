@@ -121,6 +121,7 @@ class LLM:
         self._floor = int(getattr(settings, "max_tokens_floor", 0) or 0)
         self._reasoning = getattr(settings, "reasoning_effort", None)
         self._probe_mode = getattr(settings, "probe_mode", "chat") or "chat"
+        self._stream = bool(getattr(settings, "stream", False))
         # Учёт вызовов/токенов (метрики воркера, стоимость документа)
         self.stats = {"calls": 0, "prompt_tokens": 0, "completion_tokens": 0}
 
@@ -148,25 +149,23 @@ class LLM:
             if self._reasoning:
                 kwargs["extra_body"] = {"reasoning_effort": self._reasoning}
             try:
-                resp = self._client.chat.completions.create(
-                    model=self._model,
-                    messages=[
-                        {"role": "system", "content": system},
-                        {"role": "user", "content": user},
-                    ],
-                    n=n,
-                    **kwargs,
-                )
-                self._account(resp)
-                outs = [c.message.content or "" for c in resp.choices]
-                self.last_finish = (getattr(resp.choices[0], "finish_reason", None)
-                                    if resp.choices else None)
+                messages = [{"role": "system", "content": system},
+                            {"role": "user", "content": user}]
+                if self._stream and n == 1:
+                    outs, finish = self._chat_stream(messages, kwargs)
+                    self.last_finish = finish
+                else:
+                    resp = self._client.chat.completions.create(
+                        model=self._model, messages=messages, n=n, **kwargs)
+                    self._account(resp)
+                    outs = [c.message.content or "" for c in resp.choices]
+                    self.last_finish = (getattr(resp.choices[0], "finish_reason", None)
+                                        if resp.choices else None)
                 if any(o.strip() for o in outs):
                     return outs
                 # Пустой ответ (reasoning съел бюджет / сбой генерации) — это не успех:
                 # раньше уходил дальше как '' и ронял проход «В ответе модели нет JSON».
-                finish = (getattr(resp.choices[0], "finish_reason", None)
-                          if resp.choices else None)
+                finish = self.last_finish
                 last_err = RuntimeError(f"пустой ответ модели (finish_reason={finish})")
                 if finish == "length":
                     budget_mult *= 2
@@ -180,6 +179,31 @@ class LLM:
                 last_err = e
             time.sleep(2 * (attempt + 1) + random.uniform(0.0, 1.5))  # jitter
         raise RuntimeError(f"LLM недоступна после {ATTEMPTS} попыток: {last_err}")
+
+    def _chat_stream(self, messages: list[dict], kwargs: dict) -> tuple[list[str], str | None]:
+        """Потоковый вариант одного ответа: байты идут непрерывно (reasoning-дельты тоже), поэтому
+        прокси не режет запрос по тайм-ауту первого байта. Сэмплирование то же, что без stream."""
+        parts: list[str] = []
+        finish = None
+        usage = None
+        stream = self._client.chat.completions.create(
+            model=self._model, messages=messages, stream=True,
+            stream_options={"include_usage": True}, **kwargs)
+        for chunk in stream:
+            if getattr(chunk, "usage", None):
+                usage = chunk.usage
+            if chunk.choices:
+                ch = chunk.choices[0]
+                delta = getattr(ch, "delta", None)
+                if delta is not None and getattr(delta, "content", None):
+                    parts.append(delta.content)
+                if getattr(ch, "finish_reason", None):
+                    finish = ch.finish_reason
+        self.stats["calls"] += 1
+        if usage is not None:
+            self.stats["prompt_tokens"] += getattr(usage, "prompt_tokens", 0) or 0
+            self.stats["completion_tokens"] += getattr(usage, "completion_tokens", 0) or 0
+        return ["".join(parts)], finish
 
     def chat_json(self, system: str, user: str, temperature: float = 0.0,
                   max_tokens: int = 1600) -> Any:

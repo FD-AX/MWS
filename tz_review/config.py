@@ -38,6 +38,9 @@ class Settings:
     # каналом final (EXP-19: смещён, зависит от раскладки — не для прода); "sample" — Монте-Карло
     # по n коротким ответам при t=1 (reasoning-модели на vLLM: n батчится в одном вызове).
     probe_mode: str = "chat"
+    # Потоковая передача ответа (транспорт, не влияет на сэмплирование): прокси RunPod/Cloudflare
+    # рвёт запросы без байтов дольше ~100 с (524) — длинные reasoning-ответы 120b в это окно не влезают.
+    stream: bool = False
 
 
 def _int_env(name: str, default: int) -> int:
@@ -63,6 +66,7 @@ def settings_or_die() -> Settings:
         max_tokens_floor=_int_env("TZR_MAX_TOKENS", 0),
         reasoning_effort=os.environ.get("TZR_REASONING_EFFORT") or None,
         probe_mode=os.environ.get("TZR_PROBE_MODE") or "chat",
+        stream=os.environ.get("TZR_STREAM", "").lower() in ("1", "true", "yes"),
     )
 
 
