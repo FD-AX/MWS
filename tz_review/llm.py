@@ -217,7 +217,8 @@ class LLM:
         промпта (EXP-19: «есть ли Kafka» → YES 0.97 при документе в конце), а ПОСЛЕ размышления
         вырожден (1.0 при t=0). Поэтому P(pos)/P(neg) оцениваем Монте-Карло: n коротких ответов
         при t=1 одним вызовом (vLLM батчит n), доля YES/NO среди первых слов."""
-        outs = self._chat(system, user, temperature=1.0, n=self.PROBE_SAMPLES, max_tokens=400)
+        # sample(): n одним вызовом, где бэкенд умеет (vLLM), иначе добор отдельными вызовами (OpenAI).
+        outs = self.sample(system, user, n=self.PROBE_SAMPLES, temperature=1.0)
         votes: list[tuple[str, float]] = []
         for o in outs:
             first = (o.strip().split() or [""])[0].strip(".,!:;«»\"'*").upper()

@@ -64,6 +64,14 @@ VARIANTS = {
                   "backend": "openai", "extra": True},
     "v2l_gpt_x": {"llm": True, "baseline": False, "entropy": False, "graph": True,
                   "backend": "openai", "lp": True, "extra": True},
+    # ── Канонические архитектуры (experiments/PROTOCOL.md): одинаковы для всех моделей,
+    # модель задаётся флагом --backend. Один и тот же код сигналов для обеих моделей:
+    # энтропия сэмплирует ТУ ЖЕ модель (без дешёвого сэмплера), зонд = Монте-Карло n=8 (probe_mode=sample).
+    # v1g — детерминированный слой + граф; v2g — конвейер + граф; v2e — + энтропия;
+    "v2s": {"llm": True, "baseline": False, "entropy": False, "graph": True, "lp": True, "canon": True},
+    "v2x": {"llm": True, "baseline": False, "entropy": False, "graph": True, "extra": True, "canon": True},
+    "v2f": {"llm": True, "baseline": False, "entropy": True, "graph": True, "lp": True, "extra": True,
+            "canon": True},
     # h5 = граф + только «компиляция ТЗ» (изолированный вклад гипотезы H5)
     "h5":  {"llm": True,  "baseline": False, "entropy": False, "graph": True,
             "passes": ["compile"]},
@@ -105,6 +113,10 @@ def main() -> int:
     ap.add_argument("--out", default="eval/bench_report.md")
     ap.add_argument("--json", default=None,
                     help="Дополнительно сохранить сырые результаты (per-defect hit) в JSON")
+    ap.add_argument("--backend", default="pod", choices=["pod", "openai"],
+                    help="Модель для канонических вариантов (без явного backend в VARIANTS)")
+    ap.add_argument("--repeat", type=int, default=1,
+                    help="Сколько раз прогнать каждую пару вариант×цель (PROTOCOL: медиана и размах)")
     args = ap.parse_args()
 
     variants = [v.strip() for v in args.variants.split(",")]
@@ -142,7 +154,7 @@ def main() -> int:
     for v in list(variants):
         if VARIANTS[v]["llm"]:
             try:
-                get_llm(VARIANTS[v].get("backend", "pod"))
+                get_llm(VARIANTS[v].get("backend", args.backend))
             except SystemExit as e:
                 print(f"! {v}: LLM недоступна ({e}) — вариант пропущен.")
                 variants.remove(v)
@@ -155,17 +167,24 @@ def main() -> int:
     details = []
     raw_records = []
 
+    # --repeat N: каждая цель повторяется N раз; метка получает суффикс « #k», сырые записи — поле run.
+    if args.repeat > 1:
+        targets = [dict(t, label=f"{t['label']} #{r + 1}", run=r)
+                   for r in range(args.repeat) for t in targets]
+
     for vname in variants:
         spec = VARIANTS[vname]
         for t in targets:
             text = (ROOT / t["doc"]).read_text(encoding="utf-8")
             _log(f"start {vname} · {t['label']}")
-            llm = get_llm(spec.get("backend", "pod")) if spec["llm"] else None
+            backend = spec.get("backend", args.backend)
+            llm = get_llm(backend) if spec["llm"] else None
+            # Легаси *_gpt-варианты сэмплировали энтропию дешёвой моделью; канонические — той же моделью.
             llm_cheap = (get_llm("openai_cheap")
                          if spec["llm"] and spec["entropy"] and spec.get("backend") == "openai"
-                         else None)
-            llm_lp = (get_llm(spec.get("lp_backend", "openai_lp"))
-                      if spec["llm"] and spec.get("lp") else None)
+                         and not spec.get("canon") else None)
+            lp_backend = spec.get("lp_backend", backend if spec.get("canon") else "openai_lp")
+            llm_lp = get_llm(lp_backend) if spec["llm"] and spec.get("lp") else None
             try:
                 result = review(text, rubric_x if spec.get("extra") else rubric, llm,
                                 llm_cheap=llm_cheap,
@@ -192,7 +211,8 @@ def main() -> int:
                              f"| {diffs} | {n_findings} | {len(extras)} | {result.anchoring:.0%} |")
                 _log(lines[-1])
                 raw_records.append({
-                    "variant": vname, "target": t["label"],
+                    "variant": vname, "target": t["label"], "run": t.get("run", 0),
+                    "backend": backend, "model": getattr(llm, "_model", None),
                     "defects": {d["id"]: {"code": str(d.get("code", "?")),
                                           "difficulty": str(d.get("difficulty", "?")),
                                           "description": d["description"],
@@ -214,7 +234,8 @@ def main() -> int:
                              f"| noise={n_findings} | {result.anchoring:.0%} |")
                 _log(lines[-1])
                 raw_records.append({
-                    "variant": vname, "target": t["label"], "defects": {},
+                    "variant": vname, "target": t["label"], "run": t.get("run", 0),
+                    "backend": backend, "model": getattr(llm, "_model", None), "defects": {},
                     "noise": [{"category": f["category"], "severity": f["severity"],
                                "why": (f["why"] or "")[:160]}
                               for f in (x.model_dump() for x in result.findings)

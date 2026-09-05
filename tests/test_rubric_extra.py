@@ -32,6 +32,17 @@ class RubricExtraTests(unittest.TestCase):
         applicable, na = split_applicable(r["checklist"], text)
         self.assertFalse(EXTRA_IDS & set(na), f"NA среди extra: {EXTRA_IDS & set(na)}")
 
+    def test_extra_slots_batched_separately(self):
+        """Батчи базовых слотов не меняются от подключения extra (иначе плывут ответы на официальные пункты)."""
+        from tz_review.passes.checklist import make_batches
+        base = load_rubric(extra=False)["checklist"]
+        ext = load_rubric(extra=True)
+        b0 = make_batches(base, set())
+        b1 = make_batches(ext["checklist"], set(ext["extra_slots"]))
+        self.assertEqual([[q["id"] for q in b] for b in b0], [[q["id"] for q in b] for b in b1[:len(b0)]])
+        tail = {q["id"] for b in b1[len(b0):] for q in b}
+        self.assertEqual(tail, EXTRA_IDS)
+
     def test_extra_slots_na_on_unrelated_text(self):
         text = "Поток принимает события из Kafka и пишет их в HDFS как есть, без преобразований."
         r = load_rubric(extra=True)

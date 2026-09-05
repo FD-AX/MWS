@@ -76,6 +76,9 @@ def openai_settings_or_die() -> Settings:
         base_url=os.environ.get("OPENAI_BASE_URL", "https://api.openai.com/v1"),
         api_key=key,
         model=os.environ.get("OPENAI_MODEL", "gpt-5.5"),
+        # Канонический зонд одинаков для всех моделей (PROTOCOL.md): Монте-Карло; reasoning-модели
+        # OpenAI logprobs не отдают, поэтому «chat» для них бессмыслен.
+        probe_mode=os.environ.get("OPENAI_PROBE_MODE") or "sample",
     )
 
 

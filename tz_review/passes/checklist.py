@@ -50,6 +50,15 @@ def _ask(batch: list[dict], doc_text: str, llm: LLM) -> dict[str, ChecklistAnswe
     return answers
 
 
+def make_batches(questions: list[dict], extra_ids: set[str]) -> list[list[dict]]:
+    """Батчи по BATCH_SIZE, причём базовые и дополнительные слоты (rubric_extra) батчатся
+    раздельно: подключение extra не должно менять состав батчей базовых 27 слотов —
+    иначе ответы на официальные пункты плывут вместе с контекстом батча (EXP-19, 120b)."""
+    base = [q for q in questions if q["id"] not in extra_ids]
+    extra = [q for q in questions if q["id"] in extra_ids]
+    return [g[i:i + BATCH_SIZE] for g in (base, extra) for i in range(0, len(g), BATCH_SIZE)]
+
+
 def run(doc_text: str, rubric: dict[str, Any], llm: LLM,
         on_batch=None) -> tuple[list[Finding], dict[str, str]]:
     """Чеклист-аудит «слотов» полноты. Возвращает (находки, статусы всех слотов).
@@ -59,12 +68,12 @@ def run(doc_text: str, rubric: dict[str, Any], llm: LLM,
     findings: list[Finding] = []
     statuses: dict[str, str] = {q: "NA" for q in na_slots}
     unanswered: list[str] = []
-    n_batches = (len(questions) + BATCH_SIZE - 1) // BATCH_SIZE
+    batches = make_batches(questions, set(rubric.get("extra_slots") or []))
+    n_batches = len(batches)
 
-    for i in range(0, len(questions), BATCH_SIZE):
+    for bi, batch in enumerate(batches):
         if on_batch is not None:
-            on_batch(i // BATCH_SIZE, n_batches)
-        batch = questions[i:i + BATCH_SIZE]
+            on_batch(bi, n_batches)
         answers = _ask(batch, doc_text, llm)
         rest = [q for q in batch if q["id"] not in answers]
         if rest:
