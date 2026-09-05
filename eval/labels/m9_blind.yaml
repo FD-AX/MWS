@@ -1,0 +1,313 @@
+labels:
+- n: 1
+  target: synth_v1
+  category: dev_question
+  severity: medium
+  why: Неправильная категоризация изменит распределение трафика по типам сети, что нарушит бизнес‑требования и может вызвать отклонения в проверках качества.
+  members: 1
+  verdict: TP
+  cls: gold-dup
+- n: 2
+  target: synth_v1
+  category: dev_question
+  severity: medium
+  why: Неправильный timestamp усложнит аудит и отладку, а также может нарушить согласованность данных при повторных запусках.
+  members: 1
+  verdict: FP
+  cls: generic-whatif
+- n: 3
+  target: synth_v2hard
+  category: dev_question
+  severity: medium
+  why: Неправильный тип округления даст небольшие расхождения с контрольной проверкой (допустимо 0.1 %), что может привести к ложным алертам.
+  members: 1
+  verdict: FP
+  cls: generic-whatif
+- n: 4
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Неоднозначность в поведении проверки может привести к пропуску реальных ошибок в данных или к избыточным алертам, что усложнит эксплуатацию.
+  members: 4
+  verdict: FP
+  cls: generic-whatif
+- n: 5
+  target: synth_v1
+  category: dev_question
+  severity: medium
+  why: Разный порядок округления меняет итоговое значение, что может привести к расхождениям при проверке суммы байтов.
+  members: 1
+  verdict: FP
+  cls: generic-whatif
+- n: 6
+  target: doc3_mart (целевой тип)
+  category: dev_question
+  severity: medium
+  why: Если оставить такие записи без региона или присвоить произвольное значение, итоговая агрегация по регионам будет неполной или неверной.
+  members: 4
+  verdict: TP
+  cls: new
+- n: 7
+  target: synth_v3official
+  category: dev_question
+  severity: medium
+  why: The timing affects data availability for backfills and may cause the DAG to fail or leave orphaned data if not handled correctly.
+  members: 1
+  verdict: FP
+  cls: generic-whatif
+- n: 8
+  target: doc3_mart (целевой тип)
+  category: checklist:FIL-01
+  severity: medium
+  why: В документе нет описания правил фильтрации входных данных и обработки отфильтрованных записей.
+  members: 3
+  verdict: TP
+  cls: new
+- n: 9
+  target: synth_v3official
+  category: dev_question
+  severity: medium
+  why: Если проверять только последнюю партицию, возможен запуск агрегации при неполных данных, что приведёт к недоучёту трафика.
+  members: 1
+  verdict: FP
+  cls: generic-whatif
+- n: 10
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Неправильный порядок или метод удаления может привести к потере только что записанных данных или к оставлению «мусорных» файлов, нарушая целостность витрины.
+  members: 4
+  verdict: FP
+  cls: generic-whatif
+- n: 11
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Разные функции округления дают разные результаты (например, bankers rounding), что может превысить допустимое отклонение 0.1 % в проверке суммы байтов.
+  members: 1
+  verdict: FP
+  cls: generic-whatif
+- n: 12
+  target: synth_v1
+  category: dev_question
+  severity: medium
+  why: Неправильный момент удаления может привести к потере данных, конфликтам при перезаписи или к накоплению лишних партиций, нарушая требования к хранению.
+  members: 1
+  verdict: FP
+  cls: generic-whatif
+- n: 13
+  target: synth_v2hard
+  category: dev_question
+  severity: medium
+  why: Неправильный путь приведёт к тому, что партиция не будет обнаружена при чтении, нарушит атомарность замены и может вызвать ошибки доступа у потребителей.
+  members: 1
+  verdict: FP
+  cls: generic-whatif
+- n: 14
+  target: synth_v3official
+  category: dev_question
+  severity: medium
+  why: Разный подход изменит распределение записей по категориям RAT и может повлиять на итоговые строки витрины и проверки качества.
+  members: 3
+  verdict: TP
+  cls: gold-dup
+- n: 15
+  target: synth_v2hard
+  category: dev_question
+  severity: medium
+  why: Отсутствие детерминированного выбора может привести к непостоянному результату между запусками, что усложнит отладку и может вызвать расхождения в проверках кон
+  members: 1
+  verdict: FP
+  cls: generic-whatif
+- n: 16
+  target: doc3_mart (целевой тип)
+  category: doc:terminology
+  severity: medium
+  why: В одном месте используется термин region_code, а в другом – FIELD_REGION_NAME, что может вводить в заблуждение, так как они не явно сопоставлены.
+  members: 4
+  verdict: TP
+  cls: new
+- n: 17
+  target: doc3_mart (целевой тип)
+  category: checklist:VOL-01
+  severity: medium
+  why: Документ не содержит информации об ожидаемых объёмах данных и сроке хранения (retention) витрины.
+  members: 2
+  verdict: TP
+  cls: new
+- n: 18
+  target: synth_v3official
+  category: dev_question
+  severity: medium
+  why: Non‑deterministic selection can cause flaky results between DAG runs, breaking reproducibility guarantees.
+  members: 1
+  verdict: FP
+  cls: generic-whatif
+- n: 19
+  target: clean_base (шум)
+  category: doc:consistency
+  severity: medium
+  why: Отсутствует явное указание, как формируется значение FIELD_LOG_MONTH, что может привести к несоответствию дат в журнале.
+  members: 1
+  verdict: FP
+  cls: base-nitpick
+- n: 20
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Если такие записи будут обработаны неверно, итоговый объём трафика может быть искажён, либо DAG завершится с исключением, нарушив SLA расчёта.
+  members: 1
+  verdict: FP
+  cls: generic-whatif
+- n: 21
+  target: synth_v1
+  category: dev_question
+  severity: medium
+  why: Без точного понимания этих проверок невозможно корректно реализовать контроль качества; неверные значения в журнале могут скрыть реальные отклонения или вызвать
+  members: 3
+  verdict: TP
+  cls: gold-dup
+- n: 22
+  target: synth_v1
+  category: dev_question
+  severity: high
+  why: Неправильный параметр приведёт к выбору неверных исходных партиций и к формированию агрегата за неправильный период.
+  members: 1
+  verdict: FP
+  cls: generic-whatif
+- n: 23
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Неправильная классификация изменит количество записей в категории UNKNOWN и может привести к отклонению проверок качества.
+  members: 4
+  verdict: FP
+  cls: generic-whatif
+- n: 24
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Неправильный путь сделает партицию недоступной для Hive/Presto, что приведёт к ошибкам чтения потребителями.
+  members: 4
+  verdict: FP
+  cls: generic-whatif
+- n: 25
+  target: doc3_mart (целевой тип)
+  category: checklist:DED-01
+  severity: medium
+  why: Указано, что дубли удаляются, но не уточнён ключ дедупликации (по чему определяется дублирование) и правило выбора «выжившей» записи (какой запись остаётся).
+  members: 4
+  verdict: TP
+  cls: new
+- n: 26
+  target: clean_base (шум)
+  category: doc:consistency
+  severity: medium
+  why: Поле обязательное, но в описании процесса нет указания, откуда берётся значение (например, текущий timestamp DAG‑а).
+  members: 1
+  verdict: FP
+  cls: base-nitpick
+- n: 27
+  target: synth_v2hard
+  category: dev_question
+  severity: medium
+  why: Если я удалю партицию слишком рано (или не удалю вовремя), может произойти потеря исторических данных или рост хранилища выше планового, что нарушит SLA.
+  members: 3
+  verdict: FP
+  cls: generic-whatif
+- n: 28
+  target: doc3_mart (целевой тип)
+  category: dev_question
+  severity: critical
+  why: Если выбрать неверный столбец, в агрегат попадут данные из неправильных периодов (или будут пропущены нужные), что сделает подсчёт пользователей некорректным.
+  members: 4
+  verdict: TP
+  cls: new
+- n: 29
+  target: synth_v3official
+  category: dev_question
+  severity: high
+  why: Different denominators change the pass/fail outcome; a wrong interpretation may generate false alerts or hide real data‑quality issues.
+  members: 1
+  verdict: FP
+  cls: generic-whatif
+- n: 30
+  target: doc3_mart (целевой тип)
+  category: dev_question
+  severity: medium
+  why: Разные правила (например, «последняя по времени» vs «приоритет LAC») дадут разные результаты, что изменит распределение пользователей по регионам.
+  members: 2
+  verdict: TP
+  cls: new
+- n: 31
+  target: synth_v1
+  category: dev_question
+  severity: medium
+  why: Неправильное логирование проверок может скрыть отклонения качества, привести к ложным срабатываниям алертов или к их отсутствию.
+  members: 1
+  verdict: FP
+  cls: generic-whatif
+- n: 32
+  target: synth_v3official
+  category: dev_question
+  severity: high
+  why: Непредсказуемый выбор может приводить к различиям в агрегатах между запусками, нарушая согласованность данных.
+  members: 3
+  verdict: FP
+  cls: generic-whatif
+- n: 33
+  target: doc3_mart (целевой тип)
+  category: checklist:CAT-01
+  severity: medium
+  why: В документе нет ни ссылки вида LINK_*, ни упоминания Data Catalog для приёмника и источников, поэтому прямой ссылки отсутствует.
+  members: 4
+  verdict: TP
+  cls: new
+- n: 34
+  target: synth_v1
+  category: dev_question
+  severity: medium
+  why: Неправильная реализация может либо скрыть нужные данные от потребителей, либо случайно раскрыть служебные категории без явного запроса, нарушая согласованные пр
+  members: 3
+  verdict: FP
+  cls: generic-whatif
+- n: 35
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Подсчёт на неверном наборе данных приведёт к завышенному (или заниженному) количеству абонентов, что нарушит бизнес‑требования и контроль качества.
+  members: 4
+  verdict: FP
+  cls: generic-whatif
+- n: 36
+  target: doc3_mart (целевой тип)
+  category: dev_question
+  severity: medium
+  why: Неправильный выбор схемы партиционирования может привести к плохой производительности при запросах аналитиков и к избыточному использованию ресурсов.
+  members: 3
+  verdict: FP
+  cls: generic-whatif
+- n: 37
+  target: doc3_mart (целевой тип)
+  category: checklist:FIL-01
+  severity: medium
+  why: В документе отсутствуют правила фильтрации входных данных и описание судьбы отфильтрованных записей.
+  members: 1
+  verdict: TP
+  cls: new
+- n: 38
+  target: clean_base (шум)
+  category: doc:contradiction
+  severity: high
+  why: В требованиях указано ожидаемое количество строк, предполагающее наличие всех комбинаций регион‑тип сети, тогда как алгоритм исключает комбинации без трафика, ч
+  members: 1
+  verdict: FP
+  cls: base-nitpick
+- n: 39
+  target: synth_v3official
+  category: dev_question
+  severity: medium
+  why: Parameter handling and loop logic depend on this; an incorrect assumption could leave required months unprocessed or cause unnecessary runtime.
+  members: 1
+  verdict: FP
+  cls: generic-whatif
