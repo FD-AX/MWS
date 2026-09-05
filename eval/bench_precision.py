@@ -1,16 +1,18 @@
-"""Точность по «лишним» находкам бенча (raw JSON) — заготовка разметки и подсчёт.
+"""Точность по «лишним» находкам бенча (raw JSON) — слепая разметка и подсчёт (PROTOCOL.md, п.4).
 
-    python eval/bench_precision.py skeleton eval/night/raw_exp19_oss_a.json [...] > eval/labels/exp19_skeleton.yaml
-    python eval/bench_precision.py score eval/labels/exp19_labels.yaml eval/night/raw_exp19_oss_a.json [...]
+    # 1) заготовка: находки всех моделей/вариантов перемешаны, модель скрыта; ключ — отдельно
+    python eval/bench_precision.py skeleton --blind eval/labels/m_key.json eval/night/m_pod_key.json eval/night/m_gpt_key.json > eval/labels/m_blind.yaml
+    # 2) разметить verdict (TP/FP/NA) и cls в m_blind.yaml, НЕ открывая ключ
+    # 3) подсчёт по вариантам и моделям
+    python eval/bench_precision.py score eval/labels/m_blind.yaml --key eval/labels/m_key.json eval/night/m_pod_key.json eval/night/m_gpt_key.json
 
-skeleton: все extras (не совпавшие с голдом) и noise (clean-документ) → YAML со строками
-  {variant, target, idx, category, severity, why, verdict: ?, cls: ?}; verdict ∈ TP / FP / NA, cls — класс мусора
-  (na-slot / placeholder-name / generic-whatif / rule-threshold / gold-dup / new).
-score: precision по вариантам = (совпавшие с голдом + TP среди лишних) / все находки; шум@clean отдельно.
+verdict ∈ TP / FP / NA; cls — класс мусора (na-slot / placeholder-name / generic-whatif / rule-threshold / gold-dup / new).
+score: precision = (совпавшие с голдом + TP среди лишних) / все находки, по (модель, вариант); шум@clean отдельно.
 """
 from __future__ import annotations
 
 import json
+import random
 import sys
 from collections import defaultdict
 from pathlib import Path
@@ -25,56 +27,78 @@ def load_raw(paths: list[str]) -> list[dict]:
     return recs
 
 
-def skeleton(paths: list[str]) -> None:
-    rows = []
+def _items(r: dict) -> list[dict]:
+    return r.get("extras") or r.get("noise") or []
+
+
+def skeleton(paths: list[str], blind_key: str | None) -> None:
+    rows, key = [], {}
     for r in load_raw(paths):
-        items = r.get("extras") or r.get("noise") or []
-        for i, f in enumerate(items):
+        for i, f in enumerate(_items(r)):
             rows.append({"variant": r["variant"], "target": r["target"], "idx": i,
-                         "category": f["category"], "severity": f["severity"],
-                         "why": f["why"], "verdict": "?", "cls": "?"})
+                         "model": r.get("model") or r.get("backend"),
+                         "category": f["category"], "severity": f["severity"], "why": f["why"],
+                         "verdict": "?", "cls": "?"})
+    if blind_key:
+        random.Random(20260905).shuffle(rows)
+        out_rows = []
+        for n, row in enumerate(rows, 1):
+            key[n] = {k: row[k] for k in ("variant", "target", "idx", "model")}
+            out_rows.append({"n": n, "target": row["target"].split(" #")[0],
+                             "category": row["category"], "severity": row["severity"],
+                             "why": row["why"], "verdict": "?", "cls": "?"})
+        Path(blind_key).write_text(json.dumps(key, ensure_ascii=False, indent=1), encoding="utf-8")
+        rows = out_rows
     print(yaml.safe_dump({"labels": rows}, allow_unicode=True, sort_keys=False, width=200))
 
 
-def score(labels_path: str, paths: list[str]) -> None:
+def score(labels_path: str, key_path: str | None, paths: list[str]) -> None:
     labels = yaml.safe_load(Path(labels_path).read_text(encoding="utf-8"))["labels"]
+    if key_path:
+        key = json.loads(Path(key_path).read_text(encoding="utf-8"))
+        for x in labels:
+            x.update(key[str(x["n"])])
     lab = {(x["variant"], x["target"], x["idx"]): x for x in labels}
-    per_variant: dict[str, dict[str, int]] = defaultdict(lambda: defaultdict(int))
-    cls_count: dict[str, dict[str, int]] = defaultdict(lambda: defaultdict(int))
+    per: dict = defaultdict(lambda: defaultdict(int))
+    cls_count: dict = defaultdict(lambda: defaultdict(int))
     for r in load_raw(paths):
-        v = r["variant"]
+        k = (r.get("model") or r.get("backend"), r["variant"])
         hits = sum(1 for d in r.get("defects", {}).values() if d.get("hit"))
-        items = r.get("extras") or r.get("noise") or []
         is_clean = not r.get("defects")
-        per_variant[v]["hit"] += hits
-        per_variant[v]["gold"] += len(r.get("defects", {}))
-        for i, _ in enumerate(items):
-            x = lab.get((v, r["target"], i))
+        per[k]["hit"] += hits
+        per[k]["gold"] += len(r.get("defects", {}))
+        for i, _ in enumerate(_items(r)):
+            x = lab.get((r["variant"], r["target"], i))
             verdict = (x or {}).get("verdict", "?")
-            key = "clean_" if is_clean else ""
-            per_variant[v][key + verdict] += 1
+            per[k][("clean_" if is_clean else "") + verdict] += 1
             if verdict in ("FP", "NA"):
-                cls_count[v][(x or {}).get("cls", "?")] += 1
-    print("| Вариант | recall | находок | TP среди лишних | FP | NA | ? | precision | шум@clean (не-TP) |")
-    print("|---|---|---|---|---|---|---|---|---|")
-    for v, c in per_variant.items():
+                cls_count[k][(x or {}).get("cls", "?")] += 1
+    print("| Модель | Вариант | recall Σ | находок | TP лишних | FP | NA | ? | precision | шум@clean не-TP |")
+    print("|---|---|---|---|---|---|---|---|---|---|")
+    for (m, v), c in sorted(per.items()):
         total = c["hit"] + c["TP"] + c["FP"] + c["NA"] + c["?"]
         tp = c["hit"] + c["TP"]
         prec = f"{tp / total:.0%}" if total else "—"
         clean_bad = c["clean_FP"] + c["clean_NA"] + c["clean_?"]
-        print(f"| {v} | {c['hit']}/{c['gold']} | {total} | {c['TP']} | {c['FP']} | {c['NA']} | {c['?']} | {prec} | {clean_bad} |")
-    print("\nКлассы мусора (FP+NA) по вариантам:")
-    for v, cc in cls_count.items():
-        print(f"- {v}: " + ", ".join(f"{k} {n}" for k, n in sorted(cc.items(), key=lambda x: -x[1])))
+        print(f"| {m} | {v} | {c['hit']}/{c['gold']} | {total} | {c['TP']} | {c['FP']} | {c['NA']} | {c['?']} | {prec} | {clean_bad} |")
+    print("\nКлассы мусора (FP+NA):")
+    for (m, v), cc in sorted(cls_count.items()):
+        print(f"- {m} · {v}: " + ", ".join(f"{k} {n}" for k, n in sorted(cc.items(), key=lambda x: -x[1])))
 
 
 def main() -> int:
-    if len(sys.argv) < 3:
+    a = sys.argv[1:]
+    if len(a) < 2:
         print(__doc__); return 2
-    if sys.argv[1] == "skeleton":
-        skeleton(sys.argv[2:])
-    elif sys.argv[1] == "score":
-        score(sys.argv[2], sys.argv[3:])
+    cmd, a = a[0], a[1:]
+    opt = {}
+    for flag in ("--blind", "--key"):
+        if flag in a:
+            i = a.index(flag); opt[flag] = a[i + 1]; a = a[:i] + a[i + 2:]
+    if cmd == "skeleton":
+        skeleton(a, opt.get("--blind"))
+    elif cmd == "score":
+        score(a[0], opt.get("--key"), a[1:])
     else:
         print(__doc__); return 2
     return 0
