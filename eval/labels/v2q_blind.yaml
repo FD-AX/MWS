@@ -1,0 +1,377 @@
+labels:
+- n: 1
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Неправильный путь сделает партицию недоступной для Hive/Presto, что приведёт к ошибкам чтения потребителями.
+  members: 2
+  verdict: FP
+  cls: generic-whatif
+- n: 2
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Разные функции округления дают разные результаты (например, bankers rounding), что может превысить допустимое отклонение 0.1 % в проверке суммы байтов.
+  members: 2
+  verdict: FP
+  cls: generic-whatif
+- n: 3
+  target: synth_v2hard
+  category: checklist:INC-03
+  severity: medium
+  why: В документе нет описания поведения системы при удалении или изменении записей в источнике задним числом (например, корректировка исторических данных).
+  members: 2
+  verdict: NA
+  cls: na-slot
+- n: 4
+  target: synth_v3official
+  category: dev_question
+  severity: medium
+  why: Разный подход изменит распределение записей по категориям RAT и может повлиять на итоговые строки витрины и проверки качества.
+  members: 2
+  verdict: TP
+  cls: gold-dup
+- n: 5
+  target: doc3_mart (целевой тип)
+  category: checklist:INC-03
+  severity: high
+  why: Отсутствует информация о том, что происходит с записями, удалёнными или изменёнными в источнике задним числом.
+  members: 1
+  verdict: TP
+  cls: new
+- n: 6
+  target: doc3_mart (целевой тип)
+  category: dev_question
+  severity: medium
+  why: Неправильный выбор схемы партиционирования может привести к плохой производительности при запросах аналитиков и к избыточному использованию ресурсов.
+  members: 1
+  verdict: FP
+  cls: generic-whatif
+- n: 7
+  target: doc3_mart (целевой тип)
+  category: checklist:FIL-01
+  severity: medium
+  why: В документе нет описания правил фильтрации входных данных и обработки отфильтрованных записей.
+  members: 2
+  verdict: TP
+  cls: new
+- n: 8
+  target: clean_base (шум)
+  category: doc:quantities
+  severity: high
+  why: 'Глубина данных объявлена с 01.01.2024 (т. е. требуется хранить данные начиная с этой даты), а ретеншен ограничивает хранение 24 месяцами. Через 24 месяца после '
+  members: 2
+  verdict: FP
+  cls: base-nitpick
+- n: 9
+  target: synth_v3official
+  category: checklist:NUL-02
+  severity: medium
+  why: В документе описаны формулы расчётов, но нет информации о поведении при делении на ноль, пустом знаменателе или отсутствии счётчика за период.
+  members: 1
+  verdict: FP
+  cls: rule-threshold
+- n: 10
+  target: synth_v1
+  category: dev_question
+  severity: medium
+  why: Неправильный формат записи затруднит автоматический мониторинг и может привести к пропуску критических алертов.
+  members: 1
+  verdict: FP
+  cls: generic-whatif
+- n: 11
+  target: doc3_mart (целевой тип)
+  category: checklist:CAT-01
+  severity: medium
+  why: В документе отсутствуют ссылки на карточки Data Catalog для приёмника и для источников (нет ни LINK_*, ни упоминаний о Data Catalog).
+  members: 1
+  verdict: TP
+  cls: new
+- n: 12
+  target: doc3_mart (целевой тип)
+  category: dev_question
+  severity: medium
+  why: Если оставить такие записи без региона или присвоить произвольное значение, итоговая агрегация по регионам будет неполной или неверной.
+  members: 1
+  verdict: TP
+  cls: new
+- n: 13
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Неправильная классификация изменит количество записей в категории UNKNOWN и может привести к отклонению проверок качества.
+  members: 2
+  verdict: FP
+  cls: generic-whatif
+- n: 14
+  target: synth_v1
+  category: dev_question
+  severity: medium
+  why: Неправильная реализация может либо скрыть нужные данные от потребителей, либо случайно раскрыть служебные категории без явного запроса, нарушая согласованные пр
+  members: 1
+  verdict: FP
+  cls: generic-whatif
+- n: 15
+  target: synth_v1
+  category: dev_question
+  severity: high
+  why: Без точного понимания этих проверок невозможно корректно реализовать контроль качества; неверные значения в журнале могут скрыть реальные отклонения или вызвать
+  members: 1
+  verdict: TP
+  cls: gold-dup
+- n: 16
+  target: doc3_mart (целевой тип)
+  category: dev_question
+  severity: medium
+  why: Разные правила (например, «последняя по времени» vs «приоритет LAC») дадут разные результаты, что изменит распределение пользователей по регионам.
+  members: 1
+  verdict: TP
+  cls: new
+- n: 17
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Неоднозначность в поведении проверки может привести к пропуску реальных ошибок в данных или к избыточным алертам, что усложнит эксплуатацию.
+  members: 2
+  verdict: FP
+  cls: generic-whatif
+- n: 18
+  target: synth_v1
+  category: checklist:INC-03
+  severity: medium
+  why: Отсутствует описание поведения при удалении или изменении записей в источнике после их загрузки в витрину.
+  members: 1
+  verdict: NA
+  cls: na-slot
+- n: 19
+  target: clean_base (шум)
+  category: doc:consistency
+  severity: high
+  why: Код NO_REGION присутствует в журнале и используется в контроле качества, однако в алгоритме обработки нет шага, где записи с этим кодом записываются в TABLE_AGG
+  members: 2
+  verdict: FP
+  cls: base-nitpick
+- n: 20
+  target: doc3_mart (целевой тип)
+  category: checklist:CAT-01
+  severity: medium
+  why: В документе нет ни прямых ссылок на Data Catalog, ни placeholder‑ов LINK_*, ни упоминаний URL для приёмника и источников.
+  members: 1
+  verdict: TP
+  cls: new
+- n: 21
+  target: doc3_mart (целевой тип)
+  category: checklist:FIL-02
+  severity: medium
+  why: Документ не содержит отдельного перечня типовых условий фильтрации; описаны лишь шаги алгоритма без выделения списка фильтров.
+  members: 1
+  verdict: TP
+  cls: new
+- n: 22
+  target: clean_base (шум)
+  category: doc:quantities
+  severity: high
+  why: Максимальная длительность расчёта ограничена 2 часами, но при ошибке возможны до трёх повторов, каждый из которых может занять до 2 часов плюс 20‑минутные интер
+  members: 2
+  verdict: TP
+  cls: new
+- n: 23
+  target: synth_v3official
+  category: checklist:INC-03
+  severity: medium
+  why: В документе нет информации о том, как обрабатываются записи, удалённые или изменённые в источнике задним числом после их включения в витрину.
+  members: 1
+  verdict: NA
+  cls: na-slot
+- n: 24
+  target: clean_base (шум)
+  category: checklist:INC-03
+  severity: high
+  why: В документе нет описания поведения при удалении или изменении записей в источнике задним числом.
+  members: 2
+  verdict: NA
+  cls: na-slot
+- n: 25
+  target: doc3_mart (целевой тип)
+  category: checklist:DED-01
+  severity: medium
+  why: Указано лишь, что дубли удаляются, но не указано, какой ключ используется и какое правило выбора (например, последняя запись) применяется.
+  members: 1
+  verdict: TP
+  cls: new
+- n: 26
+  target: synth_v2hard
+  category: checklist:NUL-02
+  severity: medium
+  why: В документе описаны формулы расчёта, но нет информации о поведении при делении на ноль, пустом знаменателе или отсутствии счётчика за период.
+  members: 2
+  verdict: FP
+  cls: rule-threshold
+- n: 27
+  target: doc3_mart (целевой тип)
+  category: checklist:NUL-01
+  severity: high
+  why: Нет правил обработки отсутствующих значений (NULL vs 0 vs default) для полей, участвующих в расчётах.
+  members: 1
+  verdict: TP
+  cls: new
+- n: 28
+  target: clean_base (шум)
+  category: doc:completeness
+  severity: medium
+  why: Коды CHECK_BYTES, CHECK_DROPPED и CHECK_REGIONS перечислены в журнале и используются в проверках качества, но их смысл и правила формирования не описаны в разде
+  members: 2
+  verdict: FP
+  cls: base-nitpick
+- n: 29
+  target: clean_base (шум)
+  category: doc:quantities
+  severity: medium
+  why: 85 регионов × 4 типа сети = 340 строк; добавив две служебные категории (NO_REGION и UNKNOWN) получаем 342 строки, что не соответствует заявленному «~350 строк».
+  members: 2
+  verdict: FP
+  cls: base-nitpick
+- n: 30
+  target: synth_v1
+  category: checklist:INC-01
+  severity: medium
+  why: В документе описан только полный перезапуск партиции месяца без указания механизма инкрементного отбора новых данных.
+  members: 1
+  verdict: NA
+  cls: na-slot
+- n: 31
+  target: synth_v3official
+  category: dev_question
+  severity: high
+  why: Если проверять только последнюю партицию, возможен запуск агрегации при неполных данных, что приведёт к недоучёту трафика.
+  members: 2
+  verdict: FP
+  cls: generic-whatif
+- n: 32
+  target: doc3_mart (целевой тип)
+  category: doc:terminology
+  severity: medium
+  why: В одном месте используется термин region_code, а в другом – FIELD_REGION_NAME, что может вводить в заблуждение, так как они не явно сопоставлены.
+  members: 1
+  verdict: TP
+  cls: new
+- n: 33
+  target: doc3_mart (целевой тип)
+  category: checklist:INC-03
+  severity: high
+  why: В документе не указано, что происходит с записями, удалёнными или изменёнными в источнике задним числом.
+  members: 1
+  verdict: TP
+  cls: new
+- n: 34
+  target: synth_v1
+  category: dev_question
+  severity: medium
+  why: Неправильный порядок округления изменит итоговые значения трафика, что может вызвать расхождения в проверке суммы байтов (CHECK_BYTES).
+  members: 1
+  verdict: FP
+  cls: generic-whatif
+- n: 35
+  target: doc3_mart (целевой тип)
+  category: checklist:DED-01
+  severity: high
+  why: 'Документ лишь говорит об удалении дублей ("Убираются дубли: на выходе — одна region_code на абонента"), но не указывает ключ дедупликации и правило выбора выжив'
+  members: 1
+  verdict: TP
+  cls: new
+- n: 36
+  target: doc3_mart (целевой тип)
+  category: checklist:MAP-02
+  severity: medium
+  why: В документе указаны только типы данных (string, bigint, timestamp, date), но не указана точность или длина для типов, где это применимо, поэтому непонятно, удов
+  members: 1
+  verdict: FP
+  cls: rule-threshold
+- n: 37
+  target: synth_v3official
+  category: doc:quantities
+  severity: critical
+  why: Запуск расчёта происходит в 03:00 UTC, тогда как SLA гарантирует готовность данных только к 10:00 UTC того же дня. При отсутствии дополнительного механизма ожид
+  members: 2
+  verdict: FP
+  cls: misread
+- n: 38
+  target: synth_v1
+  category: dev_question
+  severity: medium
+  why: Неправильная категоризация изменит количество строк в витрине и может нарушить проверку CHECK_REGIONS, а также нарушить ожидания потребителей.
+  members: 1
+  verdict: FP
+  cls: generic-whatif
+- n: 39
+  target: doc3_mart (целевой тип)
+  category: checklist:VOL-01
+  severity: medium
+  why: Документ указывает только глубину данных (с 01.05.2023), но не содержит оценки ожидаемых объёмов и политики хранения (retention).
+  members: 1
+  verdict: TP
+  cls: new
+- n: 40
+  target: doc3_mart (целевой тип)
+  category: dev_question
+  severity: critical
+  why: Если выбрать неверный столбец, в агрегат попадут данные из неправильных периодов (или будут пропущены нужные), что сделает подсчёт пользователей некорректным.
+  members: 2
+  verdict: TP
+  cls: new
+- n: 41
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Подсчёт на неверном наборе данных приведёт к завышенному (или заниженному) количеству абонентов, что нарушит бизнес‑требования и контроль качества.
+  members: 2
+  verdict: FP
+  cls: generic-whatif
+- n: 42
+  target: synth_v3official
+  category: dev_question
+  severity: high
+  why: Непредсказуемый выбор может приводить к различиям в агрегатах между запусками, нарушая согласованность данных.
+  members: 2
+  verdict: FP
+  cls: generic-whatif
+- n: 43
+  target: clean_base (шум)
+  category: dev_question
+  severity: medium
+  why: Неправильный порядок или метод удаления может привести к потере только что записанных данных или к оставлению «мусорных» файлов, нарушая целостность витрины.
+  members: 2
+  verdict: FP
+  cls: generic-whatif
+- n: 44
+  target: synth_v3official
+  category: dev_question
+  severity: medium
+  why: Разный коэффициент преобразования меняет ожидаемую величину агрегата и может вызвать ложные срабатывания алертов о расхождении > 0.1 %.
+  members: 1
+  verdict: FP
+  cls: generic-whatif
+- n: 45
+  target: synth_v1
+  category: dev_question
+  severity: medium
+  why: Если удалять до завершения публикации, может быть удалена нужная партиция; если после, может оставаться лишняя нагрузка и превышать политику ретеншна.
+  members: 1
+  verdict: FP
+  cls: generic-whatif
+- n: 46
+  target: synth_v2hard
+  category: dev_question
+  severity: medium
+  why: Если я удалю партицию слишком рано (или не удалю вовремя), может произойти потеря исторических данных или рост хранилища выше планового, что нарушит SLA.
+  members: 2
+  verdict: FP
+  cls: generic-whatif
+- n: 47
+  target: doc3_mart (целевой тип)
+  category: checklist:INC-02
+  severity: high
+  why: Отсутствует описание обработки данных, пришедших с опозданием (late-arriving), и окна повторной обработки.
+  members: 1
+  verdict: TP
+  cls: new

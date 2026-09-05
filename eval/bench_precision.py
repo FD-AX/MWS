@@ -36,8 +36,22 @@ def _norm(s: str) -> str:
     return re.sub(r"\W+", " ", (s or "").lower()).strip()
 
 
-def skeleton(paths: list[str], blind_key: str | None) -> None:
+def load_prior(reuse: list[str]) -> dict:
+    """Ранее размеченные группы: «labels.yaml:key.json» → {(target, category, why-norm70): (verdict, cls)}.
+    Одинаковая находка в новом прогоне получает прежнюю метку, размечать остаётся только новое."""
+    prior = {}
+    for spec in reuse:
+        lab_p, key_p = spec.split(":", 1)
+        labels = yaml.safe_load(Path(lab_p).read_text(encoding="utf-8"))["labels"]
+        for x in labels:
+            if x.get("verdict") in ("TP", "FP", "NA"):
+                prior[(x["target"].split(" #")[0], x["category"], _norm(x["why"])[:70])] = (x["verdict"], x["cls"])
+    return prior
+
+
+def skeleton(paths: list[str], blind_key: str | None, reuse: list[str] | None = None) -> None:
     rows, key = [], {}
+    prior = load_prior(reuse or [])
     for r in load_raw(paths):
         for i, f in enumerate(_items(r)):
             rows.append({"variant": r["variant"], "target": r["target"], "idx": i,
@@ -54,10 +68,15 @@ def skeleton(paths: list[str], blind_key: str | None) -> None:
         items = list(groups.items())
         random.Random(20260905).shuffle(items)
         out_rows = []
+        reused = 0
         for n, (g, members) in enumerate(items, 1):
             key[n] = [{k: m[k] for k in ("variant", "target", "idx", "model")} for m in members]
+            v, c = prior.get(g, ("?", "?"))
+            reused += v != "?"
             out_rows.append({"n": n, "target": g[0], "category": g[1], "severity": members[0]["severity"],
-                             "why": members[0]["why"], "members": len(members), "verdict": "?", "cls": "?"})
+                             "why": members[0]["why"], "members": len(members), "verdict": v, "cls": c})
+        if prior:
+            print(f"# перенесено меток из прежних разметок: {reused} из {len(out_rows)} групп", file=sys.stderr)
         Path(blind_key).write_text(json.dumps(key, ensure_ascii=False, indent=1), encoding="utf-8")
         rows = out_rows
     print(yaml.safe_dump({"labels": rows}, allow_unicode=True, sort_keys=False, width=200))
@@ -107,11 +126,14 @@ def main() -> int:
         print(__doc__); return 2
     cmd, a = a[0], a[1:]
     opt = {}
+    reuse = []
+    while "--reuse" in a:
+        i = a.index("--reuse"); reuse.append(a[i + 1]); a = a[:i] + a[i + 2:]
     for flag in ("--blind", "--key"):
         if flag in a:
             i = a.index(flag); opt[flag] = a[i + 1]; a = a[:i] + a[i + 2:]
     if cmd == "skeleton":
-        skeleton(a, opt.get("--blind"))
+        skeleton(a, opt.get("--blind"), reuse)
     elif cmd == "score":
         score(a[0], opt.get("--key"), a[1:])
     else:
