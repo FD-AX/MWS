@@ -213,6 +213,10 @@ def main() -> int:
                 raw_records.append({
                     "variant": vname, "target": t["label"], "run": t.get("run", 0),
                     "backend": backend, "model": getattr(llm, "_model", None),
+                    # Полные находки — для офлайн-пересчёта матчинга (PROTOCOL п.4: поправка на матчер)
+                    "findings": [{k: f.get(k) for k in ("fid", "category", "severity", "section", "quote",
+                                                         "why", "ask", "source_pass", "score")}
+                                 for f in (x.model_dump() for x in result.findings)],
                     "defects": {d["id"]: {"code": str(d.get("code", "?")),
                                           "difficulty": str(d.get("difficulty", "?")),
                                           "description": d["description"],
@@ -235,7 +239,11 @@ def main() -> int:
                 _log(lines[-1])
                 raw_records.append({
                     "variant": vname, "target": t["label"], "run": t.get("run", 0),
-                    "backend": backend, "model": getattr(llm, "_model", None), "defects": {},
+                    "backend": backend, "model": getattr(llm, "_model", None),
+                    # Полные находки — для офлайн-пересчёта матчинга (PROTOCOL п.4: поправка на матчер)
+                    "findings": [{k: f.get(k) for k in ("fid", "category", "severity", "section", "quote",
+                                                         "why", "ask", "source_pass", "score")}
+                                 for f in (x.model_dump() for x in result.findings)], "defects": {},
                     "noise": [{"category": f["category"], "severity": f["severity"],
                                "why": (f["why"] or "")[:160]}
                               for f in (x.model_dump() for x in result.findings)
