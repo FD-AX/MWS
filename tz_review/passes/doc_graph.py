@@ -6,7 +6,7 @@ from collections import defaultdict
 from ..document import Document
 from ..schema import Finding
 
-# Гипотеза H1 (IDEAS.md): обезличивание = бесплатная разметка сущностей.
+# Гипотеза H1 (notes/IDEAS.md): обезличивание = бесплатная разметка сущностей.
 ENT = re.compile(r"\b(?:TABLE|FIELD|TOPIC|SCHEMA|DAG)_[A-Z0-9_]+\b")
 FIELD = re.compile(r"^FIELD_[A-Z0-9_]+$")
 SEC_REF = re.compile(r"раздел[ае]?\s+(\d+)", re.IGNORECASE)

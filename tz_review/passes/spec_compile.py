@@ -6,7 +6,7 @@ from . import load_prompt
 
 
 def run(doc_text: str, llm: LLM) -> list[Finding]:
-    """Гипотеза H5 (IDEAS.md): «компиляция ТЗ» — модель проектирует реализацию
+    """Гипотеза H5 (notes/IDEAS.md): «компиляция ТЗ» — модель проектирует реализацию
     и логирует каждое вынужденное допущение. Допущение = место, где два разработчика
     разойдутся. Ловит дефекты вне рубрики чеклиста."""
     prompt = load_prompt("spec_compile", document=doc_text)

@@ -33,6 +33,24 @@ docker compose -f deploy/docker-compose.yml up -d --build
 (рисёрч: академия RE, коммерческие инструменты, LLM-практика).
 Предметка кейса — в [DOMAIN.md](DOMAIN.md).
 
+## Карта репозитория
+
+| Где | Что |
+|---|---|
+| `tz_review/` | конвейер ревью: проходы, верификация цитат, критик, отчёт; `python -m tz_review` |
+| `services/`, `deploy/` | контур: API + UI, нормализация документов, воркер; docker compose, Grafana/Prometheus |
+| `app.py`, `front/` | локальный Streamlit-интерфейс; фронтенд аналитика (отдельная сборка) |
+| `prompts/` | промпты проходов |
+| `casedata/` | обезличенные документы МТС, официальный шаблон и обязательные пункты |
+| `synth/` | фабрика синтетики: чистые базы, рецепты инъекций; `python synth/inject.py --all` → `synth/out/` (в .gitignore) |
+| `eval/` | бенч, голды и разметка, матрица ошибок, канарейки, ночные прогоны (`eval/night/`), реплей якорей |
+| `experiments/` | журнал экспериментов EXP-01…24, протокол измерений, реестр отвергнутых гипотез; `ctx/` — артефакты EXP-03 |
+| `tests/` | юнит-тесты (`python -m pytest -q`); CI — `.github/workflows/tests.yml` |
+| `scripts/` | ночной прогон, разбор ответов API; `scripts/infra/` — RunPod и vLLM |
+| `deliverables/` | артефакты сдачи хакатона: промежуточные и финальные |
+| `notes/` | рабочие заметки команды: ночные сводки, планы, идеи, чеклист сдачи |
+| корень | ARCHITECTURE, DEMO, DOMAIN, RESEARCH, METRICS, MATRIX (таксономия дефектов), DATASETS, DIRECTION, READINESS |
+
 ## Архитектура
 
 ```

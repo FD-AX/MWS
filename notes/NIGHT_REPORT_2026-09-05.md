@@ -1,8 +1,8 @@
 # Ночь 04→05.09.2026: gpt-oss-120b как единственная модель — что доказано, что отвергнуто, что осталось
 
 Все цифры — 120b на vLLM (RunPod H100), итерация it7, ключи голда v2, по 2 повтора, медиана [размах];
-правила чтения и оговорки — [experiments/PROTOCOL.md](experiments/PROTOCOL.md) (особенно п.5a).
-Реестр отвергнутых гипотез — [experiments/REJECTED.md](experiments/REJECTED.md). Истина по таблицам — [experiments/CURRENT.md](experiments/CURRENT.md).
+правила чтения и оговорки — [experiments/PROTOCOL.md](../experiments/PROTOCOL.md) (особенно п.5a).
+Реестр отвергнутых гипотез — [experiments/REJECTED.md](../experiments/REJECTED.md). Истина по таблицам — [experiments/CURRENT.md](../experiments/CURRENT.md).
 
 ## 1. Решения ночи
 - **Только gpt-oss-120b.** GPT-5.5 остановлен, остаётся справочным потолком по старым прогонам (заказчик облако не потянет).

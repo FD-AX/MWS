@@ -22,7 +22,7 @@ CURRENT.md «что даёт it7 сама по себе»). Порядок на 
 
 ## Конфигурация
 - Под: RunPod H100 80GB, `vllm/vllm-openai:latest`, `openai/gpt-oss-120b` (served as `gpt-oss-120b`), `max-model-len 32768`,
-  `infra/runpod.py create-vllm-oss`. Клиент: `TZR_MAX_TOKENS=4096`, `TZR_REASONING_EFFORT=medium`, `TZR_PROBE_MODE=harmony`
+  `scripts/infra/runpod.py create-vllm-oss`. Клиент: `TZR_MAX_TOKENS=4096`, `TZR_REASONING_EFFORT=medium`, `TZR_PROBE_MODE=harmony`
   (зонд через `/v1/completions` с raw harmony-промптом и открытым каналом final — иначе первый токен `<|channel|>`).
 - Варианты 120b: `v2g`, `v2e`, `v2l`, `v2el`. Варианты GPT-5.5: `v2g_gpt`, `v2e_gpt`, `v2l_gpt` (зонд gpt-4.1-mini).
 - Правила EXP-18 включены у всех (это уже main).
@@ -48,7 +48,7 @@ reasoning high и консенсус ×2.
 
 ## Воспроизведение
 ```
-python infra/runpod.py create-vllm-oss && python infra/runpod.py wait <pod>
+python scripts/infra/runpod.py create-vllm-oss && python scripts/infra/runpod.py wait <pod>
 # .env: TZR_BASE_URL=https://<pod>-8000.proxy.runpod.net/v1 TZR_MODEL=gpt-oss-120b TZR_API_KEY=<VLLM_API_KEY>
 #       TZR_MAX_TOKENS=4096 TZR_REASONING_EFFORT=medium TZR_PROBE_MODE=harmony
 python eval/bench.py --variants v2g_gpt,v2e_gpt,v2l_gpt --targets eval/targets_key.yaml --out eval/night/bench_exp19_gpt.md --json eval/night/raw_exp19_gpt.json 2> eval/night/exp19_gpt.log

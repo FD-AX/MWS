@@ -1,12 +1,12 @@
 # План отчёта-обоснования финальной архитектуры
 
 Правило отчёта: каждый тезис = «было → стало» цифрами + файл-доказательство + команда воспроизведения.
-Источники: [experiments/README.md](experiments/README.md), [NIGHT_REPORT.md](NIGHT_REPORT.md),
-[SOLUTIONS.md](SOLUTIONS.md), [RESEARCH.md](RESEARCH.md), [ARCHITECTURE.md](ARCHITECTURE.md).
+Источники: [experiments/README.md](../experiments/README.md), [NIGHT_REPORT.md](NIGHT_REPORT.md),
+[SOLUTIONS.md](SOLUTIONS.md), [RESEARCH.md](../RESEARCH.md), [ARCHITECTURE.md](../ARCHITECTURE.md).
 
 ## 1. Задача и как мы её измеряем
 - Кейс МТС: pre-review ТЗ на потоки/витрины; критерий кейсодателя качественный («полезные замечания, привязанные к тексту»).
-- Наша операционализация ([METRICS.md](METRICS.md)): recall@gold по классам A–F (таксономия [MATRIX.md](MATRIX.md)),
+- Наша операционализация ([METRICS.md](../METRICS.md)): recall@gold по классам A–F (таксономия [MATRIX.md](../MATRIX.md)),
   шум@clean, anchoring (доля верифицированных цитат), стабильность между прогонами, цена (вызовы/токены).
 - Данные: 3 документа МТС + голды (черновые → тройная разметка), официальная рубрика (8 пунктов + шаблон 20 разделов),
   фабрика синтетики it1–it6 (v1: 12 инъекций, v2hard: 8 экспертных, v3official: 13 по пунктам МТС).
@@ -40,7 +40,7 @@ H2/H3 📋 (G2-3, G2-7 — слепые зоны EXP-13), H6/H7/H8/H9/H12 — н
 - Инфраструктурные грабли: VPN/регион 403, vLLM-образ на RunPod, Cloudflare vs urllib.
 
 ## 6. Финальная архитектура и стоимость
-[ARCHITECTURE.md](ARCHITECTURE.md): компоненты, надёжность (очередь/DLQ/идемпотентность), метрики и дашборды,
+[ARCHITECTURE.md](../ARCHITECTURE.md): компоненты, надёжность (очередь/DLQ/идемпотентность), метрики и дашборды,
 лестница моделей с ценой за документ (GPT-5.5 / gpt-oss-120b на H100 $3.49/ч / Qwen-14B).
 
 ## 7. Демо-сценарий

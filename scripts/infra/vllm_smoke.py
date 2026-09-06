@@ -1,6 +1,6 @@
 """Смоук vLLM-пода с gpt-oss: три вещи, без которых бенч не имеет смысла.
 
-    python infra/vllm_smoke.py
+    python scripts/infra/vllm_smoke.py
 
 1. chat.completions с reasoning_effort → JSON приходит в content (а не только в reasoning);
 2. harmony-зонд: /v1/completions с открытым каналом final отдаёт YES/NO первым токеном с logprobs;
@@ -13,7 +13,7 @@ import sys
 import time
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 from tz_review.config import settings_or_die  # noqa: E402
 from tz_review.llm import LLM  # noqa: E402
 

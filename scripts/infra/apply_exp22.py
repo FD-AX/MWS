@@ -1,6 +1,6 @@
 """EXP-22: применить правила применимости v2 к рубрике (запускать ПОСЛЕ EXP-20/21, см. experiments/EXP-22-na-rules-v2.md).
 
-    python infra/apply_exp22.py
+    python scripts/infra/apply_exp22.py
 """
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ import re
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(ROOT))
 
 FULL_REWRITE = r"полн(ая|ой|ую|ый|ое)\s+(перезапис|перезагруз|пересч[её]т|перегруз)"

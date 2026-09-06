@@ -1,6 +1,6 @@
 # Эксперимент: зависимость от длины контекста
 
-Ветка: `exp/context-length` · 2026-09-03 · Данные: `eval/night/ctx_report_llm.md`, `exp/ctx_report_v1g.md`.
+Ветка: `exp/context-length` · 2026-09-03 · Данные: `eval/night/ctx_report_llm.md`, `experiments/ctx/ctx_report_v1g.md`.
 
 ## Постановка
 

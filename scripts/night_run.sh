@@ -18,7 +18,7 @@ python eval/bench.py --variants p0,p1,p2,p3,v0b,v2g,h5,v3 \
   --out eval/night/bench_pod_full.md > eval/night/01_ladder.log 2>&1
 
 echo "=== 3. Длина контекста (v2g) ==="
-python eval/bench.py --variants v2g --targets exp/targets_ctx.yaml \
+python eval/bench.py --variants v2g --targets experiments/ctx/targets_ctx.yaml \
   --out eval/night/ctx_report_llm.md > eval/night/02_ctx.log 2>&1
 
 echo "=== 4. Стабильность: v2g x3 на ключевых целях ==="

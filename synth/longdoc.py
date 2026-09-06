@@ -5,7 +5,7 @@
 Берёт испорченный synth/out/mart_traffic_v1.md и чистую базу, генерирует
 объединённые документы «реестр витрин» разных длин, размещая дефектную витрину
 в начале или в конце. Голд один и тот же (дефекты только в одной витрине).
-Выход: exp/ctx/len{N}_{pos}.md + exp/targets_ctx.yaml для бенча.
+Выход: experiments/ctx/len{N}_{pos}.md + experiments/ctx/targets_ctx.yaml для бенча.
 """
 from __future__ import annotations
 
@@ -53,13 +53,13 @@ def main() -> None:
             (out_dir / f"{name}.md").write_text(doc, encoding="utf-8")
             targets.append({
                 "label": f"ctx_{name} (~{len(doc) // 1000}k chars)",
-                "doc": f"exp/ctx/{name}.md",
+                "doc": f"experiments/ctx/{name}.md",
                 "gold": GOLD,
             })
-    (ROOT / "exp/targets_ctx.yaml").write_text(
+    (ROOT / "experiments/ctx/targets_ctx.yaml").write_text(
         yaml.safe_dump({"targets": targets}, allow_unicode=True, sort_keys=False),
         encoding="utf-8")
-    print(f"OK: {len(targets)} документов в exp/ctx/, цели в exp/targets_ctx.yaml")
+    print(f"OK: {len(targets)} документов в experiments/ctx/, цели в experiments/ctx/targets_ctx.yaml")
 
 
 if __name__ == "__main__":

@@ -10,7 +10,7 @@ from ..schema import Finding
 from . import load_prompt
 from .uncertainty import ENTROPY_THRESHOLD, N_SAMPLES, TEMPERATURE, _canon, semantic_entropy
 
-# H16 (IDEAS.md, EXP-23): неоднозначность мерить там, где живёт сущность документа, а не по 27 слотам.
+# H16 (notes/IDEAS.md, EXP-23): неоднозначность мерить там, где живёт сущность документа, а не по 27 слотам.
 # Узел = сущность (FIELD_/TABLE_/TOPIC_… или кодовая категория вроде UNKNOWN, NO_REGION, CHECK_*),
 # которая встречается в ≥2 разделах: именно между разделами возникают разночтения (термин-дрейф D4,
 # перегруженная категория D1, «последняя запись» без поля B9, UTC vs региональное время D3).

@@ -1,21 +1,21 @@
 """Управление RunPod-подом с vLLM (OpenAI-совместимый endpoint).
 
 Использование (ключ берётся из RUNPOD_API_KEY в .env / окружении):
-    python infra/runpod.py create-vllm-oss [--gpu "NVIDIA H100 80GB HBM3"] [--cloud SECURE|COMMUNITY]  # gpt-oss-120b на vLLM
-    python infra/runpod.py wait <pod_id> [minutes] · balance
-    python infra/runpod.py create [--gpu "NVIDIA GeForce RTX 4090"] [--model Qwen/Qwen2.5-14B-Instruct-AWQ]
-    python infra/runpod.py status <pod_id>
-    python infra/runpod.py list
-    python infra/runpod.py terminate <pod_id>
+    python scripts/infra/runpod.py create-vllm-oss [--gpu "NVIDIA H100 80GB HBM3"] [--cloud SECURE|COMMUNITY]  # gpt-oss-120b на vLLM
+    python scripts/infra/runpod.py wait <pod_id> [minutes] · balance
+    python scripts/infra/runpod.py create [--gpu "NVIDIA GeForce RTX 4090"] [--model Qwen/Qwen2.5-14B-Instruct-AWQ]
+    python scripts/infra/runpod.py status <pod_id>
+    python scripts/infra/runpod.py list
+    python scripts/infra/runpod.py terminate <pod_id>
 
 После create/status, когда под RUNNING и модель загрузилась, endpoint:
     https://<pod_id>-8000.proxy.runpod.net/v1
 Авторизация запросов к vLLM — токен TZR_API_KEY (передаётся поду как VLLM_API_KEY).
 
 Путь через ollama (проверен ночью 03.09; vLLM-образ на RunPod не поднимался):
-    python infra/runpod.py create-ollama [--gpu "NVIDIA H100 80GB HBM3"]   # по умолчанию список 80 ГБ
-    python infra/runpod.py pull <pod_id> gpt-oss:120b                       # докачка потоком
-    python infra/runpod.py tags <pod_id>
+    python scripts/infra/runpod.py create-ollama [--gpu "NVIDIA H100 80GB HBM3"]   # по умолчанию список 80 ГБ
+    python scripts/infra/runpod.py pull <pod_id> gpt-oss:120b                       # докачка потоком
+    python scripts/infra/runpod.py tags <pod_id>
     endpoint: https://<pod_id>-11434.proxy.runpod.net/v1, TZR_MODEL=gpt-oss:120b, ключ любой.
 vLLM для gpt-oss-120b — только Hopper (MXFP4); на A100 bf16 не влезает.
 """
@@ -27,7 +27,7 @@ import sys
 import urllib.request
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 from tz_review.config import load_dotenv  # noqa: E402
 
 API = "https://rest.runpod.io/v1"

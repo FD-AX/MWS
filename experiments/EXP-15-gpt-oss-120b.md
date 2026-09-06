@@ -42,7 +42,7 @@
 
 ## Воспроизведение
 ```
-python infra/runpod.py create-ollama && python infra/runpod.py pull <pod> gpt-oss:120b
+python scripts/infra/runpod.py create-ollama && python scripts/infra/runpod.py pull <pod> gpt-oss:120b
 # .env: TZR_BASE_URL=https://<pod>-11434.proxy.runpod.net/v1 TZR_MODEL=gpt-oss:120b TZR_MAX_TOKENS=4096 TZR_REASONING_EFFORT=medium
 python eval/canary.py --variant v2g
 python eval/bench.py --variants v1g,v2g --targets eval/targets_key.yaml --out eval/night/bench_exp15.md --json eval/night/raw_exp15.json 2> eval/night/exp15.log

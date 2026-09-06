@@ -35,7 +35,7 @@
 
 | Сервис | Роль | Порт | Технологии | Статус |
 |---|---|---|---|---|
-| `llm` | Сервер модели, OpenAI-совместимый API, `/metrics` | 8000 (vLLM) / 11434 (ollama) | vLLM (целевой: Hopper, MXFP4 для gpt-oss-120b, logprobs, batching) / ollama (RunPod сегодня) / GPT-5.5 (референс-потолок) | работает: vLLM `vllm/vllm-openai` с gpt-oss-120b на RunPod H100 (`infra/runpod.py create-vllm-oss`), стрим-транспорт |
+| `llm` | Сервер модели, OpenAI-совместимый API, `/metrics` | 8000 (vLLM) / 11434 (ollama) | vLLM (целевой: Hopper, MXFP4 для gpt-oss-120b, logprobs, batching) / ollama (RunPod сегодня) / GPT-5.5 (референс-потолок) | работает: vLLM `vllm/vllm-openai` с gpt-oss-120b на RunPod H100 (`scripts/infra/runpod.py create-vllm-oss`), стрим-транспорт |
 | `api` | Приём документа/текста, постановка задачи в очередь, выдача отчёта | 8080 | FastAPI, pika (publisher confirms) | работает (:18080, Swagger /docs, UI /) |
 | `docs` | Нормализация входа в markdown с сохранением таблиц; разбор секций; хэш документа | 8081 | FastAPI, mammoth (docx), pdfplumber (pdf), `tz_review.document` | работает (:18081) |
 | `worker` | Конвейер `tz_review.pipeline.review`, метрики по проходам, запись результата, ack | — | python, pika (prefetch=1), prometheus_client | работает (поточный консьюмер, идемпотентность, прогресс в Postgres) |
