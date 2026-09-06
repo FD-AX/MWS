@@ -41,6 +41,11 @@ class Settings:
     # Потоковая передача ответа (транспорт, не влияет на сэмплирование): прокси RunPod/Cloudflare
     # рвёт запросы без байтов дольше ~100 с (524) — длинные reasoning-ответы 120b в это окно не влезают.
     stream: bool = False
+    # Язык документов на ревью (TZR_DOC_LANG): языковой предохранитель цитат (llm.quotes_off_language)
+    # сверяет письменность цитат с языком документа и текст напоминания берёт по нему.
+    # Поддержаны ru / en; иной код — предохранитель выключен. Промпты и детерминированные проходы
+    # остаются русскими — это настройка гарда, а не полная локализация.
+    doc_lang: str = "ru"
 
 
 def _int_env(name: str, default: int) -> int:
@@ -67,7 +72,12 @@ def settings_or_die() -> Settings:
         reasoning_effort=os.environ.get("TZR_REASONING_EFFORT") or None,
         probe_mode=os.environ.get("TZR_PROBE_MODE") or "chat",
         stream=os.environ.get("TZR_STREAM", "").lower() in ("1", "true", "yes"),
+        doc_lang=_doc_lang_env(),
     )
+
+
+def _doc_lang_env() -> str:
+    return (os.environ.get("TZR_DOC_LANG") or "ru").strip().lower()
 
 
 def openai_settings_or_die() -> Settings:
@@ -83,6 +93,7 @@ def openai_settings_or_die() -> Settings:
         # Канонический зонд одинаков для всех моделей (PROTOCOL.md): Монте-Карло; reasoning-модели
         # OpenAI logprobs не отдают, поэтому «chat» для них бессмыслен.
         probe_mode=os.environ.get("OPENAI_PROBE_MODE") or "sample",
+        doc_lang=_doc_lang_env(),
     )
 
 

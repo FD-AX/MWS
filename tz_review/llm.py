@@ -73,24 +73,56 @@ def _quotes(obj: Any) -> list[str]:
     return out
 
 
-def cyrillic_share(text: str) -> float:
+# Язык документа → письменность, по доле которой в цитатах ловим перевод вместо дословного фрагмента.
+# Язык задаётся настройкой (Settings.doc_lang / TZR_DOC_LANG); неизвестный язык = гард выключен.
+SCRIPT_OF: dict[str, str] = {"ru": "cyrillic", "en": "latin"}
+
+
+def _is_script(c: str, script: str) -> bool:
+    c = c.lower()
+    if script == "cyrillic":
+        return "а" <= c <= "я" or c == "ё"
+    if script == "latin":
+        return "a" <= c <= "z"
+    return False
+
+
+def script_share(text: str, script: str) -> float:
+    """Доля букв заданной письменности среди всех букв; без букв — 1.0 (не сигнал)."""
     letters = [c for c in text if c.isalpha()]
     if not letters:
         return 1.0
-    return sum(1 for c in letters if "а" <= c.lower() <= "я" or c.lower() == "ё") / len(letters)
+    return sum(1 for c in letters if _is_script(c, script)) / len(letters)
 
 
-def quotes_off_language(obj: Any, min_share: float = 0.3) -> bool:
-    """True, если модель отдала цитаты не на русском (переводы вместо дословных фрагментов).
+def cyrillic_share(text: str) -> float:
+    return script_share(text, "cyrillic")
+
+
+def quotes_off_language(obj: Any, min_share: float = 0.3, lang: str = "ru") -> bool:
+    """True, если модель отдала цитаты не на языке документа (переводы вместо дословных фрагментов).
     EXP-19: gpt-oss-120b в длинном процессе переключался на английский на v3official —
     цитаты-переводы не верифицируются, заякоренность 93% → 25%, recall 12/13 → 8/13.
-    Документы кейса — русские; для других языков порог задаётся отдельно."""
+    Порог 0.3 калиброван на русских документах кейса; для языка без письменности в SCRIPT_OF
+    гард выключен (False), чтобы не резать ответы по чужому документу."""
+    script = SCRIPT_OF.get(lang)
+    if script is None:
+        return False
     qs = _quotes(obj)
-    return bool(qs) and cyrillic_share(" ".join(qs)) < min_share
+    return bool(qs) and script_share(" ".join(qs), script) < min_share
 
 
-LANG_GUARD = ("\n\nОтвечай строго по-русски. Поле quote — дословный фрагмент документа на языке "
-              "документа; не переводи и не пересказывай цитаты.")
+LANG_GUARDS: dict[str, str] = {
+    "ru": ("\n\nОтвечай строго по-русски. Поле quote — дословный фрагмент документа на языке "
+           "документа; не переводи и не пересказывай цитаты."),
+    "en": ("\n\nAnswer strictly in English. The quote field is a verbatim fragment of the document "
+           "in the document's language; do not translate or paraphrase quotes."),
+}
+LANG_GUARD = LANG_GUARDS["ru"]  # обратная совместимость (tests, старые вызовы)
+
+
+def lang_guard(lang: str) -> str:
+    return LANG_GUARDS.get(lang, LANG_GUARD)
 
 
 def aggregate_yes_no(top_tokens: list[tuple[str, float]],
@@ -122,6 +154,7 @@ class LLM:
         self._reasoning = getattr(settings, "reasoning_effort", None)
         self._probe_mode = getattr(settings, "probe_mode", "chat") or "chat"
         self._stream = bool(getattr(settings, "stream", False))
+        self._doc_lang = getattr(settings, "doc_lang", "ru") or "ru"
         # Учёт вызовов/токенов (метрики воркера, стоимость документа)
         self.stats = {"calls": 0, "prompt_tokens": 0, "completion_tokens": 0}
 
@@ -242,10 +275,11 @@ class LLM:
                     max_tokens *= 2
                 continue
             # Языковой предохранитель: цитаты не на языке документа → один повтор с явным требованием.
-            if not lang_retry_done and quotes_off_language(obj):
+            lang = getattr(self, "_doc_lang", "ru")
+            if not lang_retry_done and quotes_off_language(obj, lang=lang):
                 lang_retry_done = True
                 self.stats["lang_retries"] = self.stats.get("lang_retries", 0) + 1
-                system = system + LANG_GUARD
+                system = system + lang_guard(lang)
                 continue
             return obj
         raise ValueError(f"JSON не получен за 3 попытки: {last_err}")
@@ -298,7 +332,8 @@ class LLM:
         raise RuntimeError(f"logprob-зонд недоступен после {ATTEMPTS} попыток: {last_err}")
 
     PROBE_SAMPLES = 8
-    _RU = {"ДА": "YES", "НЕТ": "NO"}
+    # Алиасы ответов зонда на языке документа → канон YES/NO; английские токены проходят как есть.
+    _YES_NO_ALIASES = {"ДА": "YES", "НЕТ": "NO"}
 
     def _binary_probs_sample(self, system: str, user: str,
                              pos: str, neg: str) -> tuple[float, float]:
@@ -311,7 +346,7 @@ class LLM:
         votes: list[tuple[str, float]] = []
         for o in outs:
             first = (o.strip().split() or [""])[0].strip(".,!:;«»\"'*").upper()
-            votes.append((self._RU.get(first, first), 1.0 / max(len(outs), 1)))
+            votes.append((self._YES_NO_ALIASES.get(first, first), 1.0 / max(len(outs), 1)))
         return aggregate_yes_no(votes, pos, neg)
 
     def sample(self, system: str, user: str, n: int = 5, temperature: float = 0.9) -> list[str]:
