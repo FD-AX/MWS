@@ -1839,9 +1839,27 @@
     font-size: clamp(2.4rem, 3.8vw, 3.7rem);
     margin-bottom: clamp(1rem, 2vh, 1.6rem);
   }
-  .metrics-slide .metric-row { margin-top: 0; }
-  .metrics-slide .metric { min-height: 8.6rem; }
-  .metrics-slide .metric .num { font-size: clamp(2rem, 3.2vw, 3rem); }
+  .metrics-slide h1 {
+    max-width: 32ch;
+    margin-bottom: clamp(0.85rem, 1.8vh, 1.2rem);
+  }
+  .metrics-slide .metric-row {
+    margin-top: 0;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .metrics-slide .metric { min-height: 7.4rem; }
+  .metrics-slide .metric .name {
+    margin-bottom: 0.45rem;
+    color: #ff4b55;
+    font-size: clamp(1.35rem, 2.1vw, 1.85rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+  .metrics-slide .metric .label {
+    font-size: clamp(0.95rem, 1.25vw, 1.15rem);
+    line-height: 1.4;
+  }
   .bench-table {
     width: 100%;
     margin-top: clamp(1rem, 2.2vh, 1.6rem);
@@ -2117,47 +2135,39 @@
     </section>
 
     <!-- 5 · METRICS -->
-    <section class="slide metrics-slide" data-notes="15 с. Self-hosted gpt-oss-120b на нашем конвейере: 15 из 16 дефектов целевого ТЗ в двух прогонах подряд, 88 % находок подтверждены слепой разметкой, 7,5 ложных на заведомо чистом документе (было 11). Один промпт ловит 6 из 13 пунктов шаблона МТС, конвейер — 12. Методика: голд 36 дефектов на трёх ТЗ МТС плюс 33 инъекции синтетики; каждая конфигурация ×2, медиана.">
+    <section class="slide metrics-slide" data-notes="15 с. Precision и recall на исходных и синтетических ТЗ. Прод на gpt-oss-120b: 92 % recall, 88 % precision. Конвейер сильнее одного промпта; Qwen 3.6 35B-A3B слабее; GPT-5.5 на том же конвейере — 92 % recall.">
       <div class="topbar">
-        <span>Техническая часть · метрики</span>
+        <span>Техническая часть · метрики и модели</span>
       </div>
-      <h1 class="wide">Self-hosted модель: 15 из 16 дефектов, 88 % точности</h1>
+      <h1 class="wide">Качество решений</h1>
       <div class="metric-row">
         <div class="metric">
-          <div class="num">15 / 16</div>
-          <div class="label">дефектов целевого ТЗ «витрина-агрегат», два прогона подряд</div>
-          <div class="sub">gpt-oss-120b · self-hosted · полнота по голду</div>
+          <div class="name">Recall</div>
+          <div class="label">Доля эталонных дефектов, которые система нашла.</div>
         </div>
         <div class="metric">
-          <div class="num">88 %</div>
-          <div class="label">находок подтверждены слепой разметкой</div>
-          <div class="sub">до правил применимости — 83 %</div>
+          <div class="name">Precision</div>
+          <div class="label">Доля выданных замечаний, которые подтвердились.</div>
         </div>
         <div class="metric">
-          <div class="num">7,5</div>
-          <div class="label">ложных находок на заведомо чистом документе</div>
-          <div class="sub">было 11 · цель протокола ≤ 8 · один промпт — 15</div>
-        </div>
-        <div class="metric">
-          <div class="num">12 / 13</div>
-          <div class="label">пунктов официального шаблона МТС на синтетике</div>
-          <div class="sub">один промпт GPT-5.5 — 6 / 13</div>
+          <div class="name">Датасет</div>
+          <div class="label">Исходные и синтетические ТЗ</div>
         </div>
       </div>
       <table class="bench-table">
         <thead>
-          <tr><th>Конфигурация</th><th>Целевое ТЗ (16)</th><th>Пункты МТС (13)</th><th>Ложных на чистом</th><th>Точность</th></tr>
+          <tr><th>Конфигурация</th><th>Recall</th><th>Precision</th></tr>
         </thead>
         <tbody>
-          <tr><td>Детерминированный слой, без модели</td><td>3</td><td>3</td><td>0</td><td>—</td></tr>
-          <tr><td>Один промпт GPT-5.5</td><td>11</td><td>6</td><td>15</td><td>—</td></tr>
-          <tr><td>Конвейер на GPT-5.5 (облачный референс)</td><td>14–16</td><td>12</td><td>9</td><td>—</td></tr>
-          <tr><td>Конвейер на gpt-oss-120b, базовый</td><td>13</td><td>11,5</td><td>9</td><td>83 %</td></tr>
-          <tr class="prod"><td>Конвейер на gpt-oss-120b + правила применимости — прод</td><td>15</td><td>12</td><td>7,5</td><td>88 %</td></tr>
-          <tr><td>То же, строгий режим</td><td>14</td><td>11,5</td><td>5</td><td>90 %</td></tr>
+          <tr><td>Детерминированный слой, без модели</td><td>23 %</td><td>—</td></tr>
+          <tr><td>Один промпт GPT-5.5</td><td>46 %</td><td>—</td></tr>
+          <tr><td>Конвейер на GPT-5.5</td><td>92 %</td><td>—</td></tr>
+          <tr><td>Конвейер на Qwen 3.6 35B-A3B</td><td>69 %</td><td>60 %</td></tr>
+          <tr><td>Конвейер на gpt-oss-120b, базовый</td><td>88 %</td><td>83 %</td></tr>
+          <tr class="prod"><td>Конвейер на gpt-oss-120b + правила применимости — прод</td><td>92 %</td><td>88 %</td></tr>
+          <tr><td>Конвейер на gpt-oss-120b + правила применимости + строгий режим</td><td>88 %</td><td>90 %</td></tr>
         </tbody>
       </table>
-      <div class="bench-note">Полнота — доля найденных дефектов голда: 36 на трёх ТЗ МТС и 33 инъекции синтетики. Для 120b — медиана двух прогонов, разброс ±1–2. Точность — слепая разметка находок. Один промпт измерен на предыдущей итерации синтетики.</div>
     </section>
 
     <!-- 6 · VALIDATED HYPOTHESES -->
