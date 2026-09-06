@@ -94,7 +94,7 @@ python eval/run_eval.py out/sample_tz.findings.json eval/seeded_defects.yaml
 ```
 
 Метрики: recall по подсаженным, anchoring rate, список находок для ручной
-разметки precision. Тесты: `python -m unittest discover tests -v`.
+разметки precision. Тесты: `python -m pytest -q` (synth/out собирается из рецептов автоматически; вручную — `python synth/inject.py --all`).
 
 ## Данные кейса
 

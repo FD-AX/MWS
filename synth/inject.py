@@ -1,7 +1,8 @@
 """Фабрика синтетики: инъекция дефектов в чистый документ по рецепту.
 
 Использование:
-    python synth/inject.py synth/recipes/mart_traffic_v1.yaml
+    python synth/inject.py synth/recipes/mart_traffic_v1.yaml   # один рецепт
+    python synth/inject.py --all                                # все рецепты synth/recipes/
 
 Рецепт (yaml):
     base: путь к чистому документу
@@ -51,13 +52,15 @@ def apply_defect(text: str, d: dict) -> str:
     return text
 
 
-def main() -> int:
-    if len(sys.argv) != 2:
-        print(__doc__)
-        return 2
-    recipe_path = Path(sys.argv[1])
+RECIPES_DIR = Path(__file__).resolve().parent / "recipes"
+
+
+def build(recipe_path: Path, root: Path | None = None) -> tuple[Path, Path]:
+    """Собрать один рецепт → (out_doc, out_gold). root — корень репозитория; по умолчанию
+    выводится из пути рецепта (synth/recipes/x.yaml → ../../)."""
+    recipe_path = Path(recipe_path)
     recipe = yaml.safe_load(recipe_path.read_text(encoding="utf-8"))
-    root = recipe_path.resolve().parent.parent.parent  # корень net-review
+    root = root or recipe_path.resolve().parent.parent.parent
 
     text = (root / recipe["base"]).read_text(encoding="utf-8")
     for d in recipe["defects"]:
@@ -78,7 +81,30 @@ def main() -> int:
     ]}
     out_gold.write_text(yaml.safe_dump(gold, allow_unicode=True, sort_keys=False),
                         encoding="utf-8")
-    print(f"OK: {len(recipe['defects'])} дефектов -> {out_doc}\nГолд: {out_gold}")
+    return out_doc, out_gold
+
+
+def build_all(root: Path | None = None) -> list[tuple[Path, Path]]:
+    """Собрать все рецепты synth/recipes/*.yaml. synth/out в .gitignore — в свежем клоне его нет;
+    tests/conftest.py и CI зовут именно эту функцию. Сборка детерминирована и дешевле 0.1 с,
+    поэтому пересобираем всегда: выход не может разойтись с рецептом."""
+    root = root or RECIPES_DIR.parent.parent
+    return [build(rp, root) for rp in sorted(RECIPES_DIR.glob("*.yaml"))]
+
+
+def main(argv: list[str] | None = None) -> int:
+    argv = sys.argv[1:] if argv is None else argv
+    if argv == ["--all"]:
+        for out_doc, out_gold in build_all():
+            print(f"OK: {out_doc.name} + {out_gold.name} -> {out_doc.parent}")
+        return 0
+    if len(argv) != 1:
+        print(__doc__)
+        return 2
+    recipe_path = Path(argv[0])
+    n = len(yaml.safe_load(recipe_path.read_text(encoding="utf-8"))["defects"])
+    out_doc, out_gold = build(recipe_path)
+    print(f"OK: {n} дефектов -> {out_doc}" + chr(10) + f"Голд: {out_gold}")
     return 0
 
 
