@@ -23,7 +23,7 @@ python scripts/eval_api_result.py http://localhost:18080/reviews/<job_id> eval/g
 
 Что показать на экране:
 - **RabbitMQ** http://localhost:15672 (guest/guest): очередь `review.jobs`, DLQ `review.dead` — «ничего не теряем».
-- **Grafana** http://localhost:13000 (admin/admin) → дашборд «TZ Review — обзор»: ревью/сбои, длительность p50/p95,
+- **Grafana** http://localhost:13000 (admin/admin) → дашборд «DocReview AI — обзор»: проверки/сбои, длительность p50/p95,
   вызовы и токены LLM по модели, находки по классам и проходам, статусы слотов чеклиста, UNKNOWN-слоты (алерт).
 - **Prometheus** http://localhost:9090/targets — api, docs, worker, rabbitmq (llm — при профиле gpu).
 - Отчёт: светофор, coverage чеклиста, находки по разделам с цитатой / почему / что уточнить.

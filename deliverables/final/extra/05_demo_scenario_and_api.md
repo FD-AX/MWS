@@ -1,9 +1,11 @@
 > Дополнительные материалы — финальная версия · 06.09.2026 · команда 7, кейс МТС NET · github.com/FD-AX/MWS
 > Статус: работает локально (docker compose); фронт аналитика — сервис front :15173; API :18080
 
-# Демо: документ МТС → очередь → конвейер на self-hosted модели → отчёт (+ сверка с голдом)
+# DocReview AI: сценарий демонстрации и API
 
-Предусловия: Docker Desktop запущен; `deploy/.env` заполнен (TZR_BASE_URL/TZR_MODEL пода или OPENAI_*).
+Сценарий: документ МТС → очередь → конвейер на gpt-oss-120b → отчёт → сверка с разметкой.
+
+Предусловия: Docker Desktop запущен; `deploy/.env` заполнен (`TZR_BASE_URL` / `TZR_MODEL` для vLLM либо `OPENAI_*` для облачного бэкенда).
 
 ```bash
 # 1. Поднять контур (из корня репо)
@@ -26,7 +28,7 @@ python scripts/eval_api_result.py http://localhost:18080/reviews/<job_id> eval/g
 
 Что показать на экране:
 - **RabbitMQ** http://localhost:15672 (guest/guest): очередь `review.jobs`, DLQ `review.dead` — «ничего не теряем».
-- **Grafana** http://localhost:13000 (admin/admin) → дашборд «TZ Review — обзор»: ревью/сбои, длительность p50/p95,
+- **Grafana** http://localhost:13000 (admin/admin) → дашборд «DocReview AI — обзор»: проверки/сбои, длительность p50/p95,
   вызовы и токены LLM по модели, находки по классам и проходам, статусы слотов чеклиста, UNKNOWN-слоты (алерт).
 - **Prometheus** http://localhost:9090/targets — api, docs, worker, rabbitmq (llm — при профиле gpu).
 - Отчёт: светофор, coverage чеклиста, находки по разделам с цитатой / почему / что уточнить.
