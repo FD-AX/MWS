@@ -47,12 +47,17 @@ class TestVerify(unittest.TestCase):
             [make(quote="Файлы CSV на SFTP-сервере", section="Регламент загрузки")], DOC)
         self.assertIn("Источник", v[0].section)
 
-    def test_short_llm_quote_dropped_but_deterministic_kept(self):
-        doc = document.parse("## Контроль качества\nTBD\n")
+    def test_short_llm_quote_dropped_unless_unique(self):
+        # Короткая LLM-цитата принимается только если встречается в документе ровно один раз (EXP-24):
+        # тогда якорь — её строка. Повторяющаяся («TBD» дважды) — отбрасывается; детерминированная — всегда ок.
+        doc = document.parse("## Контроль качества\nTBD\n## Регламент\nTBD\n")
         v, d = verify_findings([make(quote="TBD")], doc)
-        self.assertEqual(len(v), 0)  # короткая LLM-цитата не принимается
+        self.assertEqual(len(v), 0)
         v, d = verify_findings([make(quote="TBD", source_pass="deterministic")], doc)
         self.assertEqual(len(v), 1)
+        doc1 = document.parse("## Контроль качества\nTBD\n")
+        v, d = verify_findings([make(quote="TBD")], doc1)
+        self.assertEqual([f.quote for f in v], ["tbd"])
 
     def test_missing_needs_no_quote(self):
         v, d = verify_findings([make(missing=True)], DOC)
