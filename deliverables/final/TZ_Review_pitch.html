@@ -1949,6 +1949,78 @@
     .hypo-grid { grid-template-columns: 1fr; }
     .bench-table { display: block; overflow-x: auto; }
   }
+
+  /* Closing slide */
+  .closing-slide {
+    overflow: hidden;
+  }
+  .closing-slide::after {
+    content: "";
+    position: absolute;
+    right: clamp(2rem, 7vw, 7rem);
+    bottom: clamp(5rem, 12vh, 8rem);
+    width: clamp(7rem, 15vw, 13rem);
+    aspect-ratio: 1;
+    border: clamp(1rem, 2.1vw, 2rem) solid var(--accent);
+    border-left-color: transparent;
+    border-radius: 50%;
+    transform: rotate(-28deg);
+    opacity: 0.95;
+    z-index: -1;
+  }
+  .closing-slide .closing-content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    max-width: min(78rem, 88vw);
+    padding-bottom: clamp(1rem, 5vh, 4rem);
+  }
+  .closing-slide .closing-kicker {
+    margin-bottom: clamp(1.1rem, 2.5vh, 2rem);
+    color: var(--accent);
+    font-family: "JetBrains Mono", monospace;
+    font-size: clamp(0.7rem, 1vw, 0.9rem);
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  .closing-slide .closing-statement {
+    max-width: 15ch;
+    margin: 0;
+    font-size: clamp(3.4rem, 7.4vw, 7.5rem);
+    line-height: 0.9;
+    letter-spacing: -0.075em;
+    text-wrap: balance;
+  }
+  .closing-slide .closing-statement em {
+    color: var(--accent);
+    font-style: normal;
+  }
+  @media (max-width: 980px) {
+    .closing-slide::after {
+      right: -3rem;
+      bottom: 5rem;
+      opacity: 0.22;
+    }
+    .closing-slide .closing-content {
+      max-width: 100%;
+      justify-content: flex-start;
+      padding-top: clamp(1rem, 5vh, 3rem);
+    }
+    .closing-slide .closing-statement {
+      font-size: clamp(3rem, 12vw, 6rem);
+    }
+  }
+  @media (max-height: 620px) {
+    .closing-slide .closing-content {
+      justify-content: flex-start;
+      padding-top: 0.5rem;
+    }
+    .closing-slide .closing-statement {
+      font-size: clamp(2.8rem, 9vh, 5rem);
+    }
+  }
 </style>
 </head>
 <body>
@@ -2264,30 +2336,15 @@
       </div>
     </section>
 
-    <!-- APPENDIX · Q&A backup -->
-    <section class="slide" data-notes="Не показывать в питче. Держать на вопросы.">
+    <!-- 9 · CLOSING -->
+    <section class="slide closing-slide" data-notes="Закрывающая мысль: сильная разработка начинается с ясного ТЗ. DocReview AI — дополнительное предварительное ревью, которое помогает аналитику увидеть риски и неоднозначности до старта разработки.">
       <div class="topbar">
-        <span>Appendix · ответы</span>
-        <span class="badge"><span class="dot"></span>Q&A</span>
+        <span>DocReview AI · финал</span>
+        <span class="badge"><span class="dot"></span>Спасибо</span>
       </div>
-      <h1 style="max-width:none;font-size:clamp(1.8rem,3.2vw,2.6rem)">Короткие ответы на вопросы комиссии</h1>
-      <div class="grid-2">
-        <div class="card">
-          <div class="k">Почему не один промпт?</div>
-          <div class="d">Даже сильный промпт пропустил 6 из 6 нарушений шаблона. Конвейер проверяет их правилами и обязательным чеклистом.</div>
-        </div>
-        <div class="card">
-          <div class="k">Что с данными?</div>
-          <div class="d">На тестах — обезличенные ТЗ МТС. В прод-сценарии документы и история проверок остаются внутри контура заказчика.</div>
-        </div>
-        <div class="card">
-          <div class="k">Сколько стоит?</div>
-          <div class="d">Основная статья — GPU для self-hosted модели. Точную стоимость считаем по реальной нагрузке пилота и выбранной модели.</div>
-        </div>
-        <div class="card">
-          <div class="k">Если метрика упадёт?</div>
-          <div class="d">Любое изменение сначала проходит канарейку и фиксированный бенч. Не прошло порог — возвращаем предыдущую конфигурацию.</div>
-        </div>
+      <div class="closing-content">
+        <div class="closing-kicker">Вопросы должны появляться раньше</div>
+        <h1 class="closing-statement">Сильная разработка начинается с ТЗ без <em>дорогих вопросов.</em></h1>
       </div>
     </section>
 
