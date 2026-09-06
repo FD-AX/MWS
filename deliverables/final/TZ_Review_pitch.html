@@ -1607,12 +1607,12 @@
   .final-line strong { font-weight: 800; }
 
   /* Appendix */
-  .slide:nth-of-type(9) .grid-2 {
+  .slide:nth-of-type(10) .grid-2 {
     grid-template-columns: 1fr 1fr;
     gap: 1.4rem 2.6rem;
   }
 
-  .slide:nth-of-type(9) .card {
+  .slide:nth-of-type(10) .card {
     padding-top: 1.1rem;
   }
 
@@ -1711,7 +1711,7 @@
     .dataset-grid { grid-template-columns: 1fr; }
     .dataset-card:not(:last-child)::after { content: none; }
     .metric-row,
-    .slide:nth-of-type(9) .grid-2 { grid-template-columns: 1fr; }
+    .slide:nth-of-type(10) .grid-2 { grid-template-columns: 1fr; }
     .metric { border-right: 0; border-bottom: 1px solid rgba(255,255,255,0.2); }
   }
   /* Dataset (final): denser three-column argument */
@@ -1731,15 +1731,23 @@
     .dataset-slide h1 { font-size: 2.1rem; }
     .dataset-card li { font-size: 0.78rem; }
   }
-  /* Hypotheses: prod pipeline strip */
-  .hypo-slide .hypo-grid { flex: 0 0 auto; }
-  .prod-flow {
-    margin-top: auto;
-    padding-top: clamp(0.9rem, 1.8vh, 1.3rem);
-    border-top: 4px solid var(--ink);
+  /* Pipeline: eight algorithmic stages */
+  .pipeline-slide h1 {
+    max-width: 22ch;
+    font-size: clamp(2.4rem, 3.8vw, 3.7rem);
+    margin-bottom: clamp(0.85rem, 1.8vh, 1.3rem);
+  }
+  .pipeline-slide .prod-flow {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
   }
   .prod-flow .k {
-    margin-bottom: 0.7rem;
+    margin-bottom: 0.85rem;
     font-family: "JetBrains Mono", monospace;
     font-size: 0.66rem;
     font-weight: 700;
@@ -1749,36 +1757,38 @@
   }
   .prod-flow ol {
     display: grid;
-    grid-template-columns: repeat(8, minmax(0, 1fr));
-    gap: 0 0.9rem;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(1.1rem, 2.2vh, 1.7rem) clamp(1.1rem, 2vw, 1.8rem);
     margin: 0;
     padding: 0;
     list-style: none;
     counter-reset: step;
+    flex: 1;
+    align-content: stretch;
   }
   .prod-flow li {
     position: relative;
     counter-increment: step;
-    padding-top: 0.35rem;
+    padding-top: 0.45rem;
     border-top: 2px solid rgba(17,17,17,0.22);
     min-width: 0;
   }
   .prod-flow li::before {
     content: counter(step, decimal-leading-zero);
     display: block;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.35rem;
     font-family: "JetBrains Mono", monospace;
     font-size: 0.66rem;
     font-weight: 700;
     letter-spacing: 0.1em;
-    color: var(--accent);
+    color: var(--ink);
   }
-  .prod-flow li:not(:last-child)::after {
+  .prod-flow li:not(:nth-child(4n))::after {
     content: "→";
     position: absolute;
-    top: 1.5rem;
-    right: -0.78rem;
-    color: var(--accent);
+    top: 0.35rem;
+    right: -0.95rem;
+    color: var(--ink);
     font-family: "JetBrains Mono", monospace;
     font-size: 0.85rem;
     font-weight: 700;
@@ -1786,51 +1796,35 @@
   .prod-flow li b {
     display: block;
     color: var(--ink);
-    font-size: clamp(0.88rem, 1.05vw, 1.05rem);
+    font-size: clamp(1.02rem, 1.28vw, 1.28rem);
     line-height: 1.2;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.03em;
   }
   .prod-flow li span {
     display: block;
-    margin-top: 0.25rem;
+    margin-top: 0.4rem;
+    color: #555;
+    font-size: clamp(0.86rem, 1.05vw, 1.05rem);
+    line-height: 1.38;
+  }
+  .prod-flow .off {
+    margin-top: auto;
+    padding-top: 0.9rem;
     color: #686868;
-    font-size: clamp(0.72rem, 0.85vw, 0.84rem);
-    line-height: 1.3;
+    font-size: clamp(0.78rem, 0.92vw, 0.9rem);
+    line-height: 1.4;
   }
-  .prod-flow li em {
-    display: block;
-    margin-top: 0.35rem;
-    font-style: normal;
-    font-weight: 700;
-    color: var(--accent);
-    font-size: clamp(0.74rem, 0.88vw, 0.86rem);
-    line-height: 1.3;
-  }
-  .prod-flow li b { font-size: clamp(0.86rem, 1.02vw, 1.02rem); }
+  .hypo-slide .hypo-grid { flex: 1; }
   .hypo-col li { font-size: clamp(0.92rem, 1.15vw, 1.15rem); }
   .hypo-col ul { gap: 0.7rem; }
-  .prod-flow .off {
-    margin-top: 0.75rem;
-    color: #686868;
-    font-size: clamp(0.76rem, 0.9vw, 0.88rem);
-  }
-  .prod-flow .off::before {
-    content: "";
-    display: inline-block;
-    width: 0.5rem;
-    height: 0.5rem;
-    margin-right: 0.45rem;
-    background: var(--accent);
-    vertical-align: middle;
-  }
   @media (max-height: 760px) and (min-width: 981px) {
-    .prod-flow li span { display: none; }
-    .prod-flow li em { margin-top: 0.2rem; }
-    .prod-flow .off { margin-top: 0.4rem; }
+    .prod-flow li span { font-size: 0.78rem; }
+    .prod-flow li b { font-size: 0.95rem; }
+    .prod-flow .off { padding-top: 0.5rem; }
   }
   @media (max-width: 980px) {
-    .prod-flow ol { grid-template-columns: repeat(2, 1fr); gap: 0.6rem; }
-    .prod-flow li:not(:last-child)::after { content: none; }
+    .prod-flow ol { grid-template-columns: repeat(2, 1fr); gap: 0.7rem; }
+    .prod-flow li:not(:nth-child(4n))::after { content: none; }
   }
   /* Metrics & hypotheses (final) */
   .metrics-slide h1,
@@ -2086,7 +2080,28 @@
       </figure>
     </section>
 
-    <!-- 4 · DATASET -->
+    <!-- 4 · PIPELINE -->
+    <section class="slide pipeline-slide" data-notes="40 с. Проверка проходит восемь этапов. 1 — находит пропущенные разделы, пустые места и расплывчатые формулировки. 2 — проверяет связи, названия и ссылки между элементами документа. 3 — проходит по чеклисту полноты и отмечает, где не хватает обязательной информации. 4 — сопоставляет разделы и выявляет противоречия в терминах, значениях и процессах. 5 — формулирует вопросы, без ответов на которые разработчик не сможет однозначно реализовать требования. 6 — убирает формальные замечания к намеренно оставленным заглушкам. 7 — подтверждает каждое замечание фрагментом исходного документа. 8 — объединяет повторы и отсеивает слабые или нерелевантные замечания, сохраняя обязательные проверки.">
+      <div class="topbar">
+        <span>Техническая часть · конвейер</span>
+      </div>
+      <h1 class="wide">Восемь этапов конвейера</h1>
+      <div class="prod-flow">
+        <div class="k">Формальные проверки → смысловой анализ → проверка обоснованности</div>
+        <ol>
+          <li><b>Структура и формулировки</b><span>Находим пропущенные разделы, пустые места и расплывчатые формулировки.</span></li>
+          <li><b>Связи и ссылки</b><span>Проверяем, что связанные элементы присутствуют, называются одинаково и ведут к нужным разделам.</span></li>
+          <li><b>Полнота требований</b><span>Проходим по чеклисту и отмечаем, где не хватает обязательной информации.</span></li>
+          <li><b>Согласованность разделов</b><span>Сопоставляем разделы и выявляем противоречия в терминах, значениях и описании процессов.</span></li>
+          <li><b>Взгляд разработчика</b><span>Формулируем вопросы, без ответов на которые требования нельзя реализовать однозначно.</span></li>
+          <li><b>Фильтрация шума</b><span>Убираем формальные замечания к намеренно оставленным заглушкам, сохраняя существенные вопросы.</span></li>
+          <li><b>Проверка основания</b><span>Подтверждаем каждое замечание фрагментом исходного документа; неподтверждённые исключаем.</span></li>
+          <li><b>Контроль качества</b><span>Объединяем повторы и отсеиваем слабые или нерелевантные замечания, сохраняя обязательные проверки.</span></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 5 · DATASET -->
     <section class="slide dataset-slide" data-notes="В официальном обезличенном пакете — три примера документов: описание потоков данных, описание данных системы источника и описание витрины-агрегата. Golden set из 36 дефектов получен при помощи сильных моделей и заморожен после аудита промахов. Для воспроизводимого benchmark YAML-рецепты детерминированно вносят 33 дефекта в чистое полное ТЗ и автоматически создают gold; чистая версия контролирует шум.">
       <div class="topbar">
         <span>Техническая часть · датасет</span>
@@ -2134,7 +2149,7 @@
       </div>
     </section>
 
-    <!-- 5 · METRICS -->
+    <!-- 6 · METRICS -->
     <section class="slide metrics-slide" data-notes="15 с. Precision и recall на исходных и синтетических ТЗ. Прод на gpt-oss-120b: 92 % recall, 88 % precision. Конвейер сильнее одного промпта; Qwen 3.6 35B-A3B слабее; GPT-5.5 на том же конвейере — 92 % recall.">
       <div class="topbar">
         <span>Техническая часть · метрики и модели</span>
@@ -2170,8 +2185,8 @@
       </table>
     </section>
 
-    <!-- 6 · VALIDATED HYPOTHESES -->
-    <section class="slide hypo-slide" data-notes="60 с. 24 эксперимента, бенч ×2, 17 гипотез отвергнуты. Кроме промпта восемь механизмов, каждый оправдан числом: 1 правила без модели — шаблон и паттерны ловит код, 6/6, 0 ложных; 2 граф сущностей — битые ссылки, поля «в воздухе», синтетика 2 → 5/12, 0 вызовов; 3 чеклист 27 слотов — полнота = свойство документа, промпт 0/6 по шаблону; применимость до вызова: ложных 11 → 7; 4 согласованность разделов — чеклист пары разделов не сравнивает (инкремент vs полная перезагрузка); 5 взгляд разработчика — трудные дефекты, без него −45 попаданий; 6 фильтр заглушек — «как называется столбец» 5 → 0; 7 верификация цитат — дословно по тексту, переанкоривание спасло 17/28; 8 критик — ранжирует, пункты МТС не режет: 9 → 12/13. Ограничения на слайде: разметка наша, разброс ±1–2, точность 88, не 95.">
+    <!-- 7 · VALIDATED HYPOTHESES -->
+    <section class="slide hypo-slide" data-notes="50 с. 24 эксперимента, бенч ×2, 17 гипотез отвергнуты. В прод только то, что дало число: граф 2→5/12; конвейер vs промпт; слоты МТС защищены; NA до модели; спасение цитат. Отвергнуто: порог критика как лечение шума, энтропия на 120b, энтропия по графу, сверка величин, один прогон. Ограничения: разметка наша, разброс ±1–2, точность 88 не 95.">
       <div class="topbar">
         <span>Техническая часть · эксперименты и ограничения</span>
       </div>
@@ -2208,23 +2223,9 @@
           </ul>
         </div>
       </div>
-      <div class="prod-flow">
-        <div class="k">Вокруг модели, кроме промпта · восемь механизмов итогового конвейера · у каждого — число</div>
-        <ol>
-          <li><b>Правила без модели</b><span>шаблон МТС, пустые разделы, языковые паттерны: TBD, «и т. д.», лазейки</span><em>нарушения шаблона 6 из 6, 0 ложных</em></li>
-          <li><b>Граф сущностей без модели</b><span>поля, таблицы, ссылки на разделы по номеру и имени; битые ссылки, поля «в воздухе»</span><em>синтетика 2 → 5 из 12, 0 вызовов</em></li>
-          <li><b>Чеклист 27 слотов</b><span>19 слотов полноты + 8 пунктов МТС; исходы OK / MISSING / UNCLEAR / NA; применимость решают правила до вызова</span><em>ложных 11 → 7, UNKNOWN 10 → 0</em></li>
-          <li><b>Согласованность разделов</b><span>противоречия между разделами: инкремент против полной перезагрузки, UTC против часовых поясов</span><em>класс противоречий 14 из 15 на референсе GPT</em></li>
-          <li><b>Взгляд разработчика</b><span>модель отвечает «что спрошу при реализации» с привязкой к месту документа</span><em>главный источник полноты на трудных дефектах: без него −45 попаданий на 20 прогонах</em></li>
-          <li><b>Фильтр заглушек</b><span>обезличивание ≠ дефект: вопросы «как называется столбец» отбрасываются до критика</span><em>вопросы о заглушках 5 → 0</em></li>
-          <li><b>Верификация цитат</b><span>дословная сверка с текстом; составная цитата переанкоривается на фрагмент документа</span><em>заякоренность 83–100 %, спасено 4 → 17 из 28</em></li>
-          <li><b>Критик</b><span>сравнительное ранжирование, порог 4; пункты МТС и детерминированные находки не режет</span><em>пункты МТС 9 → 12 из 13</em></li>
-        </ol>
-        <div class="off">Сквозное: JSON-схема ответа с ретраем пустого ответа · потоковый транспорт к vLLM · каждая конфигурация ×2, медиана · выключено по EXP-19/21: энтропия, зонд неоднозначности</div>
-      </div>
     </section>
 
-    <!-- 7 · FINALE -->
+    <!-- 8 · FINALE -->
     <section class="slide" data-notes="50 с. Сделано / проверено / следующий шаг. Запрос — закрытая проверка на новых ТЗ и оценка полезности аналитиками NET.">
       <div class="topbar">
         <span>Готовность и следующий шаг</span>
